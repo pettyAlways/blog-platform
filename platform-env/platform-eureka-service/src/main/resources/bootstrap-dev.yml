@@ -1,0 +1,19 @@
+spring:
+  rabbitmq:
+    host: 139.199.213.156
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: my_vhost
+  cloud:
+    config:
+      name: 'platform-eureka-service-dev'
+      #label: 'master' # name profile选项不配置默认是${spring.application.name}和${spring.profiles.active}
+      discovery:
+        enabled: true
+        service-id: platform-config
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://yingzuidou:yingzuidou@eureka-config:8080/eureka/, http://yingzuidou:yingzuidou@eureka-config01:8081/eureka/

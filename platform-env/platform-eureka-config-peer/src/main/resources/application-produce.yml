@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: platform-eureka-config-peer
+  security:
+    user:
+      name: yingzuidou
+      password: yingzuidou
+server:
+  port: 8081
+
+# eureka集群信息
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://yingzuidou:yingzuidou@139.199.213.156:8080/

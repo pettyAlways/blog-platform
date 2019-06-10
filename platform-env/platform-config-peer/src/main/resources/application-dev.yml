@@ -1,0 +1,44 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /platform-config
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/pettyAlways/platform-config.git
+          force-pull: true
+          deleteUntrackedBranches: true
+  application:
+      name: platform-config
+  rabbitmq:
+    host: 139.199.213.156
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: my_vhost
+  security:
+    user:
+      name: yingzuidou
+      password: yingzuidou
+# eureka集群信息
+eureka:
+  instance:
+    instance-id: platform-config-peer
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://yingzuidou:yingzuidou@eureka-config:8080/eureka/, http://yingzuidou:yingzuidou@eureka-config01:8081/eureka/
+
+info:
+  app.name: 'platform-config'
+  app.descr: '配置中心服务器'
+
+# 手动触发：http://localhost:8082/config/actuator/bus-refresh  通过Actuator进行总线消息推送
+management:
+  endpoints:
+    web:
+      exposure:
+        # 默认开启所有的actuator提供的endpoints
+        include: '*'
