@@ -11,18 +11,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.ConstBiz;
 import org.yingzuidou.cms.cmsweb.constant.InUseEnum;
-import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
-import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dao.CmsConstRepository;
 import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
 import org.yingzuidou.cms.cmsweb.service.ConstService;
+import org.yingzuidou.platform.common.exception.BusinessException;
+import org.yingzuidou.platform.common.paging.PageInfo;
+import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 类功能描述
@@ -133,5 +131,19 @@ public class ConstServiceImpl implements ConstService {
     @Override
     public CmsConstEntity findRootResource(String rootResource) {
         return cmsConstRepository.findByConstKey(rootResource);
+    }
+
+    /**
+     *  查询缓存中的系统常量，如果没在缓存没命中则从数据库查询
+     *
+     * @return 系统常量列表
+     */
+    @Override
+    public Map<String, String> systemConst() {
+        Map<String, String> systemParams = new HashMap<>(100);
+        List<CmsConstEntity> constEntities = findAllConstByType("1");
+        Optional.ofNullable(constEntities).orElse(new ArrayList <>())
+                .forEach(item -> systemParams.put(item.getConstKey(), item.getConstValue()));
+        return systemParams;
     }
 }

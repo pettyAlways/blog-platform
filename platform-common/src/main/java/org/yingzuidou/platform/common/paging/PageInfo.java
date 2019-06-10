@@ -1,4 +1,4 @@
-package org.yingzuidou.cms.cmsweb.core.paging;
+package org.yingzuidou.platform.common.paging;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

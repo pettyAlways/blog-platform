@@ -8,8 +8,8 @@ import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.cache.CmsCacheManager;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;

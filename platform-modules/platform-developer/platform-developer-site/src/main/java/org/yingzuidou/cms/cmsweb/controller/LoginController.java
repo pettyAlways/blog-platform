@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yingzuidou.cms.cmsweb.core.CmsMap;
-import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
-import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.LoginService;
 import org.yingzuidou.cms.cmsweb.service.UserService;
+import org.yingzuidou.platform.common.cache.CmsCacheManager;
+import org.yingzuidou.platform.common.dto.CmsMap;
+import org.yingzuidou.platform.common.exception.BusinessException;
 
 import java.util.Date;
 

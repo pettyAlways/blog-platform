@@ -1,4 +1,4 @@
-package org.yingzuidou.cms.cmsweb.core;
+package org.yingzuidou.platform.common.dto;
 
 import java.util.HashMap;
 

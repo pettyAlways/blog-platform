@@ -1,9 +1,9 @@
 package org.yingzuidou.cms.cmsweb.service;
 
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
-import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
+import org.yingzuidou.platform.common.paging.PageInfo;
+import org.yingzuidou.platform.common.vo.Node;
 
 import java.util.List;
 

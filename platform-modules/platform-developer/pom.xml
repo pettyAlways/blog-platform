@@ -14,5 +14,6 @@
 
     <modules>
         <module>platform-developer-site</module>
+        <module>platform-developer-blog-manager</module>
     </modules>
 </project>

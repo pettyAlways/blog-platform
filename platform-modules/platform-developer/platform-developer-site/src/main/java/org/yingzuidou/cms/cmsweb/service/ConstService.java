@@ -1,10 +1,11 @@
 package org.yingzuidou.cms.cmsweb.service;
 
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
+import org.yingzuidou.platform.common.paging.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 类功能描述
@@ -58,4 +59,11 @@ public interface ConstService {
      * @return 根资源
      */
     CmsConstEntity findRootResource(String rootResource);
+
+    /**
+     *  查询缓存中的系统常量，如果没在缓存没命中则从数据库查询
+     *
+     * @return 系统常量列表
+     */
+    Map<String, String> systemConst();
 }

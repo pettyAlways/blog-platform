@@ -11,6 +11,7 @@
         <module>platform-modules</module>
         <module>platform-env</module>
         <module>platform-auth</module>
+        <module>platform-common</module>
     </modules>
     <packaging>pom</packaging>
     <parent>

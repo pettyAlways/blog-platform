@@ -3,13 +3,13 @@ package org.yingzuidou.cms.cmsweb.controller;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.yingzuidou.cms.cmsweb.core.CmsMap;
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.UserService;
+import org.yingzuidou.platform.common.dto.CmsMap;
+import org.yingzuidou.platform.common.paging.PageInfo;
 
 /**
  * 用户管理控制器

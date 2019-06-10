@@ -1,8 +1,8 @@
 package org.yingzuidou.cms.cmsweb.service;
 
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
+import org.yingzuidou.platform.common.paging.PageInfo;
 
 /**
  * 组织机构接口

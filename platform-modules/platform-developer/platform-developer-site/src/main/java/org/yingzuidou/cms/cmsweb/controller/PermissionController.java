@@ -2,16 +2,15 @@ package org.yingzuidou.cms.cmsweb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.yingzuidou.cms.cmsweb.core.CmsMap;
-import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
-import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 import org.yingzuidou.cms.cmsweb.service.PermissionService;
+import org.yingzuidou.platform.common.cache.CmsCacheManager;
+import org.yingzuidou.platform.common.dto.CmsMap;
+import org.yingzuidou.platform.common.paging.PageInfo;
+import org.yingzuidou.platform.common.vo.Node;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * PermissionController

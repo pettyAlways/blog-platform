@@ -14,6 +14,7 @@
         <module>platform-knowledge</module>
         <module>platform-developer</module>
         <module>platform-developer</module>
+        <module>platform-blog-service</module>
     </modules>
 
 

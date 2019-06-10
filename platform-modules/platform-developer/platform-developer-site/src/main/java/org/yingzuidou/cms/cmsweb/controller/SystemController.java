@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yingzuidou.cms.cmsweb.core.CmsMap;
-import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
+import org.yingzuidou.cms.cmsweb.service.ConstService;
+import org.yingzuidou.platform.common.cache.CmsCacheManager;
+import org.yingzuidou.platform.common.dto.CmsMap;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ import java.util.Map;
 public class SystemController {
 
    @Autowired
-   private CmsCacheManager cmsCacheManager;
+   private ConstService constService;
 
     /**
      * 获取系统标题常量
@@ -37,7 +38,7 @@ public class SystemController {
     public CmsMap systemParams() {
         CmsMap<Map<String, String>> cMap = new CmsMap<>();
         // 获取所有的系统常量
-        Map<String, String> systemParams = cmsCacheManager.systemConst();
+        Map<String, String> systemParams = constService.systemConst();
         cMap.success().setResult(systemParams);
 
         return cMap;

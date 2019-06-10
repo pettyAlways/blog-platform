@@ -2,11 +2,11 @@ package org.yingzuidou.cms.cmsweb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.yingzuidou.cms.cmsweb.core.CmsMap;
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
 import org.yingzuidou.cms.cmsweb.service.ConstService;
+import org.yingzuidou.platform.common.dto.CmsMap;
+import org.yingzuidou.platform.common.paging.PageInfo;
 
 import java.util.Arrays;
 import java.util.List;
