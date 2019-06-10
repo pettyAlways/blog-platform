@@ -13,6 +13,7 @@
     <modules>
         <module>platform-knowledge</module>
         <module>platform-developer</module>
+        <module>platform-developer</module>
     </modules>
 
 
