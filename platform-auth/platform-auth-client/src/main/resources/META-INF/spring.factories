@@ -1,4 +1,3 @@
 org.yingzuidou.platform.auth.client.EnableAuthClientImportSelector=\
 org.yingzuidou.platform.auth.client.config.AuthClientConfig,\
-org.yingzuidou.platform.auth.client.config.AuthDeveloperPlatformConfig,\
-org.yingzuidou.platform.auth.client.config.AuthBlogBackEndConfig
+org.yingzuidou.platform.auth.client.core.config.WebSecurityConfig

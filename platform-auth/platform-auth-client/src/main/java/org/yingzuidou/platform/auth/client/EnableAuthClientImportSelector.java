@@ -19,11 +19,8 @@ import java.util.List;
 public class EnableAuthClientImportSelector implements ImportSelector {
 
     /**
-     * <p>SpringBoot会通过加载器对象预先加载classpath下的META-INF里面的spring.factories文件的配置</p>
-     * <p>
-     *    这里通过{@link SpringFactoriesLoader}类的{@code loadFactoryNames}方法获取EnableAuthClient注解
-     *    启动所需的配置类
-     * </p>
+     * <p>SpringBoot会通过加载器对象预先加载classpath下的META-INF里面的spring.factories文件的配置,
+     * 这里通过{@link SpringFactoriesLoader}类的{@code loadFactoryNames}方法获取EnableAuthClient注解启动所需的配置类
      *
      * @param annotationMetadata 使用@EnableAuthClient所在的类上的所有注解元数据信息
      * @return 配置在META-INF下的所有配置类名
