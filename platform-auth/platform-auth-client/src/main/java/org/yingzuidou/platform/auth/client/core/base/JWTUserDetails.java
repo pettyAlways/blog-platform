@@ -2,6 +2,8 @@ package org.yingzuidou.platform.auth.client.core.base;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
+
 import java.util.Collection;
 
 /**
@@ -13,7 +15,7 @@ import java.util.Collection;
  * 时间           作者          版本        描述
  * ====================================================
  */
-public class JWTUserDetails extends common implements UserDetails {
+public class JWTUserDetails extends CmsUserEntity implements UserDetails {
 
     public JWTUserDetails() {
     }

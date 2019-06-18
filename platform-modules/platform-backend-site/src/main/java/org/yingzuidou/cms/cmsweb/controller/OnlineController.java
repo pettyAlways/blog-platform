@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yingzuidou.cms.cmsweb.core.CmsMap;
-import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
-import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.OnlineDTO;
 import org.yingzuidou.cms.cmsweb.service.OnlineService;
+import org.yingzuidou.platform.common.exception.BusinessException;
+import org.yingzuidou.platform.common.paging.PageInfo;
+import org.yingzuidou.platform.common.utils.CmsCommonUtil;
+import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.List;
 

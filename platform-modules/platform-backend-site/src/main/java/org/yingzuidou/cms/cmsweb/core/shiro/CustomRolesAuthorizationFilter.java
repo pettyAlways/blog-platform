@@ -4,8 +4,8 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
-import org.yingzuidou.cms.cmsweb.core.utils.SpringUtil;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.utils.SpringUtil;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

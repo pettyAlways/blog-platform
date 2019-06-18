@@ -12,9 +12,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>platform-knowledge</module>
-        <module>platform-developer</module>
-        <module>platform-developer</module>
-        <module>platform-blog-service</module>
+        <module>platform-backend-site</module>
+        <module>platform-blog-site</module>
     </modules>
 
 

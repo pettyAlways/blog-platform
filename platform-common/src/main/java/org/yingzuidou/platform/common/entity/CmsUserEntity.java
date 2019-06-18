@@ -1,4 +1,4 @@
-package org.yingzuidou.cms.cmsweb.entity;
+package org.yingzuidou.platform.common.entity;
 
 import org.hibernate.validator.constraints.Length;
 import org.yingzuidou.platform.common.validate.TelNum;

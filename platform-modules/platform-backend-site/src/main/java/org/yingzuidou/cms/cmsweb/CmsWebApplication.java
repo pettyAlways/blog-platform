@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.yingzuidou.cms.cmsweb.core.utils.SpringUtil;
+import org.yingzuidou.platform.common.utils.SpringUtil;
 
 /**
  * cms web 入口函数

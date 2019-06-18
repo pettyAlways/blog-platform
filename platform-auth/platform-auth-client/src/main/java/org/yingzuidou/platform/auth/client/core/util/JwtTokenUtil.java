@@ -339,13 +339,13 @@ public class JwtTokenUtil {
      * @param userDetails  用户信息
      * @return
      */
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, JWTUserDetails userDetails) {
         JWTUserDetails user = (JWTUserDetails) userDetails;
         final long userId = getUserIdFromToken(token);
         final String username = getUsernameFromToken(token);
         // final Date created = getCreatedDateFromToken(token);
         // final Date expiration = getExpirationDateFromToken(token);
-        return (userId == user.getUserId()
+        return (userId == user.getId()
                 && username.equals(user.getUsername())
                 && !isTokenExpired(token)
                 /* && !isCreatedBeforeLastPasswordReset(created, userDetails.getLastPasswordResetDate()) */

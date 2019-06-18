@@ -1,4 +1,4 @@
-package org.yingzuidou.cms.cmsweb.core.validate;
+package org.yingzuidou.platform.common.validate;
 
 /**
  * 类功能描述

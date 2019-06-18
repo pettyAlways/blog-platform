@@ -5,14 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.OrganizationBiz;
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
-import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
-import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dao.OrganizationRepository;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.OrganizationService;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.paging.PageInfo;
+import org.yingzuidou.platform.common.utils.CmsBeanUtils;
+import org.yingzuidou.platform.common.utils.CmsCommonUtil;
 
 import java.util.ArrayList;
 import java.util.Date;

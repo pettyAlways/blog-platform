@@ -1,4 +1,4 @@
-package org.yingzuidou.cms.cmsweb.core.exception;
+package org.yingzuidou.platform.common.exception;
 
 /**
  * 业务异常
