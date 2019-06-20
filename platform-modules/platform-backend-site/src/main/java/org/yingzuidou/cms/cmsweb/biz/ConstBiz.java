@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.dao.CmsConstRepository;
 import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
-import org.yingzuidou.cms.cmsweb.entity.QCmsConstEntity;
+import org.yingzuidou.platform.common.entity.CmsConstEntity;
+import org.yingzuidou.platform.common.entity.QCmsConstEntity;
 
 
 /**

@@ -3,7 +3,7 @@ package org.yingzuidou.cms.cmsweb.dao;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.yingzuidou.cms.cmsweb.entity.RoleResourceEntity;
+import org.yingzuidou.platform.common.entity.RoleResourceEntity;
 
 import java.util.List;
 import java.util.Optional;

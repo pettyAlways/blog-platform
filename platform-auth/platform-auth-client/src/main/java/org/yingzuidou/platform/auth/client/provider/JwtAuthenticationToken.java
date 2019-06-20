@@ -1,12 +1,8 @@
 package org.yingzuidou.platform.auth.client.provider;
 
-import com.alibaba.fastjson.JSONObject;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.yingzuidou.platform.auth.client.core.base.JWTUserDetails;
-import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
 
 import java.util.Collection;
 

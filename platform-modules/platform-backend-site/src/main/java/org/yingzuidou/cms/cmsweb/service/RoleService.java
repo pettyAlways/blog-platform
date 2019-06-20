@@ -1,7 +1,7 @@
 package org.yingzuidou.cms.cmsweb.service;
 
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
-import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
+import org.yingzuidou.platform.common.entity.RoleEntity;
 import org.yingzuidou.platform.common.paging.PageInfo;
 
 import java.util.List;

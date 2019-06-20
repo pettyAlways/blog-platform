@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
+import org.yingzuidou.platform.common.entity.OrganizationEntity;
 
 import java.util.List;
 

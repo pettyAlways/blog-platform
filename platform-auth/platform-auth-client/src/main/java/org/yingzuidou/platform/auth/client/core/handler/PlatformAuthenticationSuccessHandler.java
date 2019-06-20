@@ -1,15 +1,13 @@
 package org.yingzuidou.platform.auth.client.core.handler;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.yingzuidou.platform.auth.client.core.base.JWTUserDetails;
 import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
+import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 类功能描述
@@ -31,6 +29,7 @@ public class PlatformAuthenticationSuccessHandler implements AuthenticationSucce
     public PlatformAuthenticationSuccessHandler(String tokenHeader, String tokenHeaderPrefix) {
         this.tokenHeader = tokenHeader;
         this.tokenHeaderPrefix = tokenHeaderPrefix;
+        this.expires = PlatformContext.getExpires();
     }
 
     @Override

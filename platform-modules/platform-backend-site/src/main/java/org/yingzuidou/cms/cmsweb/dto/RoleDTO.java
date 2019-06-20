@@ -1,6 +1,7 @@
 package org.yingzuidou.cms.cmsweb.dto;
 
-import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
+
+import org.yingzuidou.platform.common.entity.RoleEntity;
 
 import java.util.List;
 

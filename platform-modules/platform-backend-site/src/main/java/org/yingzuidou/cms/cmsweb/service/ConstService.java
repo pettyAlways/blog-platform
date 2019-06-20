@@ -1,7 +1,7 @@
 package org.yingzuidou.cms.cmsweb.service;
 
 import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
+import org.yingzuidou.platform.common.entity.CmsConstEntity;
 import org.yingzuidou.platform.common.paging.PageInfo;
 
 import java.util.List;

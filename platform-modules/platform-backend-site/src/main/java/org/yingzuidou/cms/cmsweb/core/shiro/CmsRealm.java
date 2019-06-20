@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
 import org.yingzuidou.cms.cmsweb.constant.LockStatusEnum;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
-import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
 
 import java.util.Objects;
 

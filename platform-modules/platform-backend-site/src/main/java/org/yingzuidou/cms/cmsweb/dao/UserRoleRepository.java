@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
+import org.yingzuidou.platform.common.entity.UserRoleEntity;
 
 import java.util.List;
 

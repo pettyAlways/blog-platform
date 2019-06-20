@@ -1,6 +1,6 @@
 package org.yingzuidou.cms.cmsweb.dto;
 
-import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
+import org.yingzuidou.platform.common.entity.ResourceEntity;
 import org.yingzuidou.platform.common.vo.Node;
 
 import java.util.List;

@@ -1,6 +1,7 @@
 package org.yingzuidou.cms.cmsweb.dto;
 
-import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
+
+import org.yingzuidou.platform.common.entity.CmsConstEntity;
 
 import java.util.List;
 

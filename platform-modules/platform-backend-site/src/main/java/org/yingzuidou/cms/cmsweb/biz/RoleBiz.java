@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.dao.RoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
-import org.yingzuidou.cms.cmsweb.entity.QRoleEntity;
-import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
+import org.yingzuidou.platform.common.entity.QRoleEntity;
+import org.yingzuidou.platform.common.entity.RoleEntity;
 
 
 /**

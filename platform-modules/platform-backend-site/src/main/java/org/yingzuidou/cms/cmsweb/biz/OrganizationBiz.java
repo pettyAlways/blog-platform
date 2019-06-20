@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.dao.OrganizationRepository;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
-import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
-import org.yingzuidou.cms.cmsweb.entity.QOrganizationEntity;
+import org.yingzuidou.platform.common.entity.OrganizationEntity;
+import org.yingzuidou.platform.common.entity.QOrganizationEntity;
 
 import java.util.ArrayList;
 import java.util.List;

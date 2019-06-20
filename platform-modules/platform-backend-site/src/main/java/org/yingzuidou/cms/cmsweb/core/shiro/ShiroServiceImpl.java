@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.yingzuidou.cms.cmsweb.constant.WebSocketTypeEnum;
 import org.yingzuidou.cms.cmsweb.core.websocket.CmsWebSocket;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
-import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
 
 import java.util.*;
 

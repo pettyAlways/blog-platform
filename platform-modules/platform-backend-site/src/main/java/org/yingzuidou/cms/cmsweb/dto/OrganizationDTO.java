@@ -6,7 +6,8 @@ package org.yingzuidou.cms.cmsweb.dto;
  * @date 2018/9/15
  */
 
-import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
+
+import org.yingzuidou.platform.common.entity.OrganizationEntity;
 
 import java.util.List;
 import java.util.Objects;

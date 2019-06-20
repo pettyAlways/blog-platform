@@ -1,7 +1,7 @@
 package org.yingzuidou.cms.cmsweb.service;
 
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.paging.PageInfo;
 
 /**

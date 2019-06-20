@@ -1,21 +1,17 @@
 package org.yingzuidou.platform.auth.client.core.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.jwt.Jwt;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.yingzuidou.platform.auth.client.core.handler.PlatformAuthenticationFailureHandler;
 import org.yingzuidou.platform.auth.client.provider.JwtAuthenticationToken;
-import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -61,7 +57,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         // 不需要jwt拦截的请求校验
         if (Objects.nonNull(requestMatcher) &&  !requestMatcher.matches(request)) {
             filterChain.doFilter(request, response);

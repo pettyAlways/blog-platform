@@ -3,8 +3,8 @@ package org.yingzuidou.cms.cmsweb.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
-import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.OrganizationService;
+import org.yingzuidou.platform.common.entity.OrganizationEntity;
 import org.yingzuidou.platform.common.paging.PageInfo;
 import org.yingzuidou.platform.common.vo.CmsMap;
 

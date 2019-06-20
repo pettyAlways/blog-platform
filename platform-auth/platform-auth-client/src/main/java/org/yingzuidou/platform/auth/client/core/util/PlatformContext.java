@@ -1,7 +1,5 @@
 package org.yingzuidou.platform.auth.client.core.util;
 
-import org.springframework.beans.factory.annotation.Value;
-
 /**
  * 类功能描述
  *

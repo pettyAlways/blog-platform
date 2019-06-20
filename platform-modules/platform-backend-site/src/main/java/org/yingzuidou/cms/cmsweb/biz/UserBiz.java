@@ -11,9 +11,9 @@ import org.yingzuidou.cms.cmsweb.dao.RoleRepository;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
-import org.yingzuidou.cms.cmsweb.entity.QCmsUserEntity;
-import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.QCmsUserEntity;
+import org.yingzuidou.platform.common.entity.RoleEntity;
 
 import java.util.List;
 import java.util.Objects;

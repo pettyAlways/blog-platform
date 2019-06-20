@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
-import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
 import org.yingzuidou.cms.cmsweb.service.RoleService;
+import org.yingzuidou.platform.common.entity.RoleEntity;
 import org.yingzuidou.platform.common.paging.PageInfo;
 import org.yingzuidou.platform.common.vo.CmsMap;
 

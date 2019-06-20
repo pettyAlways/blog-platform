@@ -2,7 +2,7 @@ package org.yingzuidou.cms.cmsweb.dao;
 
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
 
 import java.util.List;
 
