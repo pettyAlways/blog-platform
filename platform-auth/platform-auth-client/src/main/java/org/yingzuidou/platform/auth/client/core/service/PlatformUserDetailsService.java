@@ -6,7 +6,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.yingzuidou.platform.auth.client.core.base.JWTUserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +25,10 @@ import java.util.List;
 public class PlatformUserDetailsService implements UserDetailsService {
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("user");
         grantedAuthorities.add(grantedAuthority);
-        return new User("yingzuidou", "123456", grantedAuthorities);
+        return new JWTUserDetails(1, "yingzuidou", "$2a$10$/zL2TEu4yWA2GRio7dTRhu1Lh2XRXExCYGaTAyY1myUeQJqunGu92", grantedAuthorities, false);
     }
 }

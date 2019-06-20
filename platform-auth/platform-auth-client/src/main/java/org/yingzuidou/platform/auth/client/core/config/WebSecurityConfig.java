@@ -1,8 +1,9 @@
 package org.yingzuidou.platform.auth.client.core.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,12 +12,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.yingzuidou.platform.auth.client.core.configurer.JwtVerifyConfigurer;
+import org.yingzuidou.platform.auth.client.core.configurer.PlatformLoginConfigurer;
 import org.yingzuidou.platform.auth.client.core.interceptor.JwtAuthenticationTokenFilter;
-import org.yingzuidou.platform.auth.client.core.interceptor.PlatformFilterSecurityInterceptor;
 import org.yingzuidou.platform.auth.client.core.service.PlatformInvocationSecurityMetadataSourceService;
-import org.yingzuidou.platform.auth.client.core.service.PlatformAccessDecisionManager;
 import org.yingzuidou.platform.auth.client.core.service.PlatformUserDetailsService;
 import org.yingzuidou.platform.auth.client.core.matcher.SkipPathRequestMatcher;
+import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
+import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
+import org.yingzuidou.platform.auth.client.provider.JwtAuthenticationProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,13 +54,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().disable()
            // 禁用原生的form页面登录
             .formLogin().disable()
-            .cors();
+            .cors().and()
+            .apply(new JwtVerifyConfigurer<>()).setJwtAuthenticationProvider(jwtAuthenticationProvider())
+                .setJwtFilter(authenticationTokenFilterBean()).and()
+            .apply(new PlatformLoginConfigurer<>());
+
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(platformUserDetailsService()).passwordEncoder(bCryptPasswordEncoder()).and()
-                .authenticationProvider(jwtAuthenticationProvider());
+        auth.userDetailsService(platformUserDetailsService()).passwordEncoder(bCryptPasswordEncoder());
     }
 
     @Bean
@@ -71,7 +78,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     protected AuthenticationProvider jwtAuthenticationProvider() {
-        return new JwtAuthenticationProvider();
+        JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider();
+        authenticationProvider.setPlatformUserDetailsService(platformUserDetailsService());
+        return authenticationProvider;
     }
 
     @Bean
@@ -80,24 +89,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AccessDecisionManager platformAccessDecisionManager() {
-        return new PlatformAccessDecisionManager();
-    }
-
-    @Bean
-    @DependsOn("platformAccessDecisionManager")
-    public PlatformFilterSecurityInterceptor platformFilterSecurityInterceptor() {
-        return new PlatformFilterSecurityInterceptor();
-    }
-
-    @Bean
     public JwtAuthenticationTokenFilter authenticationTokenFilterBean() {
         // 不需要token 验证的url
-        List<String> pathsToSkip = Arrays.asList("/auth/v1/api/login/retrieve/pwd","/auth/v1/api/login/entry","/auth/v1/api/login/enter");
+        List<String> pathsToSkip = Arrays.asList("/login","/auth/v1/api/login/entry","/auth/v1/api/login/enter");
         //　需要验证token　的url
-        String processingPath = "/auth/v1/api/**";
+        String processingPath = "/platform/backend/**";
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, processingPath);
         return new JwtAuthenticationTokenFilter(matcher);
+    }
+
+    @Autowired(required = false)
+    public void initSecurity(@Value("${jwt.issuer}") String issuer, @Value("${jwt.subject}") String subject,
+                             @Value("${jwt.secret}") String secret, @Value("${jwt.token-header}") String tokenHeader,
+                             @Value("${jwt.token-header-prefix}") String tokenHeaderPrefix,
+                             @Value("${jwt.expire_token}") int expires,
+                             @Value("${jwt.refresh_token}") long refreshToken) {
+        JwtTokenUtil.create(issuer, subject, secret);
+        PlatformContext.create(issuer, subject, secret, tokenHeader, tokenHeaderPrefix, expires, refreshToken);
     }
 
 }

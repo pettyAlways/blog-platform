@@ -34,14 +34,7 @@ public class PlatformUsernamePasswordAuthenticationFilter extends AbstractAuthen
         super(new AntPathRequestMatcher("/login", "POST"));
     }
 
-    /**
-     * 拦截器从
-     * @param request
-     * @param response
-     * @return
-     * @throws AuthenticationException
-     * @throws IOException
-     */
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException {

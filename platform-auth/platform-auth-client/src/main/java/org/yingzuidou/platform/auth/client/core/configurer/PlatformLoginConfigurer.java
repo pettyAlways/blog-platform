@@ -3,11 +3,12 @@ package org.yingzuidou.platform.auth.client.core.configurer;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.yingzuidou.platform.auth.client.core.handler.PlatformAuthenticationFailureHandler;
 import org.yingzuidou.platform.auth.client.core.handler.PlatformAuthenticationSuccessHandler;
 import org.yingzuidou.platform.auth.client.core.interceptor.PlatformUsernamePasswordAuthenticationFilter;
-import org.yingzuidou.platform.auth.client.core.service.PlatformUserDetailsService;
+import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
 
 /**
  * 类功能描述
@@ -23,7 +24,13 @@ public class PlatformLoginConfigurer<T extends PlatformLoginConfigurer<T, B>, B 
 
     private PlatformUsernamePasswordAuthenticationFilter authFilter;
 
+    private String tokenHeader;
+
+    private String tokenHeaderPrefix;
+
     public PlatformLoginConfigurer() {
+        this.tokenHeader = PlatformContext.getTokenHeader();
+        this.tokenHeaderPrefix = PlatformContext.getTokenHeaderPrefix();
         this.authFilter = new PlatformUsernamePasswordAuthenticationFilter();
     }
 
@@ -33,11 +40,11 @@ public class PlatformLoginConfigurer<T extends PlatformLoginConfigurer<T, B>, B 
         // 设置登录认证失败的处理类
         authFilter.setAuthenticationFailureHandler(new PlatformAuthenticationFailureHandler());
         // 设置登录认证成功的处理类
-        authFilter.setAuthenticationSuccessHandler(new PlatformAuthenticationSuccessHandler());
+        authFilter.setAuthenticationSuccessHandler(new PlatformAuthenticationSuccessHandler(tokenHeader, tokenHeaderPrefix));
         // 不将认证后的context放入session
         authFilter.setSessionAuthenticationStrategy(new NullAuthenticatedSessionStrategy());
         authFilter = postProcess(authFilter);
 
-        builder.addFilter(authFilter);
+        builder.addFilterAfter(authFilter, LogoutFilter.class);
     }
 }

@@ -1,15 +1,21 @@
 package org.yingzuidou.platform.auth.client.core.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.jwt.Jwt;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.yingzuidou.platform.auth.client.core.matcher.SkipPathRequestMatcher;
+import org.yingzuidou.platform.auth.client.core.handler.PlatformAuthenticationFailureHandler;
+import org.yingzuidou.platform.auth.client.provider.JwtAuthenticationToken;
+import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,6 +26,10 @@ import java.util.Objects;
 
 /**
  * 类功能描述
+ * <p>Jwt对token的校验，这里需要注意异常的处理，SpringSecurity默认的异常处理在{@link HttpSecurity#exceptionHandling()}
+ * 这个方法中指定拦截器处理而这个拦截器优先级排在倒数的位置，而{@link JwtAuthenticationTokenFilter}拦截器在异常拦截器
+ * 之前处理，又因为在jwt拦截器中有业务处理，会抛出异常，一旦抛出异常就会返回拦截器不会执行接下来的拦截器，这也就是说
+ * 不会经过异常处理这个拦截器。这时候我们需要在这个拦截器中捕捉异常并处理,详细参考{@link #doFilterInternal}
  *
  * @author 鹰嘴豆
  * @date 2019/6/17
@@ -38,8 +48,38 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Value("${jwt.token-header-prefix}")
     private String tokenHeaderPrefix;
 
+    private AuthenticationManager authenticationManager;
+
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    private AuthenticationFailureHandler authenticationFailureHandler;
+
     public JwtAuthenticationTokenFilter(RequestMatcher requestMatcher) {
         this.requestMatcher = requestMatcher;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        // 不需要jwt拦截的请求校验
+        if (Objects.nonNull(requestMatcher) &&  !requestMatcher.matches(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        String token = getJwtToken(request);
+        log.info("当前请求" + request.getRequestURI() + "携带的token的值：[" + token + "]");
+        JwtAuthenticationToken authToken = new JwtAuthenticationToken(token);
+        try {
+            Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
+            if (Objects.nonNull(authentication)) {
+                authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
+                // 执行下一个拦截器
+                filterChain.doFilter(request, response);
+            }
+        } catch (Exception exception) {
+            authenticationFailureHandler.onAuthenticationFailure(request, response, new InsufficientAuthenticationException(exception.getMessage()));
+        }
     }
 
     /**
@@ -56,70 +96,19 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         return authInfo.substring(tokenHeaderPrefix.length());
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        // 不需要jwt拦截的请求校验
-        if (Objects.nonNull(requestMatcher) &&  !requestMatcher.matches(request)) {
-            filterChain.doFilter(request, response);
-        }
-        String token = getJwtToken(request);
-        log.info("当前请求" + request.getRequestURI() + "携带的token的值：[" + token + "]");
-        JwtAuthenticationToken authToken = new JwtAuthenticationToken(JWT.decode(token));
-        // 查看redis中的token信息是否过期
-        boolean isExists = redisUtil.hexists(RedisKeys.USER_KEY,authToken);
-        if (!requiresAuthentication(request, response)) {
-            filterChain.doFilter(request, response);
-        } else {
-            Authentication authResult = null;
-            AuthenticationException failed = null;
-            try {
-                // 从头中获取token并封装后提交给AuthenticationManager
-                String token = getJwtToken(request);
-                if (!StringUtils.isEmpty(token)) {
-                    JwtAuthenticationToken authToken = new JwtAuthenticationToken(JWT.decode(token));
-                    authResult = this.getAuthenticationManager().authenticate(authToken);
-                } else {  //如果token长度为0
-                    failed = new InsufficientAuthenticationException("JWT is Empty");
-                }
-            } catch(JWTDecodeException e) {
-                logger.error("JWT format error", e);
-                failed = new InsufficientAuthenticationException("JWT format error", failed);
-            }catch (InternalAuthenticationServiceException e) {
-                logger.error(
-                        "An internal error occurred while trying to authenticate the user.",
-                        failed);
-                failed = e;
-            }catch (AuthenticationException e) {
-                // Authentication failed
-                failed = e;
-            }
-            if(authResult != null) {   //token认证成功
-                successfulAuthentication(request, response, filterChain, authResult);
-            } else if(!permissiveRequest(request)){
-                //token认证失败，并且这个request不在例外列表里，才会返回错误
-                unsuccessfulAuthentication(request, response, failed);
-                return;
-            }
-            filterChain.doFilter(request, response);
-        }
-
-
+    public AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
     }
 
-    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        return requiresAuthenticationRequestMatcher.matches(request);
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 
-    protected boolean permissiveRequest(HttpServletRequest request) {
-        if (permissiveRequestMatchers == null) {
-            return false;
-        }
-        for(RequestMatcher permissiveMatcher : permissiveRequestMatchers) {
-            if (permissiveMatcher.matches(request)) {
-                return true;
-            }
-        }
-        return false;
+    public void setAuthenticationSuccessHandler(AuthenticationSuccessHandler authenticationSuccessHandler) {
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+    }
+
+    public void setAuthenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
+        this.authenticationFailureHandler = authenticationFailureHandler;
     }
 }
