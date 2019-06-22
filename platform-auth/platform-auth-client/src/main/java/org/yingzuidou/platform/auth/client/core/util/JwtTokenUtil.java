@@ -52,7 +52,7 @@ public class JwtTokenUtil {
      * @param password 密码
      * @return token
      */
-    public static String generateToken(String userName, String password, int expires,
+    public static String  generateToken(String userName, String password, int expires,
                                        Collection<? extends GrantedAuthority> authorities) {
         return JWT.create().withIssuer(issuer)
                 .withSubject(subject)

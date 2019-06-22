@@ -1,4 +1,4 @@
-package org.yingzuidou.platform.auth.client.provider;
+package org.yingzuidou.platform.auth.client.core.provider;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

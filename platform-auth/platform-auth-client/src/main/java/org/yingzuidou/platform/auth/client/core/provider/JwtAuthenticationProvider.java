@@ -1,4 +1,4 @@
-package org.yingzuidou.platform.auth.client.provider;
+package org.yingzuidou.platform.auth.client.core.provider;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.security.authentication.AuthenticationProvider;

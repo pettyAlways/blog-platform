@@ -11,15 +11,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.yingzuidou.platform.auth.client.core.configurer.JwtVerifyConfigurer;
 import org.yingzuidou.platform.auth.client.core.configurer.PlatformLoginConfigurer;
+import org.yingzuidou.platform.auth.client.core.encoder.HashedCredentialsEncoder;
 import org.yingzuidou.platform.auth.client.core.interceptor.JwtAuthenticationTokenFilter;
+import org.yingzuidou.platform.auth.client.core.interceptor.PlatformFilterSecurityInterceptor;
+import org.yingzuidou.platform.auth.client.core.service.PlatformAccessDecisionManager;
 import org.yingzuidou.platform.auth.client.core.service.PlatformInvocationSecurityMetadataSourceService;
 import org.yingzuidou.platform.auth.client.core.service.PlatformUserDetailsService;
 import org.yingzuidou.platform.auth.client.core.matcher.SkipPathRequestMatcher;
 import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
 import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
-import org.yingzuidou.platform.auth.client.provider.JwtAuthenticationProvider;
+import org.yingzuidou.platform.auth.client.core.provider.JwtAuthenticationProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,20 +58,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
            // 禁用原生的form页面登录
             .formLogin().disable()
             .cors().and()
+            // 增加权限校验拦截器
+            .addFilterBefore(platformFilterSecurityInterceptor(), FilterSecurityInterceptor.class)
+            // 增加Jwt验证配置器
             .apply(new JwtVerifyConfigurer<>()).setJwtAuthenticationProvider(jwtAuthenticationProvider())
                 .setJwtFilter(authenticationTokenFilterBean()).and()
+            // 增加登录认证配置器
             .apply(new PlatformLoginConfigurer<>());
 
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(platformUserDetailsService()).passwordEncoder(bCryptPasswordEncoder());
+        auth.userDetailsService(platformUserDetailsService()).passwordEncoder(hashedCredentialsEncoder());
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    public HashedCredentialsEncoder hashedCredentialsEncoder() {
+        return new HashedCredentialsEncoder();
     }
 
     @Bean
@@ -85,6 +93,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public FilterInvocationSecurityMetadataSource platformInvocationSecurityMetadataSourceService() {
         return new PlatformInvocationSecurityMetadataSourceService();
+    }
+
+    @Bean
+    public PlatformAccessDecisionManager platformAccessDecisionManager() {
+        return new PlatformAccessDecisionManager();
+    }
+
+    @Bean
+    public PlatformFilterSecurityInterceptor platformFilterSecurityInterceptor() {
+        PlatformFilterSecurityInterceptor platformFilterSecurityInterceptor = new PlatformFilterSecurityInterceptor();
+        platformFilterSecurityInterceptor.setAccessDecisionManager(platformAccessDecisionManager());
+        platformFilterSecurityInterceptor.setSecurityMetadataSource(platformInvocationSecurityMetadataSourceService());
+        return platformFilterSecurityInterceptor;
     }
 
     @Bean

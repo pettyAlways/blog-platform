@@ -6,6 +6,7 @@ package org.yingzuidou.platform.common.utils;
  * @date 2018/9/15
  */
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
@@ -18,6 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author dell
@@ -76,5 +78,18 @@ public class CmsBeanUtils extends BeanUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 将map转成指ID指定的Bean对象
+     *
+     * @param map 需要转换的map
+     * @param bean bean的class类型
+     * @param <T> Bean的类型
+     * @return 转换后的bean
+     */
+    public static <T> T map2Bean(Map map, Class<T> bean) {
+        String json = JSONObject.toJSONString(map);
+        return JSONObject.parseObject(json, bean);
     }
 }

@@ -26,17 +26,6 @@ public class PlatformInvocationSecurityMetadataSourceService implements FilterIn
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
 
-        // object 中包含用户请求的request 信息
-        HttpServletRequest request = ((FilterInvocation) o).getHttpRequest();
-        AntPathRequestMatcher matcher;
-        String resUrl;
-        for(Iterator<String> iter = map.keySet().iterator(); iter.hasNext(); ) {
-            resUrl = iter.next();
-            matcher = new AntPathRequestMatcher(resUrl);
-            if(matcher.matches(request)) {
-                return map.get(resUrl);
-            }
-        }
         return null;
     }
 

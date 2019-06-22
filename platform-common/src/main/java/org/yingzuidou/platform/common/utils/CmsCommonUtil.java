@@ -52,7 +52,6 @@ public class CmsCommonUtil {
      */
     public static String getMd5PasswordText(String uuid, String credentials) {
         ByteSource credentialsSalt = ByteSource.Util.bytes(uuid);
-        String password = new SimpleHash(hashAlgorithmName, credentials, credentialsSalt, hashIterations).toString();
-        return password;
+        return new SimpleHash(hashAlgorithmName, credentials, credentialsSalt, hashIterations).toString();
     }
 }

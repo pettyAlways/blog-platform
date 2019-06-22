@@ -3,6 +3,7 @@ package org.yingzuidou.platform.zuul;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.yingzuidou.platform.auth.client.EnableAuthClient;
 
 /**
@@ -17,6 +18,7 @@ import org.yingzuidou.platform.auth.client.EnableAuthClient;
 @SpringBootApplication
 @EnableZuulProxy
 @EnableAuthClient
+@EnableFeignClients("org.yingzuidou.platform.auth.client")
 public class ZuulApplication {
 
     public static void main(String[] args) {

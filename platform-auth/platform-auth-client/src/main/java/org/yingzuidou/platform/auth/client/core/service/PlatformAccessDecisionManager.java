@@ -24,22 +24,7 @@ public class PlatformAccessDecisionManager implements AccessDecisionManager {
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection)
             throws AccessDeniedException, InsufficientAuthenticationException {
-        if(null== collection || collection.size() <=0) {
-            return;
-        }
-        ConfigAttribute c;
-        String needRole;
-        for(Iterator<ConfigAttribute> iter = collection.iterator(); iter.hasNext(); ) {
-            c = iter.next();
-            needRole = c.getAttribute();
-            // authentication 为在注释1 中循环添加到 GrantedAuthority 对象中的权限信息集合
-            for(GrantedAuthority ga : authentication.getAuthorities()) {
-                if(needRole.trim().equals(ga.getAuthority())) {
-                    return;
-                }
-            }
-        }
-        throw new AccessDeniedException("no right");
+
     }
 
     @Override

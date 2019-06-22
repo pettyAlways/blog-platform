@@ -6,7 +6,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.yingzuidou.platform.auth.client.core.base.JWTUserDetails;
 import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
 import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
-import org.yingzuidou.platform.auth.client.provider.JwtAuthenticationToken;
+import org.yingzuidou.platform.auth.client.core.provider.JwtAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

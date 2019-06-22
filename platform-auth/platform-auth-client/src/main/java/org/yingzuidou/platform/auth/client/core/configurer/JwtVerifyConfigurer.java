@@ -10,7 +10,7 @@ import org.yingzuidou.platform.auth.client.core.handler.JwtRefreshSuccessHandler
 import org.yingzuidou.platform.auth.client.core.handler.PlatformAuthenticationFailureHandler;
 import org.yingzuidou.platform.auth.client.core.interceptor.JwtAuthenticationTokenFilter;
 import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
-import org.yingzuidou.platform.auth.client.provider.JwtAuthenticationProvider;
+import org.yingzuidou.platform.auth.client.core.provider.JwtAuthenticationProvider;
 
 import java.util.Objects;
 

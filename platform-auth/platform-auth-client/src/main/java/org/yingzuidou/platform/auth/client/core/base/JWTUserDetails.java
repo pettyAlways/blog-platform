@@ -26,12 +26,12 @@ public class JWTUserDetails extends CmsUserEntity implements UserDetails {
     public JWTUserDetails() {
     }
 
-    public JWTUserDetails(int id, String userName, String userPassword, Collection<? extends GrantedAuthority> grantedAuthorities, boolean userLock) {
+    public JWTUserDetails(int id, String userName, String userPassword, Collection<? extends GrantedAuthority> grantedAuthorities, String userLock) {
         this.setId(id);
         this.setUserName(userName);
         this.setUserPassword(userPassword);
         this.grantedAuthorities = grantedAuthorities;
-        this.setUserStatus(userLock ? "2" : "1");
+        this.setUserStatus(userLock);
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
