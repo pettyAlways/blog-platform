@@ -16,6 +16,7 @@ import org.yingzuidou.platform.common.vo.CmsMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 类功能描述
@@ -37,9 +38,9 @@ public class PlatformUserDetailsService implements UserDetailsService {
         CmsUserEntity user = CmsBeanUtils.map2Bean((Map) cmsMap.get("data"), CmsUserEntity.class);
         // MD5加密需要用到盐值
         ThreadStorageUtil.storeItem("salt-uuid", user.getUuid());
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("user");
-        grantedAuthorities.add(grantedAuthority);
+        List<String> roleNameList = CmsBeanUtils.object2List(cmsMap.get("roleList"), String.class);
+        List<GrantedAuthority> grantedAuthorities = roleNameList.stream().map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
         return new JWTUserDetails(user.getId(), user.getUserAccount(), user.getUserPassword(),
                 grantedAuthorities, user.getUserStatus());
     }

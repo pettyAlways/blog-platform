@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 类功能描述
  *
@@ -20,4 +23,7 @@ public interface ServerAuthFeign {
 
     @RequestMapping("/blog/user/loadUser/{userName}")
     CmsMap<CmsUserEntity> loadUserByUserName(@PathVariable("userName") String userName);
+
+    @RequestMapping("/blog/resource/auth")
+    public CmsMap<Map<String, List<String>>> loadAuthResource();
 }

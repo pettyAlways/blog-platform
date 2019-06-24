@@ -35,7 +35,7 @@ public class JWTUserDetails extends CmsUserEntity implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return grantedAuthorities;
     }
 
     @Override

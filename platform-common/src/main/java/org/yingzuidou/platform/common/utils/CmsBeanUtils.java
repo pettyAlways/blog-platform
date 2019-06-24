@@ -6,6 +6,7 @@ package org.yingzuidou.platform.common.utils;
  * @date 2018/9/15
  */
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -91,5 +92,15 @@ public class CmsBeanUtils extends BeanUtils {
     public static <T> T map2Bean(Map map, Class<T> bean) {
         String json = JSONObject.toJSONString(map);
         return JSONObject.parseObject(json, bean);
+    }
+
+    public static <T> T beanTransform(Object obj, Class<T> bean) {
+        String json = JSONObject.toJSONString(obj);
+        return JSONObject.parseObject(json, bean);
+    }
+
+    public static <T> List<T> object2List(Object obj, Class<T> list) {
+        String json = JSONObject.toJSONString(obj);
+        return JSONArray.parseArray(json, list);
     }
 }

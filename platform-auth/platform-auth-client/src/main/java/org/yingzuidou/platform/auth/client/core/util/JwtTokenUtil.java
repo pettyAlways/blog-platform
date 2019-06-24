@@ -12,6 +12,7 @@ import org.yingzuidou.platform.common.utils.DateUtil;
 
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * 类功能描述
@@ -59,6 +60,7 @@ public class JwtTokenUtil {
                 .withClaim("userName", userName)
                 .withClaim("password", password)
                 .withClaim("authorities", JSONObject.toJSONString(authorities))
+                .withIssuedAt(new Date())
                 .withExpiresAt(DateUtil.generateAfterDate(Calendar.HOUR, expires))
                 .sign(algorithm);
     }
