@@ -1,10 +1,18 @@
 package org.yingzuidou.platform.auth.client;
 
+import org.springframework.context.annotation.AdviceModeImportSelector;
+import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.annotation.ImportSelector;
+import org.springframework.core.GenericTypeResolver;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 类功能描述
@@ -27,9 +35,17 @@ public class EnableAuthClientImportSelector implements ImportSelector {
      */
     @Override
     public String[] selectImports(AnnotationMetadata annotationMetadata) {
+        Map<String, Object> attrMap =  annotationMetadata.getAnnotationAttributes(EnableAuthClient.class.getName());
         List<String> configs = SpringFactoriesLoader.loadFactoryNames(EnableAuthClientImportSelector.class,
                 EnableAuthClientImportSelector.class.getClassLoader());
-        annotationMetadata.getAnnotationTypes().forEach(System.out::println);
+        if (Objects.equals(attrMap.get("mode"), "RESOURCE-AUTH")) {
+            configs = configs.stream().filter(item -> Objects.equals(item,
+                    "org.yingzuidou.platform.auth.client.core.config.WebSecurityConfig")).collect(Collectors.toList());
+        } else if (Objects.equals(attrMap.get("mode"), "SERVICE-AUTH")) {
+            configs = configs.stream().filter(item -> Objects.equals(item,
+                    "org.yingzuidou.platform.auth.client.config.AuthClientConfig")).collect(Collectors.toList());
+        }
+
         return configs.toArray(new String[0]);
     }
 }

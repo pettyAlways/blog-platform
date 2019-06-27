@@ -22,7 +22,7 @@ public class PlatformAuthenticationFailureHandler implements AuthenticationFailu
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException, ServletException {
+                                        AuthenticationException exception) {
         // 返回401状态码
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }

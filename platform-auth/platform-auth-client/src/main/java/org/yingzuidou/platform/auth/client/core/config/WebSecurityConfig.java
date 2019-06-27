@@ -1,7 +1,6 @@
 package org.yingzuidou.platform.auth.client.core.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,14 +8,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.yingzuidou.platform.auth.client.core.base.ConfigData;
 import org.yingzuidou.platform.auth.client.core.configurer.JwtVerifyConfigurer;
 import org.yingzuidou.platform.auth.client.core.configurer.PlatformLoginConfigurer;
 import org.yingzuidou.platform.auth.client.core.encoder.HashedCredentialsEncoder;
 import org.yingzuidou.platform.auth.client.core.interceptor.JwtAuthenticationTokenFilter;
 import org.yingzuidou.platform.auth.client.core.interceptor.PlatformFilterSecurityInterceptor;
+import org.yingzuidou.platform.auth.client.core.interceptor.PlatformZuulHeaderFilter;
 import org.yingzuidou.platform.auth.client.core.service.PlatformAccessDecisionManager;
 import org.yingzuidou.platform.auth.client.core.service.PlatformInvocationSecurityMetadataSourceService;
 import org.yingzuidou.platform.auth.client.core.service.PlatformUserDetailsService;
@@ -60,6 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .cors().and()
             // 增加权限校验拦截器
             .addFilterBefore(platformFilterSecurityInterceptor(), FilterSecurityInterceptor.class)
+            //.addFilterBefore(platformZuulHeaderFilter(), HeaderWriterFilter.class)
             // 增加Jwt验证配置器
             .apply(new JwtVerifyConfigurer<>()).setJwtAuthenticationProvider(jwtAuthenticationProvider())
                 .setJwtFilter(authenticationTokenFilterBean()).and()
@@ -118,14 +119,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationTokenFilter(matcher);
     }
 
+    @Bean
+    public PlatformZuulHeaderFilter platformZuulHeaderFilter() {
+        return new PlatformZuulHeaderFilter();
+    }
+
+    @Bean
+    public ConfigData configData() {
+        return new ConfigData();
+    }
+
     @Autowired(required = false)
-    public void initSecurity(@Value("${jwt.issuer}") String issuer, @Value("${jwt.subject}") String subject,
-                             @Value("${jwt.secret}") String secret, @Value("${jwt.token-header}") String tokenHeader,
-                             @Value("${jwt.token-header-prefix}") String tokenHeaderPrefix,
-                             @Value("${jwt.expire_token}") int expires,
-                             @Value("${jwt.refresh_token}") long refreshToken) {
-        JwtTokenUtil.create(issuer, subject, secret);
-        PlatformContext.create(issuer, subject, secret, tokenHeader, tokenHeaderPrefix, expires, refreshToken);
+    public void initSecurity(ConfigData configData) {
+        JwtTokenUtil.create(configData.getIssuer(), configData.getSubject(), configData.getSecret());
+        PlatformContext.create(configData.getIssuer(), configData.getSubject(), configData.getSecret(),
+                configData.getTokenHeader(), configData.getTokenHeaderPrefix(), configData.getExpires(),
+                configData.getRefreshToken());
     }
 
 }

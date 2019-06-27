@@ -18,7 +18,7 @@ import org.yingzuidou.platform.auth.client.EnableAuthClient;
 @SpringBootApplication
 @EnableZuulProxy
 @EnableAuthClient
-@EnableFeignClients("org.yingzuidou.platform.auth.client")
+@EnableFeignClients(value = "org.yingzuidou.platform.auth.client")
 public class ZuulApplication {
 
     public static void main(String[] args) {

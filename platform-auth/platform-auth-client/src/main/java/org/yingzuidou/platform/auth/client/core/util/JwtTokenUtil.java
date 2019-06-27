@@ -49,14 +49,16 @@ public class JwtTokenUtil {
     /**
      * 根据用户名密码生成token
      *
+     * @param userId 用户Id
      * @param userName 用户名
      * @param password 密码
      * @return token
      */
-    public static String  generateToken(String userName, String password, int expires,
+    public static String  generateToken(Integer userId, String userName, String password, int expires,
                                        Collection<? extends GrantedAuthority> authorities) {
         return JWT.create().withIssuer(issuer)
                 .withSubject(subject)
+                .withClaim("userId", userId)
                 .withClaim("userName", userName)
                 .withClaim("password", password)
                 .withClaim("authorities", JSONObject.toJSONString(authorities))

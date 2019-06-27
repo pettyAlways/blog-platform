@@ -87,6 +87,7 @@ BEGIN
 		`is_delete` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N',
 		`alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '导航菜单配置标志别名',
 		`default_page` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '默认页面(是：Y， 否：N)',
+		`belongs` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'internal' COMMENT 'external:外部，internal：内部',
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -151,50 +152,50 @@ BEGIN
  INSERT INTO `user_role` VALUES (1, 1, 1, 1, NOW());
 
  -- 插入资源表
-INSERT INTO `resource` VALUES (1, '系统管理', -1, 'module', '1', '', 'sys-manage', 1, 0, NOW(), 1, NULL, 'N', 'SysConfigure', 'N');
-INSERT INTO `resource` VALUES (2, '系统配置', 1, 'menu', '1', '', 'organization', 2, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (3, '资源管理', 2, 'page', '1', '/sys-config/resource-manage', 'language', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (4, '组织管理', 2, 'page', '1', '/sys-config/organization-manage', 'table-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (5, '角色管理', 2, 'page', '1', '/sys-config/role-manage', 'table-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (6, '用户管理', 2, 'page', '1', '/sys-config/user-manage', 'function-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (7, '资源新增', 3, 'button', '1', '/permission/savePower.do', NULL, 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (8, '资源更新', 3, 'button', '1', '/permission/updatePower.do', NULL, 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (9, '资源查询', 3, 'button', '1', '/permission/listPower.do', NULL, 3, 1, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (10, '资源删除', 3, 'button', '1', '/permission/deletePower.do', '', 4, 0, NOW(), 8, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (11, '功能服务', -1, 'module', '1', '', 'person-manage', 2, 0, NOW(), 1, NULL, 'N', 'SysService', 'N');
-INSERT INTO `resource` VALUES (12, '简单功能', 11, 'menu', '1', NULL, 'sys-manage', 1, 0, NOW(), 1, NULL, 'N', NULL, 'Y');
-INSERT INTO `resource` VALUES (13, '简单例子', 12, 'page', '1', '/service-config/hello-service', '角色管理', 1, 0, NOW(), 1, NULL, 'N', NULL, 'Y');
-INSERT INTO `resource` VALUES (14, '配置管理', 2, 'page', '1', '/sys-config/conf-manage', 'sys-manage', 5, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (15, '常量新增', 14, 'button', '1', '/constant/save.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (16, '常量更新', 14, 'button', '1', '/constant/edit.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (17, '常量查询', 14, 'button', '1', '/constant/list.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (18, '常量删除', 14, 'button', '1', '/constant/delete.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (19, '组织新增', 4, 'button', '1', '/organization/save.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (20, '组织更新', 4, 'button', '1', '/organization/edit.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (21, '组织删除', 4, 'button', '1', '/organization/delete.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (22, '组织查询', 4, 'button', '1', '/organization/list.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (23, '角色新增', 5, 'button', '1', '/role/save.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (24, '角色更新', 5, 'button', '1', '/role/edit.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (25, '角色删除', 5, 'button', '1', '/role/delete.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (26, '角色授权', 5, 'button', '1', '/role/resourceAuth.do', '', 2, 0, NOW(), 8, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (27, '角色查询', 5, 'button', '1', '/role/list.do', '', 5, 0, NOW(), 8, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (28, '用户新增', 6, 'button', '1', '/user/save.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (29, '用户更新', 6, 'button', '1', '/user/edit.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (30, '用户赋角', 6, 'button', '1', '/user/authUser.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (31, '用户删除', 6, 'button', '1', '/user/authUser.do', '', 1, 0, NOW(), 8, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (32, '用户查询', 6, 'button', '1', '/user/list.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (33, '用户在线', 2, 'page', '1', '/sys-config/online-manage', '部门／员工管理', 6, 1, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (34, '用户查询', 33, 'button', '1', '/online/list.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (35, '用户踢出', 33, 'button', '1', '/online/kickout.do', '', 1, 1, NOW(), NULL, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (36, '用户禁用', 33, 'page', '1', '/online/invalidUser.do', '', 2, 0, NOW(), 1, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (1, '系统管理', -1, 'module', '1', '', 'sys-manage', 1, 0, NOW(), 1, NULL, 'N', 'SysConfigure', 'N', 'internal');
+INSERT INTO `resource` VALUES (2, '系统配置', 1, 'menu', '1', '', 'organization', 2, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (3, '资源管理', 2, 'page', '1', '/sys-config/resource-manage', 'language', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (4, '组织管理', 2, 'page', '1', '/sys-config/organization-manage', 'table-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (5, '角色管理', 2, 'page', '1', '/sys-config/role-manage', 'table-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (6, '用户管理', 2, 'page', '1', '/sys-config/user-manage', 'function-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (7, '资源新增', 3, 'button', '1', '/permission/savePower.do', NULL, 1, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (8, '资源更新', 3, 'button', '1', '/permission/updatePower.do', NULL, 1, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (9, '资源查询', 3, 'button', '1', '/permission/listPower.do', NULL, 3, 1, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (10, '资源删除', 3, 'button', '1', '/permission/deletePower.do', '', 4, 0, NOW(), 8, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (11, '功能服务', -1, 'module', '1', '', 'person-manage', 2, 0, NOW(), 1, NULL, 'N', 'SysService', 'N', 'internal');
+INSERT INTO `resource` VALUES (12, '简单功能', 11, 'menu', '1', NULL, 'sys-manage', 1, 0, NOW(), 1, NULL, 'N', NULL, 'Y', 'internal');
+INSERT INTO `resource` VALUES (13, '简单例子', 12, 'page', '1', '/service-config/hello-service', '角色管理', 1, 0, NOW(), 1, NULL, 'N', NULL, 'Y', 'internal');
+INSERT INTO `resource` VALUES (14, '配置管理', 2, 'page', '1', '/sys-config/conf-manage', 'sys-manage', 5, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (15, '常量新增', 14, 'button', '1', '/constant/save.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (16, '常量更新', 14, 'button', '1', '/constant/edit.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (17, '常量查询', 14, 'button', '1', '/constant/list.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (18, '常量删除', 14, 'button', '1', '/constant/delete.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (19, '组织新增', 4, 'button', '1', '/organization/save.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (20, '组织更新', 4, 'button', '1', '/organization/edit.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (21, '组织删除', 4, 'button', '1', '/organization/delete.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (22, '组织查询', 4, 'button', '1', '/organization/list.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (23, '角色新增', 5, 'button', '1', '/role/save.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (24, '角色更新', 5, 'button', '1', '/role/edit.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (25, '角色删除', 5, 'button', '1', '/role/delete.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (26, '角色授权', 5, 'button', '1', '/role/resourceAuth.do', '', 2, 0, NOW(), 8, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (27, '角色查询', 5, 'button', '1', '/role/list.do', '', 5, 0, NOW(), 8, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (28, '用户新增', 6, 'button', '1', '/user/save.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (29, '用户更新', 6, 'button', '1', '/user/edit.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (30, '用户赋角', 6, 'button', '1', '/user/authUser.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (31, '用户删除', 6, 'button', '1', '/user/authUser.do', '', 1, 0, NOW(), 8, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (32, '用户查询', 6, 'button', '1', '/user/list.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (33, '用户在线', 2, 'page', '1', '/sys-config/online-manage', '部门／员工管理', 6, 1, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (34, '用户查询', 33, 'button', '1', '/online/list.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (35, '用户踢出', 33, 'button', '1', '/online/kickout.do', '', 1, 1, NOW(), NULL, NULL, 'N', NULL, 'N', 'internal');
+INSERT INTO `resource` VALUES (36, '用户禁用', 33, 'page', '1', '/online/invalidUser.do', '', 2, 0, NOW(), 1, NULL, 'N', NULL, 'N', 'internal');
 
  -- 超级管理员角色与资源关联
-  INSERT INTO `role_resource` VALUES (1, 1, 1, 1, NOW(), NULL, NULL);
-  INSERT INTO `role_resource` VALUES (2, 1, 2, 1, NOW(), NULL, NULL);
-  INSERT INTO `role_resource` VALUES (3, 1, 5, 1, NOW(), NULL, NULL);
-  INSERT INTO `role_resource` VALUES (6, 1, 9, 1, NOW(), NULL, NULL);
-  INSERT INTO `role_resource` VALUES (5, 1, 26, 1, NOW(), NULL, NULL);
-  INSERT INTO `role_resource` VALUES (4, 1, 27, 1, NOW(), NULL, NULL);
+  INSERT INTO	`role_resource` VALUES (1, 1, 1, 1, NOW(), NULL, NULL);
+	INSERT INTO `role_resource` VALUES (2, 1, 2, 1, NOW(), NULL, NULL);
+	INSERT INTO `role_resource` VALUES (3, 1, 5, 1, NOW(), NULL, NULL);
+	INSERT INTO `role_resource` VALUES (6, 1, 9, 1, NOW(), NULL, NULL);
+	INSERT INTO `role_resource` VALUES (5, 1, 26, 1, NOW(), NULL, NULL);
+	INSERT INTO `role_resource` VALUES (4, 1, 27, 1, NOW(), NULL, NULL);
 
  -- 基本常量数据
   INSERT INTO `cms_const` VALUES (1, '1', '资源根名称', 'root_resource', '开发者平台', '1', 1, NOW(), NULL, NULL);

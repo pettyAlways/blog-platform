@@ -1,5 +1,6 @@
 package org.yingzuidou.platform.auth.client;
 
+import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -20,4 +21,6 @@ import java.lang.annotation.*;
 @Inherited
 @Import(EnableAuthClientImportSelector.class)
 public @interface EnableAuthClient {
+
+    String mode() default "RESOURCE-AUTH";
 }

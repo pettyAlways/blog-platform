@@ -31,6 +31,7 @@
             <artifactId>lombok</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- 即使使用了compile也会被父模块继承并使用，不得不在父模块做排除，这是为什么？-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>

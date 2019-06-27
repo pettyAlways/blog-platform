@@ -3,7 +3,7 @@ package org.yingzuidou.platform.auth.client.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.yingzuidou.platform.auth.client.vo.ServiceAuthVO;
+import org.yingzuidou.platform.auth.client.vo.AuthConfig;
 
 /**
  * 类功能描述
@@ -15,11 +15,10 @@ import org.yingzuidou.platform.auth.client.vo.ServiceAuthVO;
  * ====================================================
  */
 @Configuration
-@ComponentScan("org.yingzuidou.platform.auth.client")
 public class AuthClientConfig {
 
     @Bean
-    public ServiceAuthVO getServiceAuthVO() {
-        return new ServiceAuthVO();
+    public AuthConfig authConfig() {
+        return new AuthConfig();
     }
 }

@@ -48,8 +48,8 @@ public class JwtRefreshSuccessHandler implements AuthenticationSuccessHandler {
 
         if (shouldTokenRefresh(jwt.getIssuedAt())) {
             JWTUserDetails userDetails = (JWTUserDetails) authentication.getPrincipal();
-            String token = JwtTokenUtil
-                    .generateToken(userDetails.getUserName(), userDetails.getUserPassword(), expires, userDetails.getGrantedAuthorities());
+            String token = JwtTokenUtil.generateToken(userDetails.getId(), userDetails.getUserName(),
+                    userDetails.getUserPassword(), expires, userDetails.getGrantedAuthorities());
             response.setHeader(tokenHeader, tokenHeaderPrefix + token);
         }
 
