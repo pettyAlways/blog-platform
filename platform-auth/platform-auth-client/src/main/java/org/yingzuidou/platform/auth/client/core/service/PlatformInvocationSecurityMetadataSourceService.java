@@ -36,14 +36,14 @@ public class PlatformInvocationSecurityMetadataSourceService implements FilterIn
         Map resourceMap = CmsBeanUtils.beanTransform(authResource.get("data"), Map.class);
         Set entries = resourceMap.entrySet();
         for (Object item : entries) {
-            Map.Entry entry = (Map.Entry) item;
-            List<String> roles = (List<String>) entry.getValue();
-            map.put((String) entry.getKey(),
-                    Optional.ofNullable(roles).orElse(new ArrayList<>()).stream().map(SecurityConfig::new)
-                            .collect(Collectors.toList()));
-        }
-        return map.get(((FilterInvocation) object).getRequestUrl());
+        Map.Entry entry = (Map.Entry) item;
+        List<String> roles = (List<String>) entry.getValue();
+        map.put((String) entry.getKey(),
+                Optional.ofNullable(roles).orElse(new ArrayList<>()).stream().map(SecurityConfig::new)
+                        .collect(Collectors.toList()));
     }
+        return map.get(((FilterInvocation) object).getRequestUrl());
+}
 
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {

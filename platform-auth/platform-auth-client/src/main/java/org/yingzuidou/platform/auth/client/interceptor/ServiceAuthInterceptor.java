@@ -28,8 +28,8 @@ public class ServiceAuthInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(javax.servlet.http.HttpServletRequest request,
                              javax.servlet.http.HttpServletResponse response, Object handler) throws Exception {
 
-        String whereFrom = request.getHeader(authConfig.getServiceHeader());
-        if (Objects.equals(whereFrom, "zuul-client-token")) {
+        String whereFrom = request.getHeader(authConfig.getZuulHeader());
+        if (Objects.equals(whereFrom, authConfig.getZuulHeaderValue())) {
             return super.preHandle(request, response, handler);
         }
         log.warn("当前请求[" + request.getRequestURI() + "]非法访问模块");

@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.yingzuidou.platform.auth.client.core.base.ConfigData;
 import org.yingzuidou.platform.auth.client.core.configurer.JwtVerifyConfigurer;
 import org.yingzuidou.platform.auth.client.core.configurer.PlatformLoginConfigurer;
@@ -60,10 +61,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .cors().and()
             // 增加权限校验拦截器
             .addFilterBefore(platformFilterSecurityInterceptor(), FilterSecurityInterceptor.class)
-            //.addFilterBefore(platformZuulHeaderFilter(), HeaderWriterFilter.class)
+            .addFilterBefore(platformZuulHeaderFilter(), HeaderWriterFilter.class)
             // 增加Jwt验证配置器
             .apply(new JwtVerifyConfigurer<>()).setJwtAuthenticationProvider(jwtAuthenticationProvider())
-                .setJwtFilter(authenticationTokenFilterBean()).and()
+                .setJwtFilter(authenticationTokenFilter()).and()
             // 增加登录认证配置器
             .apply(new PlatformLoginConfigurer<>());
 
@@ -101,16 +102,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new PlatformAccessDecisionManager();
     }
 
-    @Bean
-    public PlatformFilterSecurityInterceptor platformFilterSecurityInterceptor() {
+    private PlatformFilterSecurityInterceptor platformFilterSecurityInterceptor() {
         PlatformFilterSecurityInterceptor platformFilterSecurityInterceptor = new PlatformFilterSecurityInterceptor();
         platformFilterSecurityInterceptor.setAccessDecisionManager(platformAccessDecisionManager());
         platformFilterSecurityInterceptor.setSecurityMetadataSource(platformInvocationSecurityMetadataSourceService());
         return platformFilterSecurityInterceptor;
     }
 
-    @Bean
-    public JwtAuthenticationTokenFilter authenticationTokenFilterBean() {
+    private JwtAuthenticationTokenFilter authenticationTokenFilter() {
         // 不需要token 验证的url
         List<String> pathsToSkip = Arrays.asList("/login","/auth/v1/api/login/entry","/auth/v1/api/login/enter");
         //　需要验证token　的url
@@ -119,8 +118,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationTokenFilter(matcher);
     }
 
-    @Bean
-    public PlatformZuulHeaderFilter platformZuulHeaderFilter() {
+    private PlatformZuulHeaderFilter platformZuulHeaderFilter() {
         return new PlatformZuulHeaderFilter();
     }
 
@@ -134,7 +132,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         JwtTokenUtil.create(configData.getIssuer(), configData.getSubject(), configData.getSecret());
         PlatformContext.create(configData.getIssuer(), configData.getSubject(), configData.getSecret(),
                 configData.getTokenHeader(), configData.getTokenHeaderPrefix(), configData.getExpires(),
-                configData.getRefreshToken());
+                configData.getRefreshToken(), configData.getZuulHeader(), configData.getZuulHeaderValue());
     }
 
 }

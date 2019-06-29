@@ -38,9 +38,9 @@ public class UserAuthInterceptor extends HandlerInterceptorAdapter {
             token = getJwtToken(request);
             if (Objects.nonNull(token)) {
                 DecodedJWT jwt = JwtTokenUtil.decode(token);
-                String userName = jwt.getClaim("userName").toString();
-                String password = jwt.getClaim("password").toString();
-                Integer userId =  Integer.valueOf(jwt.getClaim("userId").toString());
+                String userName = jwt.getClaim("userName").asString();
+                String password = jwt.getClaim("password").asString();
+                Integer userId =  jwt.getClaim("userId").asInt();
                 CmsUserEntity cmsUserEntity = new CmsUserEntity();
                 cmsUserEntity.setUserAccount(userName);
                 cmsUserEntity.setUserPassword(password);

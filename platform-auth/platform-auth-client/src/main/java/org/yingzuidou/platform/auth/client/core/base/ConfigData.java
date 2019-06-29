@@ -55,5 +55,18 @@ public class ConfigData {
     /**
      * JWT的token需要重新生成的时间
      */
-    @Value("${jwt.refresh_token}") long refreshToken;
+    @Value("${jwt.refresh_token}")
+    long refreshToken;
+
+    /**
+     * 经过网关的请求头部携带的key
+     */
+    @Value("${auth.token-header}")
+    private String zuulHeader;
+
+    /**
+     * 经过网关的请求头部携带的value
+     */
+    @Value("${auth.token-value}")
+    private String zuulHeaderValue;
 }

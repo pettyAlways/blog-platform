@@ -1,5 +1,7 @@
 package org.yingzuidou.platform.auth.client.core.util;
 
+import lombok.Data;
+
 /**
  * 类功能描述
  *
@@ -25,11 +27,21 @@ public class PlatformContext {
 
     private static int expires;
 
+    /**
+     * 经过网关的请求头部携带的key
+     */
+    private static String zuulHeader;
+
+    /**
+     * 经过网关的请求头部携带的value
+     */
+    private static String zuulHeaderValue;
+
     private PlatformContext() {
     }
 
     public static void create(String issuer, String subject, String secret, String tokenHeader, String tokenHeaderPrefix,
-                        int expires, long refreshToken) {
+                        int expires, long refreshToken, String zuulHeader, String zuulHeaderValue) {
         PlatformContext.issuer = issuer;
         PlatformContext.subject = subject;
         PlatformContext.secret = secret;
@@ -37,6 +49,8 @@ public class PlatformContext {
         PlatformContext.tokenHeaderPrefix = tokenHeaderPrefix;
         PlatformContext.expires = expires;
         PlatformContext.refreshToken = refreshToken;
+        PlatformContext.zuulHeader = zuulHeader;
+        PlatformContext.zuulHeaderValue = zuulHeaderValue;
     }
 
     public static String getIssuer() {
@@ -93,5 +107,21 @@ public class PlatformContext {
 
     public static void setExpires(int expires) {
         PlatformContext.expires = expires;
+    }
+
+    public static String getZuulHeader() {
+        return zuulHeader;
+    }
+
+    public static void setZuulHeader(String zuulHeader) {
+        PlatformContext.zuulHeader = zuulHeader;
+    }
+
+    public static String getZuulHeaderValue() {
+        return zuulHeaderValue;
+    }
+
+    public static void setZuulHeaderValue(String zuulHeaderValue) {
+        PlatformContext.zuulHeaderValue = zuulHeaderValue;
     }
 }

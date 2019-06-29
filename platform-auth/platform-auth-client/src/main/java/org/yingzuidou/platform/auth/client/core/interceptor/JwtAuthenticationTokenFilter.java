@@ -12,6 +12,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.yingzuidou.platform.auth.client.core.provider.JwtAuthenticationToken;
+import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -37,12 +38,6 @@ import java.util.Objects;
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     private RequestMatcher requestMatcher;
-
-    @Value("${jwt.token-header}")
-    private String tokenHeader;
-
-    @Value("${jwt.token-header-prefix}")
-    private String tokenHeaderPrefix;
 
     private AuthenticationManager authenticationManager;
 
@@ -84,11 +79,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
      * @return token值
      */
     private String getJwtToken(HttpServletRequest request) {
-        String authInfo = request.getHeader(this.tokenHeader);
-        if (!(StringUtils.hasText(authInfo) && authInfo.startsWith(tokenHeaderPrefix))) {
+        String authInfo = request.getHeader(PlatformContext.getTokenHeader());
+        if (!(StringUtils.hasText(authInfo) && authInfo.startsWith(PlatformContext.getTokenHeaderPrefix()))) {
             throw new InsufficientAuthenticationException("token无效");
         }
-        return authInfo.substring(tokenHeaderPrefix.length());
+        return authInfo.substring(PlatformContext.getTokenHeaderPrefix().length());
     }
 
     public AuthenticationManager getAuthenticationManager() {

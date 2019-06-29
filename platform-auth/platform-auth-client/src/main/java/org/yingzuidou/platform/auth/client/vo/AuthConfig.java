@@ -5,10 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 类功能描述
- * 配置中心对Request头的配置信息自动装配到{@link AuthConfig}对象中
  *
  * @author 鹰嘴豆
- * @date 2019/6/24
+ * @date 2019/6/29
  * <p>
  * 时间           作者          版本        描述
  * ====================================================
@@ -29,8 +28,14 @@ public class AuthConfig {
     private String tokenHeaderPrefix;
 
     /**
-     * zuul网关访问服务增加的头Key值
+     * 经过网关的请求头部携带的key
      */
     @Value("${auth.token-header}")
-    private String serviceHeader;
+    private String zuulHeader;
+
+    /**
+     * 经过网关的请求头部携带的value
+     */
+    @Value("${auth.token-value}")
+    private String zuulHeaderValue;
 }
