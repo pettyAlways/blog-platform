@@ -2,7 +2,7 @@ package org.yingzuidou.platform.auth.client.core.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -52,6 +52,18 @@ public class PlatformUsernamePasswordAuthenticationFilter extends AbstractAuthen
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
                 username, password);
 
-        return this.getAuthenticationManager().authenticate(authRequest);
+        try {
+            return this.getAuthenticationManager().authenticate(authRequest);
+        } catch (LockedException e) {
+            throw new LockedException("用户被锁定");
+        } catch (DisabledException e) {
+            throw new DisabledException("无效用户");
+        } catch (AccountExpiredException e) {
+            throw new AccountExpiredException("用户已过期");
+        } catch (CredentialsExpiredException e) {
+            throw new CredentialsExpiredException("用户证书已过期");
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("用户密码不正确");
+        }
     }
 }

@@ -6,8 +6,10 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.yingzuidou.platform.auth.client.core.exception.PlatformAuthorizationException;
 import org.yingzuidou.platform.auth.client.feign.ServerAuthFeign;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
+import org.yingzuidou.platform.common.utils.HystrixUtil;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +35,9 @@ public class PlatformInvocationSecurityMetadataSourceService implements FilterIn
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
         CmsMap<Map<String, List<String>>> authResource =  serverAuthFeign.loadAuthResource();
+        if (!HystrixUtil.checkHystrixException(authResource)) {
+            throw new PlatformAuthorizationException(authResource.get("message").toString());
+        }
         Map resourceMap = CmsBeanUtils.beanTransform(authResource.get("data"), Map.class);
         Set entries = resourceMap.entrySet();
         for (Object item : entries) {

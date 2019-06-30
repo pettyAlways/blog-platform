@@ -103,4 +103,13 @@ public class CmsBeanUtils extends BeanUtils {
         String json = JSONObject.toJSONString(obj);
         return JSONArray.parseArray(json, list);
     }
+
+    public static String beanToJson(Object obj) {
+        return JSONObject.toJSONString(obj);
+    }
+
+    public static <T> T jsonToBean(String json, Class<T> bean) {
+        return JSONObject.parseObject(json, bean);
+    }
+
 }

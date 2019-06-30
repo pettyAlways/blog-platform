@@ -41,7 +41,7 @@ public class ServiceAuthIntercept extends ZuulFilter {
     }
 
     @Override
-    public Object run() throws ZuulException {
+    public Object run() {
         RequestContext requestContext = RequestContext.getCurrentContext();
         requestContext.addZuulRequestHeader(zuulHeader, zuulHeaderPrefix);
         return null;

@@ -3,13 +3,17 @@ package org.yingzuidou.platform.auth.client.interceptor;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
+import org.yingzuidou.platform.auth.client.core.util.ResponseUtil;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.auth.client.vo.AuthConfig;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
+import org.yingzuidou.platform.common.utils.CmsBeanUtils;
+import org.yingzuidou.platform.common.vo.CmsMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -49,6 +53,9 @@ public class UserAuthInterceptor extends HandlerInterceptorAdapter {
             }
         } catch (Exception e) {
             log.error(request.getRequestURI() + "所携带的token无效");
+            CmsMap result = CmsMap.error(HttpStatus.FORBIDDEN.value() + "",
+                    request.getRequestURI() + "所携带的token无效");
+            ResponseUtil.sendError(response, HttpStatus.FORBIDDEN.value(), CmsBeanUtils.beanToJson(result));
             return false;
         }
 

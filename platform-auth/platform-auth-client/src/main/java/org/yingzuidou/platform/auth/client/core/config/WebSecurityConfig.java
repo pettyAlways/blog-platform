@@ -2,6 +2,7 @@ package org.yingzuidou.platform.auth.client.core.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,6 +41,7 @@ import java.util.List;
  * ====================================================
  */
 @EnableWebSecurity
+@ComponentScan("org.yingzuidou.platform.auth.client.feign")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -48,7 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
            // 认证授权部分配置
            .authorizeRequests()
                 // 不需要登录认证的资源
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login", "/error").permitAll()
                 // 其他请求都需要登录
                 .anyRequest().authenticated()
                 .and()
@@ -134,5 +136,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 configData.getTokenHeader(), configData.getTokenHeaderPrefix(), configData.getExpires(),
                 configData.getRefreshToken(), configData.getZuulHeader(), configData.getZuulHeaderValue());
     }
+
+
 
 }

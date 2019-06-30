@@ -2,6 +2,7 @@ package org.yingzuidou.platform.blog.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.ArrayList;
@@ -24,6 +25,6 @@ public class CategoryController {
     public CmsMap<List<String>> loadAuthResource() {
        List<String> users = new ArrayList<>();
        users.add("yingzuidou");
-        return CmsMap.<List<String>>ok().setResult(users);
+       throw new BusinessException("我正在抛出异常");
     }
 }

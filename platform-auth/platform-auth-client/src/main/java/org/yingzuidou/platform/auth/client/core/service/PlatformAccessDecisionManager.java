@@ -42,7 +42,7 @@ public class PlatformAccessDecisionManager implements AccessDecisionManager {
                 .collect(Collectors.toList());
         List<String> resourceAuth = collection.stream().map(ConfigAttribute::getAttribute).collect(Collectors.toList());
         if (Collections.disjoint(userAuth, resourceAuth)) {
-            throw  new AccessDeniedException("无访问权限.");
+            throw new AccessDeniedException("无访问权限.");
         }
     }
 

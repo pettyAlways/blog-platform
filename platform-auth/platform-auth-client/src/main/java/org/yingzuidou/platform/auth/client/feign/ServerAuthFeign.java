@@ -22,7 +22,7 @@ import java.util.Map;
  * 时间           作者          版本        描述
  * ====================================================
  */
-@FeignClient(value = "${auth.serviceId}",configuration = FeignConfiguration.class)
+@FeignClient(value = "${auth.serviceId}",fallbackFactory = ServerAuthFallbackFactory.class, configuration = FeignConfiguration.class)
 public interface ServerAuthFeign {
 
     @RequestMapping("/blog/user/loadUser/{userName}")

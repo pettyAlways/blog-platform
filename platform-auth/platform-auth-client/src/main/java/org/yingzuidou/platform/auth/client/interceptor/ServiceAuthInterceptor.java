@@ -2,8 +2,12 @@ package org.yingzuidou.platform.auth.client.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.yingzuidou.platform.auth.client.core.util.ResponseUtil;
 import org.yingzuidou.platform.auth.client.vo.AuthConfig;
+import org.yingzuidou.platform.common.utils.CmsBeanUtils;
+import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.Objects;
 
@@ -33,6 +37,8 @@ public class ServiceAuthInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
         log.warn("当前请求[" + request.getRequestURI() + "]非法访问模块");
+        CmsMap result = CmsMap.error(HttpStatus.FORBIDDEN.value() + "", "非法访问服务");
+        ResponseUtil.sendError(response, HttpStatus.FORBIDDEN.value(), CmsBeanUtils.beanToJson(result));
         return false;
     }
 }
