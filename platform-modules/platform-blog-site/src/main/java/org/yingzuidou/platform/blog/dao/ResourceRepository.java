@@ -29,4 +29,6 @@ public interface ResourceRepository extends PagingAndSortingRepository<ResourceE
             "LEFT JOIN role role ON role.id = roleReource.role_id AND role.in_use='1' WHERE r.is_delete = 'N' " +
             "AND r.resource_type= 'button' AND r.belongs = 'external' GROUP BY r.id")
     List<Object> acquireRoleResources();
+
+    List<ResourceEntity> findAllByIdInAndIsDeleteIs(List<Integer> resourceIds, String n);
 }

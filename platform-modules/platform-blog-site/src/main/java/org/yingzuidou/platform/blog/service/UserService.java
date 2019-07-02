@@ -1,5 +1,6 @@
 package org.yingzuidou.platform.blog.service;
 
+import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 
 /**
@@ -20,4 +21,6 @@ public interface UserService {
      * @return 用户对象
      */
     CmsUserEntity loadUserByUserName(String userName);
+
+    UserDTO userInfo();
 }

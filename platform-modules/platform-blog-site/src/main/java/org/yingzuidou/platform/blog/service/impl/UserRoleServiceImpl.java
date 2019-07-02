@@ -35,6 +35,6 @@ public class UserRoleServiceImpl implements UserRoleService {
         if (Objects.isNull(id)) {
             return new ArrayList<>();
         }
-        return userRoleRepository.findUserNameListByUserId(id);
+        return userRoleRepository.findRoleNameListByUserId(id);
     }
 }

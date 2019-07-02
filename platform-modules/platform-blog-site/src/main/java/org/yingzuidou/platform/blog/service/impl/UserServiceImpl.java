@@ -2,9 +2,13 @@ package org.yingzuidou.platform.blog.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.dao.UserRepository;
+import org.yingzuidou.platform.blog.dto.UserDTO;
+import org.yingzuidou.platform.blog.service.ResourceService;
 import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.vo.Node;
 
 /**
  * 类功能描述
@@ -20,6 +24,10 @@ public class UserServiceImpl  implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    ResourceService resourceService;
+
     /**
      * 根据用户名获取未删除的用户
      *
@@ -29,5 +37,14 @@ public class UserServiceImpl  implements UserService {
     @Override
     public CmsUserEntity loadUserByUserName(String userName) {
         return userRepository.findByUserAccountAndIsDelete(userName, "N");
+    }
+
+    @Override
+    public UserDTO userInfo() {
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        Node permissions = resourceService.acquireUserPermission(user.getId());
+        UserDTO userDTO = new UserDTO();
+        userDTO.setResourceTree(permissions);
+        return userDTO;
     }
 }

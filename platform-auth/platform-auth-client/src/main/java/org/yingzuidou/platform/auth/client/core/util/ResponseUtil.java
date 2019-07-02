@@ -1,5 +1,7 @@
 package org.yingzuidou.platform.auth.client.core.util;
 
+import org.springframework.http.HttpStatus;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -19,5 +21,12 @@ public class ResponseUtil {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(message);
+    }
+
+    public static void sendBack(HttpServletResponse response, String data) throws IOException {
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(data);
     }
 }

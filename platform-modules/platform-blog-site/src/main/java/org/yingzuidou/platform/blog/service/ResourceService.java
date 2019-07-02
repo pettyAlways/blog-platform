@@ -1,5 +1,7 @@
 package org.yingzuidou.platform.blog.service;
 
+import org.yingzuidou.platform.common.vo.Node;
+
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +22,6 @@ public interface ResourceService {
      * @return 资源路径与角色集合的映射
      */
     Map<String,List<String>> findResourceRoleMap();
+
+    Node acquireUserPermission(int id);
 }

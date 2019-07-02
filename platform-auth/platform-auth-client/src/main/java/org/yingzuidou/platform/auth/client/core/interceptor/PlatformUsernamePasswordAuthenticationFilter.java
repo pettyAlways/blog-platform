@@ -30,7 +30,7 @@ import java.util.Objects;
 public class PlatformUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     public PlatformUsernamePasswordAuthenticationFilter() {
-        super(new AntPathRequestMatcher("/login", "POST"));
+        super(new AntPathRequestMatcher("/platform/login", "POST"));
     }
 
 

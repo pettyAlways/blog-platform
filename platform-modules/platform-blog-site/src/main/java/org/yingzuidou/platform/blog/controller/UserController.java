@@ -2,9 +2,11 @@ package org.yingzuidou.platform.blog.controller;
 
 import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.service.UserRoleService;
 import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
@@ -38,4 +40,16 @@ public class UserController {
         List<String> roleNameList =  userRoleService.retrieveRolesByUserId(cmsUserEntity.getId());
         return CmsMap.ok().appendData("roleList", roleNameList).setResult(cmsUserEntity);
     }
+
+    /**
+     * 获取当前用户的可访问资源
+     *
+     * @return 资源列表
+     */
+    @GetMapping("userInfo.do")
+    public CmsMap<UserDTO> userInfo() {
+        UserDTO userDTO = userService.userInfo();
+        return CmsMap.<UserDTO>ok().setResult(userDTO);
+    }
+
 }

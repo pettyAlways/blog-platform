@@ -1,6 +1,7 @@
 package org.yingzuidou.platform.auth.client.feign;
 
 import feign.hystrix.FallbackFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.vo.CmsMap;
@@ -18,6 +19,7 @@ import java.util.Map;
  * ====================================================
  */
 @Component
+@Slf4j
 public class ServerAuthFallbackFactory implements FallbackFactory<ServerAuthFeign>  {
 
     @Override
@@ -26,13 +28,14 @@ public class ServerAuthFallbackFactory implements FallbackFactory<ServerAuthFeig
         return new ServerAuthFeign() {
             @Override
             public CmsMap loadUserByUserName(String userName) {
-
-                return CmsMap.error("1000", "platform-blog-site服务不可用");
+                log.error("执行feign请求[/blog/user/loadUser]超时，错误[" + cause.getMessage()+ "]");
+                return CmsMap.error("1000", "请求超时，重新再试");
             }
 
             @Override
             public CmsMap loadAuthResource() {
-                return CmsMap.error("1000", "platform-blog-site服务不可用");
+                log.error("执行feign请求[/blog/resource/auth]超时，错误[" + cause.getMessage()+ "]");
+                return CmsMap.error("1000", "请求超时，重新再试");
             }
         };
     }
