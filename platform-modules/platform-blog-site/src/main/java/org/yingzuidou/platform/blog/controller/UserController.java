@@ -13,7 +13,9 @@ import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 类功能描述
@@ -36,8 +38,12 @@ public class UserController {
 
     @RequestMapping("/loadUser/{userName}")
     public CmsMap loadUserByUserName(@PathVariable String userName) {
+        List<String> roleNameList = new ArrayList<>();
         CmsUserEntity cmsUserEntity = userService.loadUserByUserName(userName);
-        List<String> roleNameList =  userRoleService.retrieveRolesByUserId(cmsUserEntity.getId());
+        if (Objects.nonNull(cmsUserEntity)) {
+            roleNameList =  userRoleService.retrieveRolesByUserId(cmsUserEntity.getId());
+        }
+
         return CmsMap.ok().appendData("roleList", roleNameList).setResult(cmsUserEntity);
     }
 

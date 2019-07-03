@@ -63,7 +63,12 @@ public class PlatformUsernamePasswordAuthenticationFilter extends AbstractAuthen
         } catch (CredentialsExpiredException e) {
             throw new CredentialsExpiredException("用户证书已过期");
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("用户密码不正确");
+            throw new BadCredentialsException("用户名或密码不存在");
+        } catch(InternalAuthenticationServiceException e) {
+            if (e.getCause() instanceof BadCredentialsException) {
+                throw (BadCredentialsException)e.getCause();
+            }
+            throw e;
         }
     }
 }

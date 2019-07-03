@@ -113,7 +113,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtAuthenticationTokenFilter authenticationTokenFilter() {
         // 不需要token 验证的url
-        List<String> pathsToSkip = Arrays.asList("/login","/auth/v1/api/login/entry","/auth/v1/api/login/enter");
+        List<String> pathsToSkip = Arrays.asList("/platform/login","/auth/v1/api/login/entry","/auth/v1/api/login/enter");
         //　需要验证token　的url
         String processingPath = "/platform/blog/**";
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, processingPath);

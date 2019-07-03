@@ -70,7 +70,7 @@ public class ResourceBiz {
                     child.setId(node.getId());
                     child.setName(node.getResourceName());
                     child.setIcon(node.getResourceIcon());
-                    child.setType(node.getResourceType());
+                    child.setType(node.getResourceType  ());
                     child.setSort(node.getResourceSort());
                     child.setPath(node.getResourcePath());
                     child.setBelongs(node.getBelongs());
