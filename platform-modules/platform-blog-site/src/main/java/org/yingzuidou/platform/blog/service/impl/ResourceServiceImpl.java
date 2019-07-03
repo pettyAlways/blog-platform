@@ -70,7 +70,7 @@ public class ResourceServiceImpl implements ResourceService {
                 List<Integer> resourceIds = roleResourceEntities.parallelStream()
                         .map(RoleResourceEntity::getResourceId).distinct().collect(Collectors.toList());
                 if (Objects.nonNull(resourceIds)) {
-                    resourceEntities = resourceRepository.findAllByIdInAndIsDeleteIs(resourceIds, "N");
+                    resourceEntities = resourceRepository.findAllByIdInAndIsDeleteOrderByResourceSort(resourceIds, "N");
                 }
             }
         }

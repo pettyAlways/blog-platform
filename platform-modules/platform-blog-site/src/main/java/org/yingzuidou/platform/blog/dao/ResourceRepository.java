@@ -30,5 +30,12 @@ public interface ResourceRepository extends PagingAndSortingRepository<ResourceE
             "AND r.resource_type= 'button' AND r.belongs = 'external' GROUP BY r.id")
     List<Object> acquireRoleResources();
 
-    List<ResourceEntity> findAllByIdInAndIsDeleteIs(List<Integer> resourceIds, String n);
+    /**
+     * 查找用户所授权的资源并排序
+     *
+     * @param resourceIds 资源ID列表
+     * @param isDelete 资源是否删除
+     * @return 授权资源列表
+     */
+    List<ResourceEntity> findAllByIdInAndIsDeleteOrderByResourceSort(List<Integer> resourceIds, String isDelete);
 }

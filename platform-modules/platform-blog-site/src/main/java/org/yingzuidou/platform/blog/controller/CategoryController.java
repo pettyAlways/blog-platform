@@ -1,7 +1,9 @@
 package org.yingzuidou.platform.blog.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.yingzuidou.platform.blog.service.CategoryService;
+import org.yingzuidou.platform.common.entity.CategoryEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
@@ -18,13 +20,39 @@ import java.util.List;
  * ====================================================
  */
 @RestController
-@RequestMapping("cateory")
+@RequestMapping("/cateory")
 public class CategoryController {
 
-    @RequestMapping("search")
-    public CmsMap<List<String>> loadAuthResource() {
-       List<String> users = new ArrayList<>();
-       users.add("yingzuidou");
-       throw new BusinessException("我正在抛出异常");
+    @Autowired
+    private CategoryService categoryService;
+
+    /**
+     * <p>查找所有的分类而不管是否是启用，由于是协同的博客网站，分类对拥有权限的用户共享
+     * <p><note>在前端需要比较未启用的资源</note>
+     *
+     * @return 分类集合
+     */
+    @GetMapping("/search")
+    public CmsMap<List<CategoryEntity>> search() {
+       List<CategoryEntity> users = categoryService.searchCategory();
+       return CmsMap.<List<CategoryEntity>>ok().setResult(users);
+    }
+
+    @DeleteMapping("/delete/{categoryId}")
+    public CmsMap delete(@PathVariable Integer categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return CmsMap.ok();
+    }
+
+    @PutMapping("/update")
+    public CmsMap update(CategoryEntity categoryEntity) {
+        categoryService.updateCategory(categoryEntity);
+        return CmsMap.ok();
+    }
+
+    @PostMapping("/add")
+    public CmsMap add(CategoryEntity categoryEntity) {
+        categoryService.insertCategory(categoryEntity);
+        return CmsMap.ok();
     }
 }
