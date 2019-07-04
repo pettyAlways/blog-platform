@@ -129,6 +129,22 @@ BEGIN
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
+	-- 知识库分类表
+	DROP TABLE IF EXISTS `category`;
+	CREATE TABLE `category`  (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`category_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+		`in_use` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否启用 1、是 2、 否',
+		`category_desc` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '描述',
+		`sort` int(11) NULL DEFAULT NULL COMMENT '排序',
+		`is_delete` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '是否删除 Y:是 N:否',
+		`creator` int(11) NULL DEFAULT NULL COMMENT '创建人',
+		`create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+		`updator` int(11) NULL DEFAULT NULL COMMENT '修改人',
+		`update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
+		PRIMARY KEY (`id`) USING BTREE
+	) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
  -- 重置表的数据
 	truncate table cms_user;
 	truncate table cms_const;

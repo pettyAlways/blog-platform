@@ -20,7 +20,7 @@ import java.util.List;
  * ====================================================
  */
 @RestController
-@RequestMapping("/cateory")
+@RequestMapping("/category")
 public class CategoryController {
 
     @Autowired
@@ -34,24 +34,24 @@ public class CategoryController {
      */
     @GetMapping("/search")
     public CmsMap<List<CategoryEntity>> search() {
-       List<CategoryEntity> users = categoryService.searchCategory();
-       return CmsMap.<List<CategoryEntity>>ok().setResult(users);
+       List<CategoryEntity> categoryEntities = categoryService.searchCategory();
+       return CmsMap.<List<CategoryEntity>>ok().setResult(categoryEntities);
     }
 
-    @DeleteMapping("/delete/{categoryId}")
-    public CmsMap delete(@PathVariable Integer categoryId) {
+    @DeleteMapping("/delete")
+    public CmsMap delete(Integer categoryId) {
         categoryService.deleteCategory(categoryId);
         return CmsMap.ok();
     }
 
     @PutMapping("/update")
-    public CmsMap update(CategoryEntity categoryEntity) {
+    public CmsMap update(@RequestBody CategoryEntity categoryEntity) {
         categoryService.updateCategory(categoryEntity);
         return CmsMap.ok();
     }
 
     @PostMapping("/add")
-    public CmsMap add(CategoryEntity categoryEntity) {
+    public CmsMap add(@RequestBody CategoryEntity categoryEntity) {
         categoryService.insertCategory(categoryEntity);
         return CmsMap.ok();
     }

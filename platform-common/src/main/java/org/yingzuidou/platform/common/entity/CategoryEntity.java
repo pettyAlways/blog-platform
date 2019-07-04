@@ -19,12 +19,13 @@ public class CategoryEntity {
     private int id;
     private String categoryName;
     private String inUse;
+    private String categoryDesc;
+    private Integer sort;
+    private String isDelete;
     private Integer creator;
     private Date createTime;
     private Integer updator;
     private Date updateTime;
-    private String desc;
-    private String isDelete;
 
     @Id
     @Column(name = "id")
@@ -47,7 +48,7 @@ public class CategoryEntity {
     }
 
     @Basic
-    @Column(name = "in_use")
+    @Column(name = "in_use", insertable = false)
     public String getInUse() {
         return inUse;
     }
@@ -97,23 +98,33 @@ public class CategoryEntity {
     }
 
     @Basic
-    @Column(name = "desc")
-    public String getDesc() {
-        return desc;
+    @Column(name = "category_desc")
+    public String getCategoryDesc() {
+        return categoryDesc;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setCategoryDesc(String categoryDesc) {
+        this.categoryDesc = categoryDesc;
     }
 
     @Basic
-    @Column(name = "is_delete")
+    @Column(name = "is_delete", insertable = false)
     public String getIsDelete() {
         return isDelete;
     }
 
     public void setIsDelete(String isDelete) {
         this.isDelete = isDelete;
+    }
+
+    @Basic
+    @Column(name = "sort")
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 
     @Override
@@ -124,16 +135,18 @@ public class CategoryEntity {
         return id == that.id &&
                 Objects.equals(categoryName, that.categoryName) &&
                 Objects.equals(inUse, that.inUse) &&
+                Objects.equals(categoryDesc, that.categoryDesc) &&
+                Objects.equals(sort, that.sort) &&
+                Objects.equals(isDelete, that.isDelete) &&
                 Objects.equals(creator, that.creator) &&
                 Objects.equals(createTime, that.createTime) &&
                 Objects.equals(updator, that.updator) &&
-                Objects.equals(updateTime, that.updateTime) &&
-                Objects.equals(desc, that.desc);
+                Objects.equals(updateTime, that.updateTime);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, categoryName, inUse, creator, createTime, updator, updateTime, desc);
+        return Objects.hash(id, categoryName, inUse, categoryDesc, sort, isDelete, creator, createTime, updator, updateTime);
     }
 }

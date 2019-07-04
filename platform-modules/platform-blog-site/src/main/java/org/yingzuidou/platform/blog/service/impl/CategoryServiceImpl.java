@@ -38,10 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public List<CategoryEntity> searchCategory() {
-        Iterable<CategoryEntity> iterable = categoryRepository.findAll();
-        List<CategoryEntity> categoryEntities = new ArrayList<>();
-        iterable.forEach(categoryEntities::add);
-        return categoryEntities;
+        return categoryRepository.findAllWithCreatorName();
     }
 
     /**
@@ -102,7 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryEntity> categoryEntities = categoryRepository
                 .findAllByCategoryName(categoryEntity.getCategoryName());
 
-        if (Objects.nonNull(categoryEntities)) {
+        if (categoryEntities.size() > 0) {
             if (Objects.equals(categoryEntities.get(0).getInUse(), InUseEnum.NONUSE.getValue())) {
                 throw new BusinessException("分类名已存在请启用即可");
             }
