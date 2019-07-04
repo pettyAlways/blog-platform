@@ -6,6 +6,8 @@ import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.constant.InUseEnum;
 import org.yingzuidou.platform.blog.constant.IsDeleteEnum;
 import org.yingzuidou.platform.blog.dao.CategoryRepository;
+import org.yingzuidou.platform.blog.dao.UserRepository;
+import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.blog.service.CategoryService;
 import org.yingzuidou.platform.common.entity.CategoryEntity;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
@@ -13,6 +15,7 @@ import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 类功能描述
@@ -31,14 +34,24 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     /**
-     * 获取所有的分类包括不可用资源
+     * 获取所有的分类包括不可用资源,jpa的多表查询结果转换成CategoryDTO非常的麻烦，因此这里暂时使用一次一个查询
      *
      * @return 所有分类集合
      */
     @Override
-    public List<CategoryEntity> searchCategory() {
-        return categoryRepository.findAllWithCreatorName();
+    public List<CategoryDTO> searchCategory() {
+        List<CategoryEntity> categoryEntities = categoryRepository.findAllByIsDelete(IsDeleteEnum.NOTDELETE.getValue());
+        return categoryEntities.stream().map(category -> {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            CmsBeanUtils.copyMorNULLProperties(category, categoryDTO);
+            Optional<CmsUserEntity> cmsUserEntityOp = userRepository.findById(category.getCreator());
+            cmsUserEntityOp.ifPresent(cmsUserEntity -> categoryDTO.setUserName(cmsUserEntity.getUserName()));
+            return categoryDTO;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -80,7 +93,6 @@ public class CategoryServiceImpl implements CategoryService {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         target.setUpdator(user.getId());
         target.setUpdateTime(new Date());
-        target.setIsDelete(IsDeleteEnum.DELETE.getValue());
         categoryRepository.save(target);
 
 

@@ -18,12 +18,11 @@ public interface CategoryRepository extends PagingAndSortingRepository<CategoryE
     List<CategoryEntity> findAllByCategoryName(String categoryName);
 
     /**
-     * 查找所有未删除的分类包括未启用分类，并获取创建人名字
+     * 根据参数是否删除查找所有分类包括未启用分类
      *
+     * @param isDelete 是否删除
      * @return 分类集合
      */
-    @Query(nativeQuery = true, value= "SELECT c.*, u.user_name FROM category c LEFT JOIN cms_user u " +
-            "on c.creator = u.id WHERE c.is_delete = 'N' ORDER BY c.sort")
-    List<CategoryEntity> findAllWithCreatorName();
+    List<CategoryEntity> findAllByIsDelete(String isDelete);
 
 }

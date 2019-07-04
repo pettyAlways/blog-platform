@@ -1,5 +1,6 @@
 package org.yingzuidou.platform.blog.service;
 
+import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.common.entity.CategoryEntity;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface CategoryService {
      *
      * @return 所有分类集合
      */
-    public List<CategoryEntity> searchCategory();
+    public List<CategoryDTO> searchCategory();
 
     /**
      * 根据分类id删除分类

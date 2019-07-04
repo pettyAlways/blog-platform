@@ -1,5 +1,7 @@
 package org.yingzuidou.platform.common.entity;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -17,8 +19,10 @@ import java.util.Objects;
 @Table(name = "category", schema = "cms_web", catalog = "")
 public class CategoryEntity {
     private int id;
+    @Length(max = 20, message = "分类名不能超过20个字符")
     private String categoryName;
     private String inUse;
+    @Length(max = 20, message = "分类描述不能超过50个字符")
     private String categoryDesc;
     private Integer sort;
     private String isDelete;

@@ -2,6 +2,7 @@ package org.yingzuidou.platform.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.blog.service.CategoryService;
 import org.yingzuidou.platform.common.entity.CategoryEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
@@ -33,9 +34,9 @@ public class CategoryController {
      * @return 分类集合
      */
     @GetMapping("/search")
-    public CmsMap<List<CategoryEntity>> search() {
-       List<CategoryEntity> categoryEntities = categoryService.searchCategory();
-       return CmsMap.<List<CategoryEntity>>ok().setResult(categoryEntities);
+    public CmsMap<List<CategoryDTO>> search() {
+       List<CategoryDTO> categoryEntities = categoryService.searchCategory();
+       return CmsMap.<List<CategoryDTO>>ok().setResult(categoryEntities);
     }
 
     @DeleteMapping("/delete")
