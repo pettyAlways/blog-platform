@@ -1,21 +1,21 @@
-package org.yingzuidou.cms.cmsweb.constant;
+package org.yingzuidou.platform.common.constant;
 
 /**
  * 类功能描述
- * 锁定状态枚举
+ * 系统常量列表
  *
  * @author 鹰嘴豆
- * @date 2018/11/21
+ * @date 2019/7/13
  * <p>
  * 时间           作者          版本        描述
  * ====================================================
  */
-public enum InUseEnum {
+public enum ConstEnum {
     // 账户正常状态
-    USE("启用", "1"),
+    CONST("常量配置", "1"),
 
     // 账户被锁定
-    NONUSE("不启用", "2");
+    ENUM("枚举配置", "2");
 
     /**
      * 用户状态
@@ -27,7 +27,7 @@ public enum InUseEnum {
      */
     private String value;
 
-    private InUseEnum(String key, String value) {
+    private ConstEnum(String key, String value) {
         this.key = key;
         this.value = value;
     }

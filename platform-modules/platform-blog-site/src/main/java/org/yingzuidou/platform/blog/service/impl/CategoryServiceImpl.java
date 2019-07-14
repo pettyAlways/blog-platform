@@ -6,9 +6,14 @@ import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.constant.InUseEnum;
 import org.yingzuidou.platform.blog.constant.IsDeleteEnum;
 import org.yingzuidou.platform.blog.dao.CategoryRepository;
+import org.yingzuidou.platform.blog.dao.OperRecordRepository;
 import org.yingzuidou.platform.blog.dao.UserRepository;
 import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.blog.service.CategoryService;
+import org.yingzuidou.platform.blog.service.OperRecordService;
+import org.yingzuidou.platform.common.constant.ObjTypeEnum;
+import org.yingzuidou.platform.common.constant.OperTypeEnum;
+import org.yingzuidou.platform.common.constant.RootEnum;
 import org.yingzuidou.platform.common.entity.CategoryEntity;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
@@ -36,6 +41,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OperRecordService operRecordService;
 
     /**
      * 获取所有的分类包括不可用资源,jpa的多表查询结果转换成CategoryDTO非常的麻烦，因此这里暂时使用一次一个查询
@@ -71,6 +79,9 @@ public class CategoryServiceImpl implements CategoryService {
         }
         CategoryEntity categoryEntity = categoryEntityOp.get();
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        if (!Objects.equals(categoryEntity.getCreator(), user.getId())) {
+            throw new BusinessException("没有权限删除其他人的分类");
+        }
         categoryEntity.setUpdator(user.getId());
         categoryEntity.setUpdateTime(new Date());
         categoryEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
@@ -87,15 +98,18 @@ public class CategoryServiceImpl implements CategoryService {
             throw new BusinessException("需要更新分类不存在");
         }
 
-        CategoryEntity target = categoryEntityOp.get();
-        CmsBeanUtils.copyMorNULLProperties(categoryEntity, target);
-
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        CategoryEntity target = categoryEntityOp.get();
+        if (!Objects.equals(target.getCreator(), user.getId())) {
+            throw new BusinessException("没有权限修改其他人的分类");
+        }
+
+        CmsBeanUtils.copyMorNULLProperties(categoryEntity, target);
         target.setUpdator(user.getId());
         target.setUpdateTime(new Date());
         categoryRepository.save(target);
-
-
+        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.EDIT.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                target.getId(), target.getCategoryName());
     }
 
     /**
@@ -121,6 +135,47 @@ public class CategoryServiceImpl implements CategoryService {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         categoryEntity.setCreator(user.getId());
         categoryEntity.setCreateTime(new Date());
+        categoryEntity = categoryRepository.save(categoryEntity);
+        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.ADD.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                categoryEntity.getId(), null, null);
+    }
+
+    @Override
+    public void shareDeleteCategory(Integer categoryId) {
+        if (Objects.isNull(categoryId)) {
+            throw new BusinessException("分类ID不能为空");
+        }
+        Optional<CategoryEntity> categoryEntityOp = categoryRepository.findById(categoryId);
+        if (!categoryEntityOp.isPresent()) {
+            throw new BusinessException("指定分类[" + categoryId+ "]不存在");
+        }
+        CategoryEntity categoryEntity = categoryEntityOp.get();
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        categoryEntity.setUpdator(user.getId());
+        categoryEntity.setUpdateTime(new Date());
+        categoryEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         categoryRepository.save(categoryEntity);
+        // TODO: 如果删除了别人的分类，需要发送一个通知给创建人
+    }
+
+    @Override
+    public void updateShareCategory(CategoryEntity categoryEntity) {
+        if (Objects.isNull(categoryEntity)) {
+            throw new BusinessException("请传递完整的分类信息");
+        }
+        Optional<CategoryEntity> categoryEntityOp = categoryRepository.findById(categoryEntity.getId());
+        if (!categoryEntityOp.isPresent()) {
+            throw new BusinessException("需要更新分类不存在");
+        }
+
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        CategoryEntity target = categoryEntityOp.get();
+
+        CmsBeanUtils.copyMorNULLProperties(categoryEntity, target);
+        target.setUpdator(user.getId());
+        target.setUpdateTime(new Date());
+        categoryRepository.save(target);
+        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.EDIT.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                target.getId(), target.getCategoryName());
     }
 }

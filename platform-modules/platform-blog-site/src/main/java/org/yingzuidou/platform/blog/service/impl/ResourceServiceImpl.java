@@ -51,7 +51,12 @@ public class ResourceServiceImpl implements ResourceService {
         List<Object> roleResources = resourceRepository.acquireRoleResources();
         Optional.ofNullable(roleResources).orElse(new ArrayList<>()).forEach(roleResource -> {
             Object[] objects = (Object[])roleResource;
-            String[] roleNames = ((String) objects[1]).split(",");
+            String roles = (String) objects[1];
+            String[] roleNames = new String[]{};
+            if (Objects.nonNull(roles)) {
+                roleNames = roles.contains(",") ? roles.split(",") : new String[] { roles };
+            }
+
             List<String> roleList = Arrays.asList(roleNames);
             authMap.put((String) objects[0], roleList);
         });

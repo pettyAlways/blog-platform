@@ -6,15 +6,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.dto.UserDTO;
+import org.yingzuidou.platform.blog.service.SysConstService;
 import org.yingzuidou.platform.blog.service.UserRoleService;
 import org.yingzuidou.platform.blog.service.UserService;
+import org.yingzuidou.platform.common.constant.ConstEnum;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -36,6 +40,9 @@ public class UserController {
     @Autowired
     private UserRoleService userRoleService;
 
+    @Autowired
+    private SysConstService sysConstService;
+
     @RequestMapping("/loadUser/{userName}")
     public CmsMap loadUserByUserName(@PathVariable String userName) {
         List<String> roleNameList = new ArrayList<>();
@@ -55,7 +62,9 @@ public class UserController {
     @GetMapping("userInfo.do")
     public CmsMap<UserDTO> userInfo() {
         UserDTO userDTO = userService.userInfo();
-        return CmsMap.<UserDTO>ok().setResult(userDTO);
+        Map<String, String> sysConst = sysConstService.listSystemConst(ConstEnum.CONST.getValue());
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        return CmsMap.<UserDTO>ok().appendData("sysConst", sysConst).appendData("curUser", user).setResult(userDTO);
     }
 
 }

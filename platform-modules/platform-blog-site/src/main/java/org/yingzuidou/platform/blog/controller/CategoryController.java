@@ -45,9 +45,27 @@ public class CategoryController {
         return CmsMap.ok();
     }
 
+    @DeleteMapping("/share/delete")
+    public CmsMap shareDelete(Integer categoryId) {
+        categoryService.shareDeleteCategory(categoryId);
+        return CmsMap.ok();
+    }
+
     @PutMapping("/update")
     public CmsMap update(@RequestBody CategoryEntity categoryEntity) {
         categoryService.updateCategory(categoryEntity);
+        return CmsMap.ok();
+    }
+
+    /**
+     * 共享编辑其他人的分类
+     *
+     * @param categoryEntity 分类内容
+     * @return 修改结果
+     */
+    @PutMapping("/share/update")
+    public CmsMap updateShare(@RequestBody CategoryEntity categoryEntity) {
+        categoryService.updateShareCategory(categoryEntity);
         return CmsMap.ok();
     }
 

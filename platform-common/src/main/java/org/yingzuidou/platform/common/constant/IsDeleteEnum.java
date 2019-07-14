@@ -1,8 +1,8 @@
-package org.yingzuidou.cms.cmsweb.constant;
+package org.yingzuidou.platform.common.constant;
 
 /**
  * 类功能描述
- * 锁定状态枚举
+ * 是否删除枚举
  *
  * @author 鹰嘴豆
  * @date 2018/11/21
@@ -10,15 +10,12 @@ package org.yingzuidou.cms.cmsweb.constant;
  * 时间           作者          版本        描述
  * ====================================================
  */
-public enum LockStatusEnum {
+public enum IsDeleteEnum {
     // 账户正常状态
-    NORMAL("正常", "1"),
+    DELETE("删除", "Y"),
 
     // 账户被锁定
-    LOCK("锁定", "2"),
-
-    // 账户状态禁用
-    INVAILD("无效", "3");
+    NOTDELETE("不删除", "N");
 
     /**
      * 用户状态
@@ -30,7 +27,7 @@ public enum LockStatusEnum {
      */
     private String value;
 
-    private LockStatusEnum(String key, String value) {
+    private IsDeleteEnum(String key, String value) {
         this.key = key;
         this.value = value;
     }

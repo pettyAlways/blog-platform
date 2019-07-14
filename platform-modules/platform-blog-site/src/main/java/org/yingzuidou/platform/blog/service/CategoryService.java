@@ -44,4 +44,17 @@ public interface CategoryService {
      * @param categoryEntity 需要新增的分类对象
      */
     void insertCategory(CategoryEntity categoryEntity);
+
+    /**
+     * 共享删除，不需要校验的分类创建者和操作人是否是同一人
+     *
+     * @param categoryId 分类ID
+     */
+    void shareDeleteCategory(Integer categoryId);
+
+    /**
+     * 共享更新，不需要校验的分类创建者和操作人是否是同一人
+     * @param categoryEntity
+     */
+    void updateShareCategory(CategoryEntity categoryEntity);
 }

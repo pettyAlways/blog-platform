@@ -1,22 +1,23 @@
-package org.yingzuidou.cms.cmsweb.constant;
+package org.yingzuidou.platform.common.constant;
 
 /**
  * 类功能描述
- * WebSocket发送的数据类型
+ * 知识库访问方式
  *
  * @author 鹰嘴豆
- * @date 2018/11/26
+ * @date 2019/7/7
  * <p>
  * 时间           作者          版本        描述
  * ====================================================
  */
-public enum WebSocketTypeEnum {
-
-    // 心跳包类型
-    HEART("心跳", "heart"),
+public enum AccessEnum {
+    // 账户正常状态
+    PRIVATE("私有", "1"),
 
     // 账户被锁定
-    TIP("消息提示", "tip");
+    PUBLIC("公开", "2"),
+
+    ENCRYPTION("加密", "3");
 
     /**
      * 用户状态
@@ -28,7 +29,7 @@ public enum WebSocketTypeEnum {
      */
     private String value;
 
-    private WebSocketTypeEnum(String key, String value) {
+    private AccessEnum(String key, String value) {
         this.key = key;
         this.value = value;
     }

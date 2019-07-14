@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ehcache name="cms_cache">
+<ehcache name="blog_cache">
     <defaultCache
             eternal="false"
             maxElementsInMemory="1000"
@@ -18,15 +18,6 @@
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU" />
 
-    <!-- 登录次数限制 -->
-    <cache
-            name="LoginRetry"
-            eternal="true"
-            maxElementsInMemory="1000"
-            overflowToDisk="false"
-            diskPersistent="false"
-            memoryStoreEvictionPolicy="LRU" />
-
     <!-- 资源访问缓存-->
     <cache
             name="resourceCache"
@@ -36,15 +27,5 @@
             diskPersistent="false"
             timeToIdleSeconds="1600"
             timeToLiveSeconds="1600"
-            memoryStoreEvictionPolicy="LRU" />
-
-    <cache
-            name="shiroCache"
-            eternal="false"
-            maxElementsInMemory="1000"
-            overflowToDisk="false"
-            diskPersistent="false"
-            timeToIdleSeconds="0"
-            timeToLiveSeconds="0"
             memoryStoreEvictionPolicy="LRU" />
 </ehcache>

@@ -1,21 +1,22 @@
-package org.yingzuidou.cms.cmsweb.constant;
+package org.yingzuidou.platform.common.constant;
 
 /**
  * 类功能描述
- * 是否删除枚举
+ * WebSocket发送的数据类型
  *
  * @author 鹰嘴豆
- * @date 2018/11/21
+ * @date 2018/11/26
  * <p>
  * 时间           作者          版本        描述
  * ====================================================
  */
-public enum IsDeleteEnum {
-    // 账户正常状态
-    DELETE("删除", "Y"),
+public enum WebSocketTypeEnum {
+
+    // 心跳包类型
+    HEART("心跳", "heart"),
 
     // 账户被锁定
-    NOTDELETE("不删除", "N");
+    TIP("消息提示", "tip");
 
     /**
      * 用户状态
@@ -27,7 +28,7 @@ public enum IsDeleteEnum {
      */
     private String value;
 
-    private IsDeleteEnum(String key, String value) {
+    private WebSocketTypeEnum(String key, String value) {
         this.key = key;
         this.value = value;
     }
