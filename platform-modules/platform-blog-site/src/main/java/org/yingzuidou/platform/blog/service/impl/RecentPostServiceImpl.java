@@ -61,69 +61,60 @@ public class RecentPostServiceImpl implements RecentPostService {
     }
 
     private List<RecentPostDTO> getKnowledgeRelateRecentPost() {
-        List<RecentPostDTO> recentPostDTOS = new ArrayList<>();
+        List<RecentPostDTO> recentPostDTOS;
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
-        List<KnowledgeEntity> knowledgeEntities = knowledgeRepository
+        List<Integer> knowledgeIdList = knowledgeRepository
                 .findAllByKParticipantInAndIsDelete(user.getId(), IsDeleteEnum.NOTDELETE.getValue());
-        if (!knowledgeEntities.isEmpty()) {
-            List<Integer> kwIds = knowledgeEntities.stream().map(KnowledgeEntity::getId).collect(Collectors.toList());
-            List<OperRecordEntity> operRecordEntities = operRecordRepository
-                    .findFirst6ByRootTypeAndRootObjIn(RootEnum.KNOWLEDGE.getValue(), kwIds);
-            recentPostDTOS = Optional.ofNullable(operRecordEntities).orElse(new ArrayList<>()).stream().map(item -> {
-                RecentPostDTO recentPostDTO = new RecentPostDTO();
-                Optional<CmsUserEntity> cmsUserEntityOp = userRepository.findById(item.getOperUser());
-                if (cmsUserEntityOp.isPresent()) {
-                    recentPostDTO.setOperUserName(cmsUserEntityOp.get().getUserName());
-                    recentPostDTO.setOperUser(cmsUserEntityOp.get().getId());
-                }
-                recentPostDTO.setOperTime(item.getOperTime());
-                recentPostDTO.setOperType(OperTypeEnum.getKey(item.getOperType()));
-                if (Objects.nonNull(item.getHandleUser())) {
-                    Optional<CmsUserEntity> handleUserEntityOp = userRepository.findById(item.getHandleUser());
-                    if (handleUserEntityOp.isPresent()) {
-                        recentPostDTO.setHandleUserName(handleUserEntityOp.get().getUserName());
-                        recentPostDTO.setHandleUser(handleUserEntityOp.get().getId());
-                    }
-                }
-                recentPostDTO.setHandleResult(item.getHandleResult());
-                recentPostDTO.setObjType(ObjTypeEnum.getKey(item.getObjType()));
-                handleOperObj(recentPostDTO, item);
-                recentPostDTO.setReserve(item.getReserve());
-                return recentPostDTO;
-            }).collect(Collectors.toList());
-        }
+        List<OperRecordEntity> operRecordEntities = operRecordRepository.findRecentPost(
+                RootEnum.KNOWLEDGE.getValue(), knowledgeIdList, RootEnum.CATEGORY.getValue());
+
+        recentPostDTOS = Optional.ofNullable(operRecordEntities).orElse(new ArrayList<>()).stream().map(item -> {
+            RecentPostDTO recentPostDTO = new RecentPostDTO();
+            if (Objects.nonNull(item.getOperUser())) {
+                recentPostDTO.setOperUserName(item.getOperUser().getUserName()).setOperUser(item.getOperUser().getId());
+            }
+            recentPostDTO.setOperTime(item.getOperTime()).setOperType(OperTypeEnum.getKey(item.getOperType()));
+            if (Objects.nonNull(item.getHandleUser())) {
+                recentPostDTO.setHandleUserName(item.getHandleUser().getUserName())
+                        .setHandleUser(item.getHandleUser().getId());
+            }
+            recentPostDTO.setHandleResult(item.getHandleResult()).setObjType(ObjTypeEnum.getKey(item.getObjType()));
+            handleOperObj(recentPostDTO, item);
+            recentPostDTO.setReserve(item.getReserve());
+            return recentPostDTO;
+        }).collect(Collectors.toList());
         return recentPostDTOS;
     }
 
     private void handleOperObj(RecentPostDTO recentPostDTO, OperRecordEntity item) {
         if (Objects.equals(item.getObjType(), ObjTypeEnum.KNOWLEDGE.getValue())) {
-            Optional<KnowledgeEntity> knowledgeEntityOp = knowledgeRepository.findById(item.getObj());
-            if (knowledgeEntityOp.isPresent()) {
-                recentPostDTO.setObjName(knowledgeEntityOp.get().getkName());
-                recentPostDTO.setObj(knowledgeEntityOp.get().getId());
+            if (!Objects.equals(item.getOperType(), OperTypeEnum.DEL.getValue())) {
+                Optional<KnowledgeEntity> knowledgeEntityOp = knowledgeRepository.findById(item.getObj());
+                knowledgeEntityOp.ifPresent(knowledgeEntity -> recentPostDTO.setObjName(knowledgeEntity.getKName())
+                        .setObj(knowledgeEntity.getId()));
             }
+
         }
         if (Objects.equals(item.getObjType(), ObjTypeEnum.ARTICLE.getValue())) {
-            Optional<ArticleEntity> articleEntityOp = articleRepository.findById(item.getObj());
-            if (articleEntityOp.isPresent()) {
-                recentPostDTO.setObjName(articleEntityOp.get().getArticleTitle());
-                recentPostDTO.setObj(articleEntityOp.get().getId());
-                rootTypeDeal(recentPostDTO, item);
+            if (!Objects.equals(item.getOperType(), OperTypeEnum.DEL.getValue())) {
+                Optional<ArticleEntity> articleEntityOp = articleRepository.findById(item.getObj());
+                if (articleEntityOp.isPresent()) {
+                    recentPostDTO.setObjName(articleEntityOp.get().getArticleTitle()).setObj(articleEntityOp.get().getId());
+                    rootTypeDeal(recentPostDTO, item);
+                }
             }
         }
         if (Objects.equals(item.getObjType(), ObjTypeEnum.CATEGORY.getValue())) {
-            Optional<CategoryEntity> categoryEntityOp = categoryRepository.findById(item.getObj());
-            if (categoryEntityOp.isPresent()) {
-                recentPostDTO.setObjName(categoryEntityOp.get().getCategoryName());
-                recentPostDTO.setObj(categoryEntityOp.get().getId());
-
+            if (!Objects.equals(item.getOperType(), OperTypeEnum.DEL.getValue())) {
+                Optional<CategoryEntity> categoryEntityOp = categoryRepository.findById(item.getObj());
+                categoryEntityOp.ifPresent(categoryEntity -> recentPostDTO.setObjName(categoryEntity.getCategoryName())
+                        .setObj(categoryEntity.getId()));
             }
         }
         if (Objects.equals(item.getObjType(), ObjTypeEnum.USER.getValue())) {
             Optional<CmsUserEntity> userEntityOp = userRepository.findById(item.getObj());
             if (userEntityOp.isPresent()) {
-                recentPostDTO.setObjName(userEntityOp.get().getUserName());
-                recentPostDTO.setObj(userEntityOp.get().getId());
+                recentPostDTO.setObjName(userEntityOp.get().getUserName()).setObj(userEntityOp.get().getId());
                 rootTypeDeal(recentPostDTO, item);
             }
         }
@@ -132,10 +123,8 @@ public class RecentPostServiceImpl implements RecentPostService {
     private void rootTypeDeal(RecentPostDTO recentPostDTO, OperRecordEntity item) {
         if (Objects.equals(item.getRootType(), RootEnum.KNOWLEDGE.getValue())) {
             Optional<KnowledgeEntity> knowledgeEntityOp = knowledgeRepository.findById(item.getRootObj());
-            if (knowledgeEntityOp.isPresent()) {
-                recentPostDTO.setTargetName(knowledgeEntityOp.get().getkName());
-                recentPostDTO.setObj(knowledgeEntityOp.get().getId());
-            }
+            knowledgeEntityOp.ifPresent(knowledgeEntity -> recentPostDTO.setTargetName(knowledgeEntity.getKName())
+                    .setObj(knowledgeEntity.getId()));
         }
     }
 }

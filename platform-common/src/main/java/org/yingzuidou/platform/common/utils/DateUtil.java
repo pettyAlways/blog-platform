@@ -1,5 +1,6 @@
 package org.yingzuidou.platform.common.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -25,5 +26,14 @@ public class DateUtil {
         Calendar calendar = Calendar.getInstance();
         calendar.add(unit,value);
         return calendar.getTime();
+    }
+
+    public static Date transformStrToDate(String str, String format) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        try {
+            return simpleDateFormat.parse(str);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

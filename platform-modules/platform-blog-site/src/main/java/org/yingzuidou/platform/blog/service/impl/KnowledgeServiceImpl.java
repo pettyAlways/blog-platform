@@ -55,21 +55,21 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     @Override
     public void addKnowledge(KnowledgeEntity knowledgeEntity) {
         List<KnowledgeEntity> knowledgeEntities = knowledgeRepository
-                .findAllByKNameAndIsDelete(knowledgeEntity.getkName(), IsDeleteEnum.NOTDELETE.getValue());
+                .findAllByKNameAndIsDelete(knowledgeEntity.getKName(), IsDeleteEnum.NOTDELETE.getValue());
         if (!knowledgeEntities.isEmpty()) {
             throw new BusinessException("知识库名字已存在");
         }
 
         // 如果访问方式是加密方式，则需要用AES处理
-        if (Objects.equals(knowledgeEntity.getkAccess(), AccessEnum.ENCRYPTION.getValue())) {
-            knowledgeEntity.setkReserveO(EntryptionUtils.aesEncryption(knowledgeEntity.getkReserveO()));
+        if (Objects.equals(knowledgeEntity.getKAccess(), AccessEnum.ENCRYPTION.getValue())) {
+            knowledgeEntity.setKReserveO(EntryptionUtils.aesEncryption(knowledgeEntity.getKReserveO()));
         }
 
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         knowledgeEntity.setCreator(user);
         knowledgeEntity.setCreateTime(new Date());
         knowledgeEntity = knowledgeRepository.save(knowledgeEntity);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.ADD.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
+        operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
                 knowledgeEntity.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
     }
 
@@ -83,7 +83,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     public List<KnowledgeDTO> list(KnowledgeDTO knowledgeDTO) {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         List<KnowledgeEntity> knowledgeEntities = knowledgeRepository
-                .findAllByKParticipantInAndIsDelete(user.getId(), IsDeleteEnum.NOTDELETE.getValue());
+                .findAllKnowledgeByKParticipantInAndIsDelete(user.getId(), IsDeleteEnum.NOTDELETE.getValue());
         return Optional.ofNullable(knowledgeEntities).orElse(new ArrayList<>()).stream()
                 .map(knowledgeEntity -> {
                     KnowledgeDTO tempDTO = new KnowledgeDTO();
@@ -122,8 +122,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             throw new BusinessException("需要移除的参与者不存在，参与者ID为[" + userId + "]");
         }
 
-        participantRepository.removeAllByKnowledgeIdAndParticipantId(knowledgeId, userId);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.REMOVE.getValue(), ObjTypeEnum.USER.getValue(),
+        participantRepository.removeByKnowledgeIdAndParticipantId(knowledgeId, userId);
+        operRecordService.recordCommonOperation(user, OperTypeEnum.REMOVE.getValue(), ObjTypeEnum.USER.getValue(),
                 knowledgeId, RootEnum.KNOWLEDGE.getValue(), knowledgeId);
     }
 
@@ -146,6 +146,38 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         }
 
         return knowledgeDTO;
+    }
+
+    /**
+     * <p>移除指定的知识库，如果知识库下存在文章，那么需要删除文章在移除。需要发送通知给该知识库参与者告知知识库已经移除
+     * 拥有知识库删除权限的用户可以移除其他人的知识库
+     *
+     * @param knowledgeId 知识库ID
+     *
+     */
+    @Override
+    public void removeKnowledge(Integer knowledgeId) {
+        Optional<KnowledgeEntity> knowledgeEntityOp = knowledgeRepository.findById(knowledgeId);
+        if (!knowledgeEntityOp.isPresent()) {
+            throw new BusinessException("需要删除的知识库不存在");
+        }
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        KnowledgeEntity knowledgeEntity = knowledgeEntityOp.get();
+        if (!Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
+            throw new BusinessException("没有权限移除其他人的知识库");
+        }
+        if (articleRepository.existsByKnowledgeIdAndIsDelete(knowledgeId, IsDeleteEnum.NOTDELETE.getValue())) {
+            throw new BusinessException("知识库下存在文章，请先迁移文章");
+        }
+        knowledgeEntity.setIsDelete(IsDeleteEnum.DELETE.getValue()).setUpdator(user.getId()).setUpdateTime(new Date());
+        knowledgeRepository.save(knowledgeEntity);
+
+        List<ParticipantEntity> participantEntities = participantRepository.findAllByKnowledgeId(knowledgeId);
+        if (!participantEntities.isEmpty()) {
+            // TODO 通知参与者关于知识库的删除
+        }
+
+        participantRepository.removeAllParticipantByKnowledgeId(knowledgeId);
     }
 
 }

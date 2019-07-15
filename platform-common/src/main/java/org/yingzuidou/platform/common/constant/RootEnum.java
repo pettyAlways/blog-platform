@@ -14,7 +14,12 @@ public enum  RootEnum {
     /**
      * 知识库
      */
-    KNOWLEDGE("知识库", "1");
+    KNOWLEDGE("知识库", "1"),
+
+    /**
+     * 分类
+     */
+    CATEGORY("分类", "2");
 
     /**
      * 用户状态

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
-import org.yingzuidou.platform.blog.dto.RecentAritcleDTO;
+import org.yingzuidou.platform.blog.dto.RecentArticleDTO;
 import org.yingzuidou.platform.blog.dto.RecentKnowledgeDTO;
 import org.yingzuidou.platform.blog.dto.RecentPostDTO;
 import org.yingzuidou.platform.blog.service.OperRecordService;
@@ -40,16 +40,20 @@ public class RecentPostController {
     private RecentEditService recentEditService;
 
     @GetMapping("/post")
-    public CmsMap<List<RecentPostDTO>> retriveRecentPost() {
+    public CmsMap<List<RecentPostDTO>> retrieveRecentPost() {
         List<RecentPostDTO> recentPostDTOList =  recentPostService.getRecentPost();
         return CmsMap.<List<RecentPostDTO>>ok().setResult(recentPostDTOList);
     }
 
-
+    /**
+     * 获取当前用户最近编辑的6篇文章
+     *
+     * @return 最近编辑的文章列表
+     */
     @GetMapping("/article/edit")
-    public CmsMap<List<RecentAritcleDTO>> getRecentArticleList() {
-        List<RecentAritcleDTO> recentArticleDTOS = operRecordService.recentOperArticle();
-        return CmsMap.<List<RecentAritcleDTO>>ok().setResult(recentArticleDTOS);
+    public CmsMap<List<RecentArticleDTO>> getRecentArticleList(@RequestParam("listNum") Integer num) {
+        List<RecentArticleDTO> recentArticleDTOS = recentEditService.listRecentArticle(num);
+        return CmsMap.<List<RecentArticleDTO>>ok().setResult(recentArticleDTOS);
     }
 
     /**

@@ -2,15 +2,22 @@ package org.yingzuidou.platform.blog.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.dao.RecentEditRepository;
+import org.yingzuidou.platform.blog.dto.RecentArticleDTO;
 import org.yingzuidou.platform.blog.dto.RecentKnowledgeDTO;
 import org.yingzuidou.platform.blog.service.RecentEditService;
 import org.yingzuidou.platform.common.entity.ArticleEntity;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.entity.KnowledgeEntity;
 import org.yingzuidou.platform.common.entity.RecentEditEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 类功能描述
@@ -22,6 +29,7 @@ import java.util.List;
  * ====================================================
  */
 @Service
+@Transactional
 public class RecentEditServiceImpl implements RecentEditService {
 
     @Autowired
@@ -42,9 +50,21 @@ public class RecentEditServiceImpl implements RecentEditService {
         recentEditRepository.removeAllByArticleId(articleId);
     }
 
+    /**
+     * 返回指定用户最近编辑的文章列表
+     *
+     * @return 返回6条该用户最近编辑的文章
+     */
     @Override
-    public List<RecentEditEntity> listRecentArticle(int id) {
-        return recentEditRepository.findFirst6ByUserIdOrderByEditTimeDesc(id);
+    public List<RecentArticleDTO> listRecentArticle(Integer num) {
+        List<RecentArticleDTO> recentArticleDTOList = new ArrayList<>();
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        List<Object[]> recentEditEntities = recentEditRepository.findRecentArticle(user.getId(), num);
+        if (!recentEditEntities.isEmpty()) {
+            recentArticleDTOList = recentEditEntities.stream().map(item -> RecentArticleDTO.transform.apply(item))
+                    .collect(Collectors.toList());
+        }
+        return recentArticleDTOList;
     }
 
     /**
@@ -56,6 +76,8 @@ public class RecentEditServiceImpl implements RecentEditService {
      */
     @Override
     public List<RecentKnowledgeDTO> listRecentKnowledge(int userId, Integer num) {
-        return recentEditRepository.findRecentKnowledge(userId, num);
+        List<Object[]> dataList = recentEditRepository.findRecentKnowledge(userId, num);
+        return Optional.ofNullable(dataList).orElse(new ArrayList<>()).stream()
+                .map(data -> RecentKnowledgeDTO.function.apply(data)).collect(Collectors.toList());
     }
 }

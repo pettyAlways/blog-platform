@@ -2,10 +2,12 @@ package org.yingzuidou.platform.blog.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.constant.IsDeleteEnum;
 import org.yingzuidou.platform.blog.dao.*;
 import org.yingzuidou.platform.blog.dto.ArticleDTO;
+import org.yingzuidou.platform.blog.service.ArticleParticipantService;
 import org.yingzuidou.platform.blog.service.ArticleService;
 import org.yingzuidou.platform.blog.service.OperRecordService;
 import org.yingzuidou.platform.blog.service.RecentEditService;
@@ -15,7 +17,6 @@ import org.yingzuidou.platform.common.constant.RootEnum;
 import org.yingzuidou.platform.common.entity.ArticleEntity;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.entity.KnowledgeEntity;
-import org.yingzuidou.platform.common.entity.RecentEditEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  * ====================================================
  */
 @Service
+@Transactional
 public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
@@ -51,6 +53,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private RecentEditService recentEditService;
+
+    @Autowired
+    private ArticleParticipantService articleParticipantService;
 
     /**
      * <p>查找知识库下的文章目录信息,业务相关有如下几点
@@ -102,22 +107,24 @@ public class ArticleServiceImpl implements ArticleService {
         KnowledgeEntity knowledgeEntity = knowledgeRepository.findByIdAndIsDelete(articleEntity.getKnowledge().getId(),
                 IsDeleteEnum.NOTDELETE.getValue());
         if (Objects.isNull(knowledgeEntity)) {
-            throw new BusinessException("知识库不存在");
+            throw new BusinessException("请在指定的知识库下增加文章");
         }
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
-        if (!Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
-            boolean exist = participantRepository.existsByKnowledgeIdAndParticipantId(articleEntity.getKnowledge().getId(),
-                    user.getId());
-            if (!exist) {
-                throw new BusinessException("当前用户没有加入该知识库，无法新增文章");
-            }
+        boolean exist = participantRepository.existsByKnowledgeIdAndParticipantId(
+                articleEntity.getKnowledge().getId(), user.getId());
+        if (!Objects.equals(knowledgeEntity.getCreator().getId(), user.getId())
+                && !exist) {
+            throw new BusinessException("当前用户没有加入该知识库，无法新增文章");
         }
         articleEntity.setPostTime(new Date());
         articleEntity.setAuthor(user);
         articleEntity.setCreator(user);
         articleEntity = articleRepository.save(articleEntity);
+        // 新增一篇文章就对知识库做了修改，需要更新数据库的修改时间，来用于知识库页面的知识库列表排序
+        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeRepository.save(knowledgeEntity);
         recentEditService.saveRecentEditRecord(user.getId(), articleEntity, knowledgeEntity);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.ADD.getValue(), ObjTypeEnum.ARTICLE.getValue(),
+        operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.ARTICLE.getValue(),
                 articleEntity.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
         return articleEntity;
     }
@@ -163,33 +170,37 @@ public class ArticleServiceImpl implements ArticleService {
         KnowledgeEntity knowledgeEntity = knowledgeRepository.findByIdAndIsDelete(articleEntity.getKnowledge().getId(),
                 IsDeleteEnum.NOTDELETE.getValue());
         if (Objects.isNull(knowledgeEntity)) {
-            throw new BusinessException("知识库不存在");
+            throw new BusinessException("所修改的文章不在任何知识库下");
         }
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
-        if (!Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
-            boolean exist = participantRepository.existsByKnowledgeIdAndParticipantId(articleEntity.getKnowledge().getId(),
-                    user.getId());
-            if (!exist) {
-                throw new BusinessException("当前用户没有加入该知识库，无法编辑文章");
-            }
-        }
+
         Optional<ArticleEntity> articleEntityOp = articleRepository.findById(articleEntity.getId());
         if (!articleEntityOp.isPresent()) {
             throw new BusinessException("所修改的文章不存在");
         }
         ArticleEntity origin = articleEntityOp.get();
-        // 修改人和文章的创建人是否是同一个人
-        if (!Objects.equals(origin.getCreator().getId(), user.getId())) {
+        // 修改人和文章的创建人是否是同一个人或者是知识库拥有者
+        if (!Objects.equals(origin.getAuthor().getId(), user.getId())
+                && !Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
             throw new BusinessException("没有权限修改其他人文章");
         }
         CmsBeanUtils.copyMorNULLProperties(articleEntity, origin);
         origin.setUpdateTime(new Date());
         origin.setUpdator(user);
         articleRepository.save(origin);
-        articleEntity.setId(origin.getId());
+        // 更新知识库日期来在知识库列表中根据更新时间排序
+        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeRepository.save(knowledgeEntity);
+        // 如果修改其他人的文章需要添加参与者，以及发送消息给文章创建者
+        if (!Objects.equals(origin.getAuthor().getId(), user.getId())) {
+            articleParticipantService.addArticleParticipant(origin.getId(), user);
+            // TODO 发通知给文章创建者
+        }
         recentEditService.saveRecentEditRecord(user.getId(), origin, knowledgeEntity);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.EDIT.getValue(), ObjTypeEnum.ARTICLE.getValue(),
-                articleEntity.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
+        operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.ARTICLE.getValue(),
+                origin.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
+
+        articleEntity.setId(origin.getId());
         return articleEntity;
     }
 
@@ -204,16 +215,10 @@ public class ArticleServiceImpl implements ArticleService {
         KnowledgeEntity knowledgeEntity = knowledgeRepository.findByIdAndIsDelete(articleEntity.getKnowledge().getId(),
                 IsDeleteEnum.NOTDELETE.getValue());
         if (Objects.isNull(knowledgeEntity)) {
-            throw new BusinessException("知识库不存在");
+            throw new BusinessException("所修改的文章不在任何知识库下");
         }
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
-        if (!Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
-            boolean exist = participantRepository.existsByKnowledgeIdAndParticipantId(articleEntity.getKnowledge().getId(),
-                    user.getId());
-            if (!exist) {
-                throw new BusinessException("当前用户没有加入该知识库，无法编辑文章");
-            }
-        }
+
         Optional<ArticleEntity> articleEntityOp = articleRepository.findById(articleEntity.getId());
         if (!articleEntityOp.isPresent()) {
             throw new BusinessException("所修改的文章不存在");
@@ -223,29 +228,65 @@ public class ArticleServiceImpl implements ArticleService {
         origin.setUpdateTime(new Date());
         origin.setUpdator(user);
         articleRepository.save(origin);
-        articleEntity.setId(origin.getId());
+        // 更新知识库日期来在知识库列表中根据更新时间排序
+        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeRepository.save(knowledgeEntity);
+        // 如果修改其他人的文章需要添加参与者，以及发送消息给文章创建者
+        if (!Objects.equals(origin.getAuthor().getId(), user.getId())) {
+            articleParticipantService.addArticleParticipant(origin.getId(), user);
+            // TODO 发通知给文章创建者
+        }
         recentEditService.saveRecentEditRecord(user.getId(), origin, knowledgeEntity);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.EDIT.getValue(), ObjTypeEnum.ARTICLE.getValue(),
-                articleEntity.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
+        operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.ARTICLE.getValue(),
+                origin.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
+
+        articleEntity.setId(origin.getId());
         return articleEntity;
     }
 
+    /**
+     * 1.删除知识库下的文章，如果操作用户不是拥有共享文章删除权限或者知识库拥有者，则没有权限删除别人的文章
+     * 2.需要移除该文章的所有参与者
+     * 3.移除该文章在最近编辑表中的及记录
+     * 4.需要增加一条操作记录
+     *
+     * @param articleId 文章ID
+     * @return 知识库下第一篇文章内容
+     */
     @Override
     public ArticleDTO deleteArticle(Integer articleId) {
         Optional<ArticleEntity> articleEntityOp =  articleRepository.findById(articleId);
         if (!articleEntityOp.isPresent()) {
             throw new BusinessException("要删除的文章不存在");
         }
-        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         ArticleEntity articleEntity = articleEntityOp.get();
-        if (!Objects.equals(user.getId(), articleEntity.getCreator().getId())) {
+        KnowledgeEntity knowledgeEntity = knowledgeRepository.
+                findByIdAndIsDelete(articleEntity.getKnowledge().getId(), IsDeleteEnum.NOTDELETE.getValue());
+        if (Objects.isNull(knowledgeEntity)) {
+            throw new BusinessException("需要删除的文章不在任何知识库下");
+        }
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        if (!Objects.equals(user.getId(), articleEntity.getCreator().getId())
+                && !Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
             throw new BusinessException("没有权限删除其他人的文章");
         }
+
         articleEntity.setUpdateTime(new Date());
         articleEntity.setUpdator(user);
         articleEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         articleRepository.save(articleEntity);
+        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeRepository.save(knowledgeEntity);
+
+        if (!Objects.equals(user.getId(), articleEntity.getCreator().getId())) {
+            // TODO 发送通知给文章创建者
+        }
+
+        articleParticipantService.removeAllArticleParticipantInArticle(articleId);
         recentEditService.removeRecentArticleRecord(articleId);
+        operRecordService.recordCommonOperation(user, OperTypeEnum.DEL.getValue(), ObjTypeEnum.ARTICLE.getValue(),
+                articleEntity.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId(), articleEntity.getArticleTitle());
+
         articleEntity = articleRepository.findFirstByKnowledgeIdAndIsDeleteOrderByPostTimeAsc(
                 articleEntity.getKnowledge().getId(), IsDeleteEnum.NOTDELETE.getValue());
         ArticleDTO articleDTO = new ArticleDTO();
@@ -259,20 +300,34 @@ public class ArticleServiceImpl implements ArticleService {
         if (!articleEntityOp.isPresent()) {
             throw new BusinessException("要删除的文章不存在");
         }
-        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         ArticleEntity articleEntity = articleEntityOp.get();
+        KnowledgeEntity knowledgeEntity = knowledgeRepository.
+                findByIdAndIsDelete(articleEntity.getKnowledge().getId(), IsDeleteEnum.NOTDELETE.getValue());
+        if (Objects.isNull(knowledgeEntity)) {
+            throw new BusinessException("需要删除的文章不在任何知识库下");
+        }
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+
         articleEntity.setUpdateTime(new Date());
         articleEntity.setUpdator(user);
         articleEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         articleRepository.save(articleEntity);
+        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeRepository.save(knowledgeEntity);
+
+        if (!Objects.equals(user.getId(), articleEntity.getCreator().getId())) {
+            // TODO 发送通知给文章创建者
+        }
+
+        articleParticipantService.removeAllArticleParticipantInArticle(articleId);
         recentEditService.removeRecentArticleRecord(articleId);
-        // TODO 发通知给创建者
+        operRecordService.recordCommonOperation(user, OperTypeEnum.DEL.getValue(), ObjTypeEnum.ARTICLE.getValue(),
+                articleEntity.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId(), articleEntity.getArticleTitle());
+
         articleEntity = articleRepository.findFirstByKnowledgeIdAndIsDeleteOrderByPostTimeAsc(
                 articleEntity.getKnowledge().getId(), IsDeleteEnum.NOTDELETE.getValue());
-        ArticleDTO articleDTO =  new ArticleDTO();
-        if (Objects.nonNull(articleEntity)) {
-            articleDTO.setId(articleEntity.getId());
-        }
+        ArticleDTO articleDTO = new ArticleDTO();
+        articleDTO.setId(articleEntity.getId());
         return articleDTO;
     }
 
@@ -282,9 +337,9 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setArticleTitle(articleEntity.getArticleTitle());
         articleDTO.setContent(articleEntity.getContent());
         articleDTO.setPostTime(articleEntity.getPostTime());
-        articleDTO.setCategoryName(articleEntity.getKnowledge().getkType().getCategoryName());
-        articleDTO.setCategoryId(articleEntity.getKnowledge().getkType().getId());
+        articleDTO.setCategoryName(articleEntity.getKnowledge().getKType().getCategoryName());
+        articleDTO.setCategoryId(articleEntity.getKnowledge().getKType().getId());
         articleDTO.setKnowledgeId(articleEntity.getKnowledge().getId());
-        articleDTO.setKnowledgeName(articleEntity.getKnowledge().getkName());
+        articleDTO.setKnowledgeName(articleEntity.getKnowledge().getKName());
     }
 }

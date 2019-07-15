@@ -14,12 +14,19 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
 
     KnowledgeEntity findByIdAndIsDelete(Integer knowledgeId, String isDelete);
 
-    @Query(nativeQuery = true, value="SELECT knowledgee.* FROM knowledge knowledgee LEFT JOIN participant participant " +
+    @Query(nativeQuery = true, value="SELECT knowledgee.id FROM knowledge knowledgee LEFT JOIN participant participant " +
             "ON knowledgee.id = participant.knowledge_id WHERE (knowledgee.creator = :userId OR participant.participant_id in (:userId))" +
             "AND knowledgee.is_delete = :isDelete " +
             "UNION " +
-            "SELECT knowledge.* FROM knowledge knowledge JOIN participant participant ON knowledge.id = participant.knowledge_id\n" +
+            "SELECT knowledge.id FROM knowledge knowledge JOIN participant participant ON knowledge.id = participant.knowledge_id " +
             "WHERE participant.participant_id IN (:userId) AND knowledge.is_delete = :isDelete")
-    List<KnowledgeEntity> findAllByKParticipantInAndIsDelete(@Param("userId") Integer userId, @Param("isDelete") String isDelete);
+    List<Integer> findAllByKParticipantInAndIsDelete(@Param("userId") Integer userId, @Param("isDelete") String isDelete);
+
+
+    @Query(nativeQuery = true, value="SELECT DISTINCT knowledgee.* FROM knowledge knowledgee " +
+            "LEFT JOIN participant participant ON knowledgee.id = participant.knowledge_id " +
+            "WHERE ( knowledgee.creator = :userId OR participant.participant_id = :userId ) AND knowledgee.is_delete = :isDelete " +
+            "ORDER BY knowledgee.update_time DESC")
+    List<KnowledgeEntity> findAllKnowledgeByKParticipantInAndIsDelete(@Param("userId") Integer userId, @Param("isDelete") String isDelete);
 
 }

@@ -1,9 +1,9 @@
 package org.yingzuidou.platform.blog.service;
 
+import org.yingzuidou.platform.blog.dto.RecentArticleDTO;
 import org.yingzuidou.platform.blog.dto.RecentKnowledgeDTO;
 import org.yingzuidou.platform.common.entity.ArticleEntity;
 import org.yingzuidou.platform.common.entity.KnowledgeEntity;
-import org.yingzuidou.platform.common.entity.RecentEditEntity;
 
 import java.util.List;
 
@@ -13,7 +13,13 @@ public interface RecentEditService {
 
     void removeRecentArticleRecord(Integer articleId);
 
-    List<RecentEditEntity> listRecentArticle(int id);
+    /**
+     * 获取指定用户最近编辑的文章列表
+     *
+     * @param num 指定返回的文章个数，这里是6条
+     * @return 返回6条改用户最近编辑的文章
+     */
+    List<RecentArticleDTO> listRecentArticle(Integer num);
 
     /**
      * 获取指定用户最近编辑的知识库数量

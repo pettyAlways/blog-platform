@@ -31,4 +31,6 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
 
 
     ArticleEntity findFirstByKnowledgeIdAndIsDeleteOrderByPostTimeAsc(Integer knowledgeId, String isDelete);
+
+    boolean existsByKnowledgeIdAndIsDelete(Integer knowledgeId, String isDelete);
 }

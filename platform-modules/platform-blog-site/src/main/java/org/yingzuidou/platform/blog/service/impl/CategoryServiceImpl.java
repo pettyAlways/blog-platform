@@ -86,6 +86,8 @@ public class CategoryServiceImpl implements CategoryService {
         categoryEntity.setUpdateTime(new Date());
         categoryEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         categoryRepository.save(categoryEntity);
+        operRecordService.recordCommonOperation(user, OperTypeEnum.DEL.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                null, RootEnum.CATEGORY.getValue(), categoryEntity.getCategoryName());
     }
 
     @Override
@@ -108,8 +110,8 @@ public class CategoryServiceImpl implements CategoryService {
         target.setUpdator(user.getId());
         target.setUpdateTime(new Date());
         categoryRepository.save(target);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.EDIT.getValue(), ObjTypeEnum.CATEGORY.getValue(),
-                target.getId(), target.getCategoryName());
+        operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                target.getId(), RootEnum.CATEGORY.getValue(), target.getCategoryName());
     }
 
     /**
@@ -136,8 +138,9 @@ public class CategoryServiceImpl implements CategoryService {
         categoryEntity.setCreator(user.getId());
         categoryEntity.setCreateTime(new Date());
         categoryEntity = categoryRepository.save(categoryEntity);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.ADD.getValue(), ObjTypeEnum.CATEGORY.getValue(),
-                categoryEntity.getId(), null, null);
+        operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                categoryEntity.getId(), RootEnum.CATEGORY.getValue(), "");
+
     }
 
     @Override
@@ -156,6 +159,8 @@ public class CategoryServiceImpl implements CategoryService {
         categoryEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         categoryRepository.save(categoryEntity);
         // TODO: 如果删除了别人的分类，需要发送一个通知给创建人
+        operRecordService.recordCommonOperation(user, OperTypeEnum.DEL.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                null, RootEnum.CATEGORY.getValue(), categoryEntity.getCategoryName());
     }
 
     @Override
@@ -175,7 +180,7 @@ public class CategoryServiceImpl implements CategoryService {
         target.setUpdator(user.getId());
         target.setUpdateTime(new Date());
         categoryRepository.save(target);
-        operRecordService.recordCommonOperation(user.getId(), OperTypeEnum.EDIT.getValue(), ObjTypeEnum.CATEGORY.getValue(),
-                target.getId(), target.getCategoryName());
+        operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.CATEGORY.getValue(),
+                target.getId(), RootEnum.CATEGORY.getValue(), target.getCategoryName());
     }
 }
