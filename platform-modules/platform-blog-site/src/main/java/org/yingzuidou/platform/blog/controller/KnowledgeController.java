@@ -50,10 +50,47 @@ public class KnowledgeController {
         return CmsMap.ok();
     }
 
+    @PutMapping("/update")
+    public CmsMap updateKnowledge(@RequestBody KnowledgeEntity knowledgeEntity) {
+        knowledgeService.editKnowledge(knowledgeEntity);
+        return CmsMap.ok();
+    }
+
+    @PutMapping("/share/update")
+    public CmsMap updateShareKnowledge(@RequestBody KnowledgeEntity knowledgeEntity) {
+        knowledgeService.editShareKnowledge(knowledgeEntity);
+        return CmsMap.ok();
+    }
+
+    @DeleteMapping("/remove")
+    public CmsMap removeKnowledge(@RequestParam Integer knowledgeId) {
+        knowledgeService.removeKnowledge(knowledgeId);
+        return CmsMap.ok();
+    }
+
+    @DeleteMapping("/share/remove")
+    public CmsMap removeShareKnowledge(@RequestParam Integer knowledgeId) {
+        knowledgeService.removeShareKnowledge(knowledgeId);
+        return CmsMap.ok();
+    }
+
     @PutMapping("/removeParticipant")
     public CmsMap removeParticipant(@RequestParam("participantId") Integer uId, @RequestParam("knowledgeId") Integer kId ) {
         knowledgeService.removeParticipant(uId, kId);
         return CmsMap.ok();
     }
+
+    @PutMapping("/share/removeParticipant")
+    public CmsMap removeShareParticipant(@RequestParam("participantId") Integer uId, @RequestParam("knowledgeId") Integer kId ) {
+        knowledgeService.removeShareParticipant(uId, kId);
+        return CmsMap.ok();
+    }
+
+    @GetMapping("/belongs/mine")
+    public CmsMap<List<KnowledgeDTO>> retrieveParicipantKnowledge() {
+        List<KnowledgeDTO> knowledgeDTOS = knowledgeService.retrieveParticipantKnowledge();
+        return CmsMap.<List<KnowledgeDTO>>ok().setResult(knowledgeDTOS);
+    }
+
 
 }

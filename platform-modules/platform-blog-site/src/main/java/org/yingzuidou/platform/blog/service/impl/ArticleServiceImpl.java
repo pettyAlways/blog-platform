@@ -7,13 +7,9 @@ import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.constant.IsDeleteEnum;
 import org.yingzuidou.platform.blog.dao.*;
 import org.yingzuidou.platform.blog.dto.ArticleDTO;
-import org.yingzuidou.platform.blog.service.ArticleParticipantService;
-import org.yingzuidou.platform.blog.service.ArticleService;
-import org.yingzuidou.platform.blog.service.OperRecordService;
-import org.yingzuidou.platform.blog.service.RecentEditService;
-import org.yingzuidou.platform.common.constant.ObjTypeEnum;
-import org.yingzuidou.platform.common.constant.OperTypeEnum;
-import org.yingzuidou.platform.common.constant.RootEnum;
+import org.yingzuidou.platform.blog.service.*;
+import org.yingzuidou.platform.blog.websocket.BlogSocket;
+import org.yingzuidou.platform.common.constant.*;
 import org.yingzuidou.platform.common.entity.ArticleEntity;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.entity.KnowledgeEntity;
@@ -57,6 +53,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleParticipantService articleParticipantService;
 
+    @Autowired
+    private MessageService messageService;
+
     /**
      * <p>查找知识库下的文章目录信息,业务相关有如下几点
      * <ul>
@@ -86,10 +85,10 @@ public class ArticleServiceImpl implements ArticleService {
 
         return Optional.ofNullable(articleEntities).orElse(new ArrayList<>()).stream().map(item -> {
             ArticleDTO articleDTO = new ArticleDTO();
-            articleDTO.setId(item.getId());
-            articleDTO.setArticleTitle(item.getArticleTitle());
-            articleDTO.setCreateName(item.getCreator().getUserName());
-            articleDTO.setPostTime(item.getPostTime());
+            articleDTO.setCreateName(item.getCreator().getUserName())
+                    .setKnowledgeCreator(item.getKnowledge().getCreator().getId())
+                    .setCreatorId(item.getCreator().getId())
+                    .setId(item.getId()).setArticleTitle(item.getArticleTitle()).setPostTime(item.getPostTime());
             return articleDTO;
         }).collect(Collectors.toList());
     }
@@ -119,9 +118,10 @@ public class ArticleServiceImpl implements ArticleService {
         articleEntity.setPostTime(new Date());
         articleEntity.setAuthor(user);
         articleEntity.setCreator(user);
+        articleEntity.setCreateTime(new Date());
         articleEntity = articleRepository.save(articleEntity);
         // 新增一篇文章就对知识库做了修改，需要更新数据库的修改时间，来用于知识库页面的知识库列表排序
-        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeEntity.setEditTime(new Date());
         knowledgeRepository.save(knowledgeEntity);
         recentEditService.saveRecentEditRecord(user.getId(), articleEntity, knowledgeEntity);
         operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.ARTICLE.getValue(),
@@ -148,7 +148,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
         ArticleDTO articleDTO = new ArticleDTO();
         articleTransformDTO(articleEntity, articleDTO);
-
+        articleDTO.setParticipantList(articleEntity.getParticipantList());
         return articleDTO;
     }
 
@@ -184,17 +184,18 @@ public class ArticleServiceImpl implements ArticleService {
                 && !Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
             throw new BusinessException("没有权限修改其他人文章");
         }
+        String oldTitle = origin.getArticleTitle();
         CmsBeanUtils.copyMorNULLProperties(articleEntity, origin);
         origin.setUpdateTime(new Date());
         origin.setUpdator(user);
         articleRepository.save(origin);
         // 更新知识库日期来在知识库列表中根据更新时间排序
-        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeEntity.setEditTime(new Date());
         knowledgeRepository.save(knowledgeEntity);
         // 如果修改其他人的文章需要添加参与者，以及发送消息给文章创建者
         if (!Objects.equals(origin.getAuthor().getId(), user.getId())) {
             articleParticipantService.addArticleParticipant(origin.getId(), user);
-            // TODO 发通知给文章创建者
+            noticeArticleEdit(knowledgeEntity, user, origin, oldTitle);
         }
         recentEditService.saveRecentEditRecord(user.getId(), origin, knowledgeEntity);
         operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.ARTICLE.getValue(),
@@ -224,17 +225,18 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BusinessException("所修改的文章不存在");
         }
         ArticleEntity origin = articleEntityOp.get();
+        String oldTitle = origin.getArticleTitle();
         CmsBeanUtils.copyMorNULLProperties(articleEntity, origin);
         origin.setUpdateTime(new Date());
         origin.setUpdator(user);
         articleRepository.save(origin);
         // 更新知识库日期来在知识库列表中根据更新时间排序
-        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeEntity.setEditTime(new Date());
         knowledgeRepository.save(knowledgeEntity);
         // 如果修改其他人的文章需要添加参与者，以及发送消息给文章创建者
         if (!Objects.equals(origin.getAuthor().getId(), user.getId())) {
             articleParticipantService.addArticleParticipant(origin.getId(), user);
-            // TODO 发通知给文章创建者
+            noticeArticleEdit(knowledgeEntity, user, origin, oldTitle);
         }
         recentEditService.saveRecentEditRecord(user.getId(), origin, knowledgeEntity);
         operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.ARTICLE.getValue(),
@@ -275,11 +277,11 @@ public class ArticleServiceImpl implements ArticleService {
         articleEntity.setUpdator(user);
         articleEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         articleRepository.save(articleEntity);
-        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeEntity.setEditTime(new Date());
         knowledgeRepository.save(knowledgeEntity);
 
-        if (!Objects.equals(user.getId(), articleEntity.getCreator().getId())) {
-            // TODO 发送通知给文章创建者
+        if (!Objects.equals(user.getId(), articleEntity.getAuthor().getId())) {
+            noticeArticleDelete(knowledgeEntity, user,  articleEntity, articleEntity.getArticleTitle());
         }
 
         articleParticipantService.removeAllArticleParticipantInArticle(articleId);
@@ -312,11 +314,11 @@ public class ArticleServiceImpl implements ArticleService {
         articleEntity.setUpdator(user);
         articleEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         articleRepository.save(articleEntity);
-        knowledgeEntity.setUpdateTime(new Date());
+        knowledgeEntity.setEditTime(new Date());
         knowledgeRepository.save(knowledgeEntity);
 
-        if (!Objects.equals(user.getId(), articleEntity.getCreator().getId())) {
-            // TODO 发送通知给文章创建者
+        if (!Objects.equals(user.getId(), articleEntity.getAuthor().getId())) {
+            noticeArticleDelete(knowledgeEntity, user,  articleEntity, articleEntity.getArticleTitle());
         }
 
         articleParticipantService.removeAllArticleParticipantInArticle(articleId);
@@ -331,6 +333,35 @@ public class ArticleServiceImpl implements ArticleService {
         return articleDTO;
     }
 
+    /**
+     * 将文章复制到指定的知识库下面
+     *
+     * @param articleId 目标文章ID
+     * @param knowledgeId 目的知识库ID
+     */
+    @Override
+    public void copyTo(Integer articleId, Integer knowledgeId) {
+        Optional<KnowledgeEntity> knowledgeEntityOp = knowledgeRepository.findById(knowledgeId);
+        if (!knowledgeEntityOp.isPresent()) {
+            throw new BusinessException("文章无法复制,目标知识库不存在");
+        }
+        Optional<ArticleEntity> articleEntityOp = articleRepository.findById(articleId);
+        if (!articleEntityOp.isPresent()) {
+            throw new BusinessException("文章不存在，无法复制");
+        }
+        KnowledgeEntity knowledgeEntity = knowledgeEntityOp.get();
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        ArticleEntity origin = articleEntityOp.get();
+        ArticleEntity copy = new ArticleEntity();
+        copy.setArticleTitle(origin.getArticleTitle()).setContent(origin.getContent()).setAuthor(user)
+                .setPostTime(new Date()).setCreator(user).setCreateTime(new Date()).setKnowledge(knowledgeEntity)
+                .setUpdateTime(new Date());
+        copy = articleRepository.save(copy);
+        recentEditService.saveRecentEditRecord(user.getId(), copy, knowledgeEntity);
+        operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.ARTICLE.getValue(),
+                copy.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
+    }
+
     private void articleTransformDTO(ArticleEntity articleEntity, ArticleDTO articleDTO) {
         articleDTO.setCreateName(articleEntity.getAuthor().getUserName());
         articleDTO.setCreatorId(articleEntity.getAuthor().getId());
@@ -341,5 +372,28 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setCategoryId(articleEntity.getKnowledge().getKType().getId());
         articleDTO.setKnowledgeId(articleEntity.getKnowledge().getId());
         articleDTO.setKnowledgeName(articleEntity.getKnowledge().getKName());
+    }
+
+    private void noticeArticleEdit(KnowledgeEntity knowledgeEntity, CmsUserEntity user, ArticleEntity origin, String oldTitle) {
+        String message = String.format("%s在知识库[%s]下修改了您的文章《%s》,请尽快核实内容", user.getUserName(),
+                knowledgeEntity.getKName(), oldTitle);
+        Map<String, Integer> map = new HashMap<>(3);
+        map.put("articleId", origin.getId());
+        map.put("knowledgeId", knowledgeEntity.getId());
+        messageService.addMessage(MessageTypeEnum.ARTICLEEDIT.getValue(), message, origin.getAuthor().getId(),
+                CmsBeanUtils.beanToJson(map));
+        Integer counts = messageService.countOfMessage(origin.getAuthor().getId());
+        BlogSocket.sendSpecifyUserMsg(origin.getAuthor().getId(), WebSocketTypeEnum.NOTICE, counts);
+    }
+
+    private void noticeArticleDelete(KnowledgeEntity knowledgeEntity, CmsUserEntity user, ArticleEntity origin, String oldTitle) {
+        String message = String.format("%s在知识库[%s]下删除了您的文章《%s》,请尽快核实内容", user.getUserName(),
+                knowledgeEntity.getKName(), oldTitle);
+        Map<String, Integer> map = new HashMap<>(1);
+        map.put("knowledgeId", knowledgeEntity.getId());
+        messageService.addMessage(MessageTypeEnum.ARTICLEDEL.getValue(), message, origin.getAuthor().getId(),
+                CmsBeanUtils.beanToJson(map));
+        Integer counts = messageService.countOfMessage(origin.getAuthor().getId());
+        BlogSocket.sendSpecifyUserMsg(origin.getAuthor().getId(), WebSocketTypeEnum.NOTICE, counts);
     }
 }

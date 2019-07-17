@@ -81,4 +81,11 @@ public class ArticleController {
         ArticleDTO articleDTO = articleService.deleteShareArticle(articleId);
         return CmsMap.<ArticleDTO>ok().setResult(articleDTO);
     }
+
+    @PostMapping("/copy")
+    public CmsMap copyArticleToOtherKnowledge(@RequestParam("knowledgeId") Integer knowledgeId,
+                                              @RequestParam("articleId") Integer articleId) {
+        articleService.copyTo(articleId, knowledgeId);
+        return CmsMap.ok();
+    }
 }

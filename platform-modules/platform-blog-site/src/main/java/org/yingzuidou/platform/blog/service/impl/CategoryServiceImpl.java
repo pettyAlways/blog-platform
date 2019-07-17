@@ -10,12 +10,14 @@ import org.yingzuidou.platform.blog.dao.OperRecordRepository;
 import org.yingzuidou.platform.blog.dao.UserRepository;
 import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.blog.service.CategoryService;
+import org.yingzuidou.platform.blog.service.KnowledgeService;
+import org.yingzuidou.platform.blog.service.MessageService;
 import org.yingzuidou.platform.blog.service.OperRecordService;
-import org.yingzuidou.platform.common.constant.ObjTypeEnum;
-import org.yingzuidou.platform.common.constant.OperTypeEnum;
-import org.yingzuidou.platform.common.constant.RootEnum;
+import org.yingzuidou.platform.blog.websocket.BlogSocket;
+import org.yingzuidou.platform.common.constant.*;
 import org.yingzuidou.platform.common.entity.CategoryEntity;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.KnowledgeEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
@@ -26,7 +28,6 @@ import java.util.stream.Collectors;
  * 类功能描述
  * 分类服务实现类，做分类常见的增删改查功能操作，这部分功能是提供用户操作的，所以需要考虑数据的安全性与可恢复性
  *
- * <p><note>今天2019年7月3号是我三十而立de日子，时间过得真快啊</note>
  * @author 鹰嘴豆
  * @date 2019/7/3
  * <p>
@@ -44,6 +45,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private OperRecordService operRecordService;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private KnowledgeService knowledgeService;
 
     /**
      * 获取所有的分类包括不可用资源,jpa的多表查询结果转换成CategoryDTO非常的麻烦，因此这里暂时使用一次一个查询
@@ -81,6 +88,9 @@ public class CategoryServiceImpl implements CategoryService {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         if (!Objects.equals(categoryEntity.getCreator(), user.getId())) {
             throw new BusinessException("没有权限删除其他人的分类");
+        }
+        if (knowledgeService.stillUsingCategory(categoryId)) {
+            throw new BusinessException("分类还被其他知识库引用，请先修改这些知识库的分类");
         }
         categoryEntity.setUpdator(user.getId());
         categoryEntity.setUpdateTime(new Date());
@@ -125,7 +135,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new BusinessException("请传递完整的分类信息");
         }
         List<CategoryEntity> categoryEntities = categoryRepository
-                .findAllByCategoryName(categoryEntity.getCategoryName());
+                .findAllByCategoryNameAndIsDelete(categoryEntity.getCategoryName(), IsDeleteEnum.NOTDELETE.getValue());
 
         if (categoryEntities.size() > 0) {
             if (Objects.equals(categoryEntities.get(0).getInUse(), InUseEnum.NONUSE.getValue())) {
@@ -152,13 +162,18 @@ public class CategoryServiceImpl implements CategoryService {
         if (!categoryEntityOp.isPresent()) {
             throw new BusinessException("指定分类[" + categoryId+ "]不存在");
         }
+        if (knowledgeService.stillUsingCategory(categoryId)) {
+            throw new BusinessException("分类还被其他知识库引用，请先修改这些知识库的分类");
+        }
         CategoryEntity categoryEntity = categoryEntityOp.get();
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         categoryEntity.setUpdator(user.getId());
         categoryEntity.setUpdateTime(new Date());
         categoryEntity.setIsDelete(IsDeleteEnum.DELETE.getValue());
         categoryRepository.save(categoryEntity);
-        // TODO: 如果删除了别人的分类，需要发送一个通知给创建人
+        if (!Objects.equals(categoryEntity.getCreator(), user.getId())) {
+            noticeKnowledgeDel(categoryEntity, user, categoryEntity.getCreator());
+        }
         operRecordService.recordCommonOperation(user, OperTypeEnum.DEL.getValue(), ObjTypeEnum.CATEGORY.getValue(),
                 null, RootEnum.CATEGORY.getValue(), categoryEntity.getCategoryName());
     }
@@ -180,7 +195,24 @@ public class CategoryServiceImpl implements CategoryService {
         target.setUpdator(user.getId());
         target.setUpdateTime(new Date());
         categoryRepository.save(target);
+        if (!Objects.equals(target.getCreator(), user.getId())) {
+            noticeKnowledgeEdit(target, user, target.getCreator());
+        }
         operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.CATEGORY.getValue(),
                 target.getId(), RootEnum.CATEGORY.getValue(), target.getCategoryName());
+    }
+
+    private void noticeKnowledgeDel(CategoryEntity categoryEntity, CmsUserEntity opUser, Integer userId) {
+        String message = String.format("%s删除了您创建的分类[%s]", opUser.getUserName(),
+                categoryEntity.getCategoryName());
+        messageService.addMessage(MessageTypeEnum.CATEGORYDEL.getValue(), message, userId);
+        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, "new");
+    }
+
+    private void noticeKnowledgeEdit(CategoryEntity categoryEntity, CmsUserEntity opUser, Integer userId) {
+        String message = String.format("%s修改了您创建的分类[%s]的信息", opUser.getUserName(),
+                categoryEntity.getCategoryName());
+        messageService.addMessage(MessageTypeEnum.CATEGORYEDIT.getValue(), message, userId);
+        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, "new");
     }
 }

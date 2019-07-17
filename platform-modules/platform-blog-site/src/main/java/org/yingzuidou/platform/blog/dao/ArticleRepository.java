@@ -27,9 +27,10 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
 
     List<ArticleEntity> findByIdIn(List<Integer> articleId);
 
+    @EntityGraph(value = "Article.Graph", type = EntityGraph.EntityGraphType.FETCH)
     List<ArticleEntity> findFirst6ByKnowledgeIdAndIsDeleteOrderByUpdateTimeDesc(Integer knowledgeId, String isDelete);
 
-
+    @EntityGraph(value = "Article.Graph", type = EntityGraph.EntityGraphType.FETCH)
     ArticleEntity findFirstByKnowledgeIdAndIsDeleteOrderByPostTimeAsc(Integer knowledgeId, String isDelete);
 
     boolean existsByKnowledgeIdAndIsDelete(Integer knowledgeId, String isDelete);

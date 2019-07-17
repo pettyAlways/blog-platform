@@ -54,12 +54,13 @@ public class JwtTokenUtil {
      * @param password 密码
      * @return token
      */
-    public static String  generateToken(Integer userId, String userName, String password, int expires,
-                                       Collection<? extends GrantedAuthority> authorities) {
+    public static String  generateToken(Integer userId, String userName, String userAccount, String password,
+                                        int expires, Collection<? extends GrantedAuthority> authorities) {
         return JWT.create().withIssuer(issuer)
                 .withSubject(subject)
                 .withClaim("userId", userId)
                 .withClaim("userName", userName)
+                .withClaim("userAccount", userAccount)
                 .withClaim("password", password)
                 .withClaim("authorities", JSONObject.toJSONString(authorities))
                 .withIssuedAt(new Date())
@@ -71,12 +72,12 @@ public class JwtTokenUtil {
      * 根据获取到的token校验合法性
      *
      * @param token 外部token
-     * @param userName 用户名
+     * @param userAccount 账号
      * @param password 密码
      */
-    public static void verifyToken(String token, String userName, String password) {
+    public static void verifyToken(String token, String userAccount, String password) {
         JWTVerifier jwtVerifier = JWT.require(algorithm).withIssuer(issuer).withSubject(subject)
-                .withClaim("userName", userName).withClaim("password", password).build();
+                .withClaim("userAccount", userAccount).withClaim("password", password).build();
         try {
             DecodedJWT decoderJWT = jwtVerifier.verify(token);
             System.out.println(decoderJWT);

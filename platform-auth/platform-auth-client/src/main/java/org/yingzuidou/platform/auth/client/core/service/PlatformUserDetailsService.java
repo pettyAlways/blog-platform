@@ -53,7 +53,7 @@ public class    PlatformUserDetailsService implements UserDetailsService {
         List<String> roleNameList = CmsBeanUtils.object2List(cmsMap.get("roleList"), String.class);
         List<GrantedAuthority> grantedAuthorities = roleNameList.stream().map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-        return new JWTUserDetails(user.getId(), user.getUserAccount(), user.getUserPassword(),
+        return new JWTUserDetails(user.getId(),user.getUserName(), user.getUserAccount(), user.getUserPassword(),
                 grantedAuthorities, user.getUserStatus());
     }
 }

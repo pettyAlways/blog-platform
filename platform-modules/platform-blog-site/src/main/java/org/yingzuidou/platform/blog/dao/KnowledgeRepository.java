@@ -26,7 +26,16 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
     @Query(nativeQuery = true, value="SELECT DISTINCT knowledgee.* FROM knowledge knowledgee " +
             "LEFT JOIN participant participant ON knowledgee.id = participant.knowledge_id " +
             "WHERE ( knowledgee.creator = :userId OR participant.participant_id = :userId ) AND knowledgee.is_delete = :isDelete " +
-            "ORDER BY knowledgee.update_time DESC")
+            "ORDER BY knowledgee.edit_time DESC")
     List<KnowledgeEntity> findAllKnowledgeByKParticipantInAndIsDelete(@Param("userId") Integer userId, @Param("isDelete") String isDelete);
 
+    /**
+     * 分类是否还被其他知识库引用
+     *
+     * @param kType 分类ID
+     * @param isDelete 是否删除
+     * @return 是否被其他知识库引用
+     */
+    @Query(nativeQuery = true, value = "SELECT count(*) FROM knowledge k where  k.k_type = :kType AND k.is_delete = :isDelete")
+    Integer findAllByKTypeAndIsDelete(@Param("kType") Integer kType, @Param("isDelete") String isDelete);
 }

@@ -41,7 +41,7 @@ public class PlatformAuthenticationSuccessHandler implements AuthenticationSucce
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
         JWTUserDetails userDetails =  (JWTUserDetails) authentication.getPrincipal();
-        String token = JwtTokenUtil.generateToken(userDetails.getId(), userDetails.getUserName(),
+        String token = JwtTokenUtil.generateToken(userDetails.getId(), userDetails.getUserName(), userDetails.getUserAccount(),
                 userDetails.getUserPassword(), expires, userDetails.getGrantedAuthorities());
         response.setHeader(tokenHeader, tokenHeaderPrefix + token);
         CmsMap result = CmsMap.ok().appendData("authorization", tokenHeaderPrefix + token);

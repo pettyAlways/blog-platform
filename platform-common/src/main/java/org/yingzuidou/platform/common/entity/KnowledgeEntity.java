@@ -8,7 +8,6 @@ import org.hibernate.annotations.NotFoundAction;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 类功能描述
@@ -79,6 +78,10 @@ public class KnowledgeEntity {
     @Basic
     @Column(name = "update_time")
     private Date updateTime;
+
+    @Basic
+    @Column(name = "edit_time")
+    private Date editTime;
 
     @Basic
     @Column(name = "is_delete", insertable = false)

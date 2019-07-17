@@ -65,6 +65,10 @@ public class RecentPostServiceImpl implements RecentPostService {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         List<Integer> knowledgeIdList = knowledgeRepository
                 .findAllByKParticipantInAndIsDelete(user.getId(), IsDeleteEnum.NOTDELETE.getValue());
+        if (knowledgeIdList.isEmpty()) {
+            // 如果不存在知识库则设置一个不可能存在的知识库以便于在下面代码中查找分类的操作记录
+            knowledgeIdList.add(-1);
+        }
         List<OperRecordEntity> operRecordEntities = operRecordRepository.findRecentPost(
                 RootEnum.KNOWLEDGE.getValue(), knowledgeIdList, RootEnum.CATEGORY.getValue());
 

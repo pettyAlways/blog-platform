@@ -1,5 +1,7 @@
 package org.yingzuidou.platform.blog.dto;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.yingzuidou.platform.common.entity.ArticleEntity;
 
 /**
@@ -11,7 +13,8 @@ import org.yingzuidou.platform.common.entity.ArticleEntity;
  * 时间           作者          版本        描述
  * ====================================================
  */
-
+@Data
+@Accessors(chain = true)
 public class ArticleDTO extends ArticleEntity {
 
     private Integer creatorId;
@@ -26,51 +29,6 @@ public class ArticleDTO extends ArticleEntity {
 
     private Integer knowledgeId;
 
-    public String getCreateName() {
-        return createName;
-    }
+    private Integer knowledgeCreator;
 
-    public void setCreateName(String createName) {
-        this.createName = createName;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getKnowledgeName() {
-        return knowledgeName;
-    }
-
-    public void setKnowledgeName(String knowledgeName) {
-        this.knowledgeName = knowledgeName;
-    }
-
-    public Integer getKnowledgeId() {
-        return knowledgeId;
-    }
-
-    public void setKnowledgeId(Integer knowledgeId) {
-        this.knowledgeId = knowledgeId;
-    }
-
-    public Integer getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
-    }
 }

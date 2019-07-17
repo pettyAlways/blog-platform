@@ -1,6 +1,7 @@
 package org.yingzuidou.platform.blog.controller;
 
 import com.netflix.discovery.converters.Auto;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.dto.UserDTO;
+import org.yingzuidou.platform.blog.service.MessageService;
 import org.yingzuidou.platform.blog.service.SysConstService;
 import org.yingzuidou.platform.blog.service.UserRoleService;
 import org.yingzuidou.platform.blog.service.UserService;
@@ -43,6 +45,9 @@ public class UserController {
     @Autowired
     private SysConstService sysConstService;
 
+    @Autowired
+    private MessageService messageService;
+
     @RequestMapping("/loadUser/{userName}")
     public CmsMap loadUserByUserName(@PathVariable String userName) {
         List<String> roleNameList = new ArrayList<>();
@@ -65,6 +70,13 @@ public class UserController {
         Map<String, String> sysConst = sysConstService.listSystemConst(ConstEnum.CONST.getValue());
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         return CmsMap.<UserDTO>ok().appendData("sysConst", sysConst).appendData("curUser", user).setResult(userDTO);
+    }
+
+    @GetMapping("/message")
+    public CmsMap message() {
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        Integer messageCount = messageService.countOfMessage(user.getId());
+        return CmsMap.ok().setResult(messageCount);
     }
 
 }

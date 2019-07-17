@@ -35,4 +35,12 @@ public interface ArticleService {
     ArticleDTO deleteArticle(Integer articleId);
 
     ArticleDTO deleteShareArticle(Integer articleId);
+
+    /**
+     * 将文章复制到指定的知识库下面
+     *
+     * @param articleId 目标文章ID
+     * @param knowledgeId 目的知识库ID
+     */
+    void copyTo(Integer articleId, Integer knowledgeId);
 }

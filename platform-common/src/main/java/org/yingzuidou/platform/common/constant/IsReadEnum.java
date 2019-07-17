@@ -2,23 +2,25 @@ package org.yingzuidou.platform.common.constant;
 
 /**
  * 类功能描述
- * WebSocket发送的数据类型
+ * 消息是否已读
  *
  * @author 鹰嘴豆
- * @date 2018/11/26
+ * @date 2019/7/17
  * <p>
  * 时间           作者          版本        描述
  * ====================================================
  */
-public enum WebSocketTypeEnum {
+public enum IsReadEnum {
 
-    // 心跳包类型
-    HEART("心跳", "heart"),
+    /**
+     * 已读
+     */
+    READ("已读", "Y"),
 
-    NOTICE("通知", "notice"),
-
-    // 账户被锁定
-    TIP("消息提示", "tip");
+    /**
+     * 未读
+     */
+    UNREAD("未读", "N");
 
     /**
      * 用户状态
@@ -30,7 +32,7 @@ public enum WebSocketTypeEnum {
      */
     private String value;
 
-    WebSocketTypeEnum(String key, String value) {
+    IsReadEnum(String key, String value) {
         this.key = key;
         this.value = value;
     }

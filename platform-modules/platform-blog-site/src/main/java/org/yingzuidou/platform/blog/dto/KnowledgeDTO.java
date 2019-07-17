@@ -1,10 +1,11 @@
 package org.yingzuidou.platform.blog.dto;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.yingzuidou.platform.common.entity.ArticleEntity;
 import org.yingzuidou.platform.common.entity.KnowledgeEntity;
 import org.yingzuidou.platform.common.entity.ParticipantEntity;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,6 +17,8 @@ import java.util.List;
  * 时间           作者          版本        描述
  * ====================================================
  */
+@Data
+@Accessors(chain = true)
 public class KnowledgeDTO extends KnowledgeEntity {
 
 
@@ -27,36 +30,4 @@ public class KnowledgeDTO extends KnowledgeEntity {
 
     private List<ParticipantEntity> participantEntities;
 
-
-    public String getShowWay() {
-        return showWay;
-    }
-
-    public void setShowWay(String showWay) {
-        this.showWay = showWay;
-    }
-
-    public String getCreateName() {
-        return createName;
-    }
-
-    public void setCreateName(String createName) {
-        this.createName = createName;
-    }
-
-    public List<ArticleEntity> getArticleEntities() {
-        return articleEntities;
-    }
-
-    public void setArticleEntities(List<ArticleEntity> articleEntities) {
-        this.articleEntities = articleEntities;
-    }
-
-    public List<ParticipantEntity> getParticipantEntities() {
-        return participantEntities;
-    }
-
-    public void setParticipantEntities(List<ParticipantEntity> participantEntities) {
-        this.participantEntities = participantEntities;
-    }
 }

@@ -15,7 +15,7 @@ public interface CategoryRepository extends PagingAndSortingRepository<CategoryE
      * @param categoryName 分类名字
      * @return 同一个分类名字的列表
      */
-    List<CategoryEntity> findAllByCategoryName(String categoryName);
+    List<CategoryEntity> findAllByCategoryNameAndIsDelete(String categoryName, String isDelete);
 
     /**
      * 根据参数是否删除查找所有分类包括未启用分类

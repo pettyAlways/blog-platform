@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 13/07/2019 11:33:09
+ Date: 16/07/2019 15:13:05
 */
 
 SET NAMES utf8mb4;
@@ -34,28 +34,7 @@ CREATE TABLE `article`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `is_delete` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for article_bak
--- ----------------------------
-DROP TABLE IF EXISTS `article_bak`;
-CREATE TABLE `article_bak`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `article_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文章标题',
-  `author_id` int(11) NULL DEFAULT NULL COMMENT '作者',
-  `knowledge_id` int(11) NULL DEFAULT NULL COMMENT '知识库',
-  `post_time` datetime(0) NULL DEFAULT NULL COMMENT '发布时间',
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '文章内容',
-  `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '1.审核中 2.审核不通过',
-  `article_id` int(11) NULL DEFAULT NULL COMMENT '备份的原文章ID',
-  `creator` int(11) NOT NULL COMMENT '创建人',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `updator` int(11) NULL DEFAULT NULL COMMENT '更新人',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  `is_delete` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '是否删除',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 44 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for article_participant
@@ -65,10 +44,6 @@ CREATE TABLE `article_participant`  (
   `id` int(11) NOT NULL COMMENT '主键ID',
   `article_id` int(11) NULL DEFAULT NULL COMMENT '文章ID',
   `user_id` int(11) NULL DEFAULT NULL COMMENT '协作者ID',
-  `creator` int(11) NOT NULL COMMENT '创建人',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `updator` int(11) NULL DEFAULT NULL COMMENT '更新人',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -103,7 +78,7 @@ CREATE TABLE `category`  (
   `updator` int(11) NULL DEFAULT NULL COMMENT '修改人',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cms_const
@@ -153,13 +128,14 @@ CREATE TABLE `cms_user`  (
   `lock_time` datetime(0) NULL DEFAULT NULL COMMENT '锁住时间',
   `login_time` datetime(0) NULL DEFAULT NULL COMMENT '登录时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cms_user
 -- ----------------------------
-INSERT INTO `cms_user` VALUES (1, '超级管理员', '0', 'admin', '5684995729a64824ce148c0fd50c1037', '1', '', '', 1, 0, '2019-06-27 09:34:54', 3, NULL, 'N', '9ddac78c1ddf4301a3bc31d721ebc5a7', NULL, '2019-07-11 11:14:57');
+INSERT INTO `cms_user` VALUES (1, '超级管理员', '0', 'admin', '5684995729a64824ce148c0fd50c1037', '1', '', '', 1, 0, '2019-06-27 09:34:54', 3, NULL, 'N', '9ddac78c1ddf4301a3bc31d721ebc5a7', NULL, '2019-07-14 13:50:07');
 INSERT INTO `cms_user` VALUES (2, '鹰嘴豆', '0', 'yingzuidou', 'ef134caf30177d95a43d6f9b7a244614', '1', '18268873650', 'shangguanls1990@gmail.com', 1, 1, '2019-06-27 09:57:39', NULL, NULL, 'N', 'e1ba5e75b0b8488583d65b93c3f01923', NULL, '2019-07-03 02:38:14');
+INSERT INTO `cms_user` VALUES (3, '混蛋羊', '0', 'fuckyang', '94d72f4ccd8209714caad6aa5071164d', '1', '', '', 1, 1, '2019-07-13 05:46:14', NULL, NULL, 'N', '0a392ec83d7043bc9db241c97bfd1374', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for knowledge
@@ -180,7 +156,7 @@ CREATE TABLE `knowledge`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `is_delete` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for oper_record
@@ -195,10 +171,11 @@ CREATE TABLE `oper_record`  (
   `handle_result` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '处理结果：1.通过，2.不通过',
   `obj_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '对象类型：1.知识库，2.文章，3.分类，4.用户',
   `obj` int(255) NULL DEFAULT NULL COMMENT '操作对象ID',
-  `root_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '根类型：1.知识库',
+  `root_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '根类型：1.知识库, 2.分类',
   `root_obj` int(1) NULL DEFAULT NULL COMMENT '根对象ID',
+  `reserve` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '预留字段',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 69 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for organization
@@ -235,7 +212,20 @@ CREATE TABLE `participant`  (
   `updator` int(11) NULL DEFAULT NULL COMMENT '更新人',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for recent_edit
+-- ----------------------------
+DROP TABLE IF EXISTS `recent_edit`;
+CREATE TABLE `recent_edit`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `user_id` int(11) NULL DEFAULT NULL COMMENT '操作人',
+  `article_id` int(11) NULL DEFAULT NULL COMMENT '文章ID',
+  `knowledge_id` int(11) NULL DEFAULT NULL COMMENT '知识库ID',
+  `edit_time` datetime(0) NULL DEFAULT NULL COMMENT '编辑时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for resource
@@ -259,7 +249,7 @@ CREATE TABLE `resource`  (
   `default_page` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '默认页面(是：Y， 否：N)',
   `belongs` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'internal' COMMENT 'external:外部，internal：内部',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 92 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of resource
@@ -306,13 +296,40 @@ INSERT INTO `resource` VALUES (42, '项目资源', 41, 'page', '1', '/knowledge/
 INSERT INTO `resource` VALUES (43, '知识库创建', 42, 'button', '1', '/platform/blog/new-knowledge/create', '', 1, 0, '2019-06-27 09:56:28', 1, '2019-07-03 02:45:03', 'N', '', 'N', 'external');
 INSERT INTO `resource` VALUES (44, '工作台', 38, 'page', '1', '/platform/blog/workbench', 'workbench', 1, 0, '2019-07-03 02:39:53', 1, '2019-07-03 09:56:27', 'N', NULL, 'N', 'external');
 INSERT INTO `resource` VALUES (45, '知识库', 38, 'page', '1', '/platform/blog/knowledge', 'knowledge', 3, 0, '2019-07-03 02:40:33', 1, '2019-07-03 09:56:13', 'N', NULL, 'N', 'external');
-INSERT INTO `resource` VALUES (46, '文档', 38, 'page', '1', '/platform/blog/document', 'document', 4, 0, '2019-07-03 02:41:18', 1, '2019-07-03 09:56:03', 'N', NULL, 'N', 'external');
+INSERT INTO `resource` VALUES (46, '最近动态', 38, 'page', '1', '/platform/blog/post', 'document', 4, 0, '2019-07-03 02:41:18', 1, '2019-07-13 04:55:40', 'N', NULL, 'N', 'external');
 INSERT INTO `resource` VALUES (47, '审核', 38, 'page', '1', '/platform/blog/audit', 'audit', 5, 0, '2019-07-03 02:42:54', 1, '2019-07-03 09:55:55', 'N', NULL, 'N', 'external');
 INSERT INTO `resource` VALUES (48, '消息', 38, 'page', '1', '/platform/blog/message', 'message', 6, 0, '2019-07-03 02:43:20', 1, '2019-07-03 09:55:46', 'N', NULL, 'N', 'external');
 INSERT INTO `resource` VALUES (61, '内部页面', 37, 'menu', '1', '', '', 3, 0, '2019-07-11 11:19:42', 1, '2019-07-11 11:19:59', 'N', 'internal', 'N', 'external');
 INSERT INTO `resource` VALUES (62, '知识库详情', 61, 'page', '1', '/platform/blog/knowledge/detail', '', 1, 1, '2019-07-11 11:20:26', NULL, NULL, 'N', '', 'N', 'external');
 INSERT INTO `resource` VALUES (63, '文章编辑', 61, 'page', '1', '/platform/blog/knowledge/article/editor', '', 2, 1, '2019-07-11 11:20:41', NULL, NULL, 'N', '', 'N', 'external');
 INSERT INTO `resource` VALUES (64, '文章显示', 61, 'page', '1', '/platform/blog/knowledge/article/show', '', 3, 1, '2019-07-11 11:20:52', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (65, '分类删除', 39, 'button', '1', '/platform/blog/category/delete', '', 2, 1, '2019-07-13 04:39:58', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (66, '分类修改', 39, 'button', '1', '/platform/blog/category/update', '', 3, 0, '2019-07-13 04:40:13', 1, '2019-07-13 04:43:31', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (67, '共享修改', 39, 'button', '1', '/platform/blog/category/share/update', '', 4, 0, '2019-07-13 04:40:29', 1, '2019-07-13 04:43:24', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (68, '分类新增', 39, 'button', '1', '/platform/blog/category/add', '', 5, 0, '2019-07-13 04:41:07', 1, '2019-07-13 04:43:18', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (69, '最新动态', 44, 'button', '1', '/platform/blog/recent/post', '', 1, 0, '2019-07-13 04:42:33', 1, '2019-07-13 04:42:42', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (70, '最新文章', 44, 'button', '1', '/platform/blog/recent/article/edit', '', 2, 0, '2019-07-13 04:43:01', 1, '2019-07-13 04:43:11', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (71, '最近知识库', 44, 'button', '1', '/platform/blog/recent/knowledge/edit', '', 3, 1, '2019-07-13 04:43:53', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (72, '知识库查询', 45, 'button', '1', '/platform/blog/knowledge/list', '', 1, 1, '2019-07-13 04:45:17', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (73, '移除参与者', 45, 'button', '1', '/platform/blog/knowledge/removeParticipant', '', 2, 1, '2019-07-13 04:45:51', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (74, '删除知识库', 45, 'button', '1', '/platform/blog/knowledge/delete', '', 3, 0, '2019-07-13 04:46:38', 1, '2019-07-13 04:46:44', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (75, '共享删除知识库', 45, 'button', '1', '/platform/blog/knowledge/share/delete', '', 4, 0, '2019-07-13 04:47:03', 1, '2019-07-13 05:11:32', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (76, '更新知识库', 45, 'button', '1', '/platform/blog/knowledge/update', '', 5, 1, '2019-07-13 04:47:49', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (77, '共享更新', 45, 'button', '1', '/platform/blog/knowledge/share/update', '', 6, 0, '2019-07-13 04:48:29', 1, '2019-07-13 04:48:36', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (78, '新增知识库', 45, 'button', '1', '/platform/blog/knowledge/add', '', 7, 1, '2019-07-13 04:49:00', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (79, '共享删除', 39, 'button', '1', '/platform/blog/category/share/delete', '', 6, 0, '2019-07-13 05:09:32', 1, '2019-07-13 12:29:01', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (80, '共享移除参与者', 45, 'button', '1', '/platform/blog/knowledge/share/removeParticipant', '', 8, 1, '2019-07-13 05:10:43', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (81, '文章列表', 62, 'button', '1', '/platform/blog/article/list', '', 1, 1, '2019-07-13 05:21:16', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (82, '文章显示', 64, 'button', '1', '/platform/blog/article/get', '', 1, 1, '2019-07-13 05:22:17', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (83, '文章新增', 63, 'button', '1', '/platform/blog/article/post', '', 1, 1, '2019-07-13 05:22:48', 1, '2019-07-13 12:26:49', 'Y', '', 'N', 'external');
+INSERT INTO `resource` VALUES (84, '文章修改', 63, 'button', '1', '/platform/blog/article/edit', '', 2, 1, '2019-07-13 05:23:08', 1, '2019-07-13 12:26:22', 'Y', '', 'N', 'external');
+INSERT INTO `resource` VALUES (85, '共享文章编辑', 63, 'button', '1', '/platform/blog/article/share/edit', '', 3, 1, '2019-07-13 05:23:38', 1, '2019-07-13 12:28:01', 'Y', '', 'N', 'external');
+INSERT INTO `resource` VALUES (86, '文章删除', 64, 'button', '1', '/platform/blog/article/delete', '', 2, 1, '2019-07-13 05:24:23', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (87, '文章共享删除', 64, 'button', '1', '/platform/blog/article/share/delete', '', 3, 0, '2019-07-13 05:24:40', 1, '2019-07-13 05:24:46', 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (88, '文章编辑', 64, 'button', '1', '/platform/blog/article/edit', '', 4, 1, '2019-07-13 12:21:57', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (89, '文章共享修改', 64, 'button', '1', '/platform/blog/article/share/edit', '', 5, 1, '2019-07-13 12:22:58', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (90, '文章新增', 62, 'button', '1', '/platform/blog/article/post', '', 2, 1, '2019-07-13 12:24:28', NULL, NULL, 'N', '', 'N', 'external');
+INSERT INTO `resource` VALUES (91, '文章新增', 64, 'button', '1', '/platform/blog/article/post', '', 6, 1, '2019-07-13 12:24:52', 1, '2019-07-14 13:52:19', 'Y', '', 'N', 'external');
 
 -- ----------------------------
 -- Table structure for role
@@ -329,13 +346,15 @@ CREATE TABLE `role`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
   `is_delete` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role
 -- ----------------------------
 INSERT INTO `role` VALUES (1, '超级管理员', '1', '我是超级管理员哟~', 1, '2019-06-27 09:34:54', 1, NULL, 'N');
-INSERT INTO `role` VALUES (2, '博客创作者', '1', '拥有大部分的权限', 1, '2019-06-27 09:38:32', NULL, NULL, 'N');
+INSERT INTO `role` VALUES (2, '博客创作者', '1', '拥有大部分的权限', 1, '2019-06-27 09:38:32', 1, NULL, 'Y');
+INSERT INTO `role` VALUES (3, '博客参与者', '1', '拥有自己的知识库操作权限', 1, '2019-07-13 04:57:56', NULL, NULL, 'N');
+INSERT INTO `role` VALUES (4, '知识库共享者', '1', '拥有共享的操作权限', 0, '2019-07-13 04:58:27', 1, NULL, 'N');
 
 -- ----------------------------
 -- Table structure for role_resource
@@ -350,7 +369,7 @@ CREATE TABLE `role_resource`  (
   `updator` int(11) NULL DEFAULT NULL,
   `update_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 78 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 179 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_resource
@@ -404,6 +423,52 @@ INSERT INTO `role_resource` VALUES (74, 2, 61, 1, '2019-07-11 11:21:12', NULL, N
 INSERT INTO `role_resource` VALUES (75, 2, 62, 1, '2019-07-11 11:21:12', NULL, NULL);
 INSERT INTO `role_resource` VALUES (76, 2, 63, 1, '2019-07-11 11:21:12', NULL, NULL);
 INSERT INTO `role_resource` VALUES (77, 2, 64, 1, '2019-07-11 11:21:12', NULL, NULL);
+INSERT INTO `role_resource` VALUES (133, 4, 37, 1, '2019-07-14 13:52:35', NULL, NULL);
+INSERT INTO `role_resource` VALUES (134, 4, 38, 1, '2019-07-14 13:52:35', NULL, NULL);
+INSERT INTO `role_resource` VALUES (135, 4, 39, 1, '2019-07-14 13:52:35', NULL, NULL);
+INSERT INTO `role_resource` VALUES (136, 4, 67, 1, '2019-07-14 13:52:35', NULL, NULL);
+INSERT INTO `role_resource` VALUES (137, 4, 79, 1, '2019-07-14 13:52:35', NULL, NULL);
+INSERT INTO `role_resource` VALUES (138, 4, 45, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (139, 4, 75, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (140, 4, 77, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (141, 4, 80, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (142, 4, 61, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (143, 4, 63, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (144, 4, 64, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (145, 4, 87, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (146, 4, 89, 1, '2019-07-14 13:52:36', NULL, NULL);
+INSERT INTO `role_resource` VALUES (147, 3, 37, 1, '2019-07-14 13:52:56', NULL, NULL);
+INSERT INTO `role_resource` VALUES (148, 3, 38, 1, '2019-07-14 13:52:56', NULL, NULL);
+INSERT INTO `role_resource` VALUES (149, 3, 39, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (150, 3, 40, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (151, 3, 65, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (152, 3, 66, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (153, 3, 68, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (154, 3, 44, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (155, 3, 69, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (156, 3, 70, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (157, 3, 71, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (158, 3, 45, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (159, 3, 72, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (160, 3, 73, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (161, 3, 74, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (162, 3, 76, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (163, 3, 78, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (164, 3, 46, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (165, 3, 47, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (166, 3, 48, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (167, 3, 41, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (168, 3, 42, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (169, 3, 43, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (170, 3, 61, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (171, 3, 62, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (172, 3, 81, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (173, 3, 90, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (174, 3, 63, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (175, 3, 64, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (176, 3, 82, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (177, 3, 86, 1, '2019-07-14 13:52:57', NULL, NULL);
+INSERT INTO `role_resource` VALUES (178, 3, 88, 1, '2019-07-14 13:52:57', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for user_role
@@ -416,13 +481,17 @@ CREATE TABLE `user_role`  (
   `creator` int(11) NOT NULL,
   `create_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
 INSERT INTO `user_role` VALUES (1, 1, 1, 1, '2019-06-27 09:34:54');
-INSERT INTO `user_role` VALUES (2, 2, 2, 1, '2019-06-27 09:57:53');
+INSERT INTO `user_role` VALUES (3, 2, 2, 1, '2019-07-13 05:45:36');
+INSERT INTO `user_role` VALUES (4, 2, 1, 1, '2019-07-13 05:45:36');
+INSERT INTO `user_role` VALUES (5, 2, 3, 1, '2019-07-13 05:45:36');
+INSERT INTO `user_role` VALUES (6, 2, 4, 1, '2019-07-13 05:45:36');
+INSERT INTO `user_role` VALUES (7, 3, 3, 1, '2019-07-13 05:46:28');
 
 -- ----------------------------
 -- Procedure structure for INIT_CMS_TABLE
