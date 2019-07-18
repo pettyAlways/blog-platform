@@ -2,14 +2,14 @@ package org.yingzuidou.platform.blog.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.platform.blog.dao.MessageRepository;
 import org.yingzuidou.platform.blog.service.MessageService;
 import org.yingzuidou.platform.common.constant.IsReadEnum;
+import org.yingzuidou.platform.common.constant.MessageTypeEnum;
 import org.yingzuidou.platform.common.entity.MessageEntity;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 类功能描述
@@ -21,6 +21,7 @@ import java.util.Optional;
  * ====================================================
  */
 @Service
+@Transactional
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
@@ -96,8 +97,61 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.save(messageEntity);
     }
 
+    /**
+     * 设置用户下所有的未读消息为可读
+     *
+     * @param userId 用户ID
+     */
+    @Override
+    public void setMessageAllRead(Integer userId) {
+        messageRepository.updateAllMessageReadByUserId(userId, IsReadEnum.UNREAD.getValue());
+    }
+
+    /**
+     * 获取用户的所有未读消息数量
+     *
+     * @param userId 用户ID
+     * @return 未读消息数量
+     */
     @Override
     public Integer countOfMessage(int userId) {
         return messageRepository.countByUserIdAndMRead(userId, IsReadEnum.UNREAD.getValue());
     }
+
+    /**
+     * 获取用户下的所有已读或未读
+     *
+     * @param userId 用户ID
+     * @param isRead 是否已读
+     * @return 已读或未读消息
+     */
+    @Override
+    public List<MessageEntity> userMessages(int userId, String isRead) {
+        return messageRepository.findAllByUserIdAndMReadOrderByCreateTimeDesc(userId, isRead);
+    }
+
+    /**
+     * 获取用户的所有审核的消息
+     *
+     * @param userId 用户ID
+     * @param isRead 是否已读
+     * @return 所有审核的消息
+     */
+    @Override
+    public List<MessageEntity> retrieveAuditMessage(int userId, String isRead) {
+        List<String> types = Arrays.asList(MessageTypeEnum.JOINKNOWLEDGE.getValue(), MessageTypeEnum.USERREGISTRY.getValue());
+        return messageRepository.findAllByUserIdAndMTypeInAndMRead(userId, types, isRead);
+    }
+
+    /**
+     * 删除用户下所有已读的消息
+     *
+     * @param userId 用户ID
+     * @param isRead 已读
+     */
+    @Override
+    public void deleteMessage(int userId, String isRead) {
+        messageRepository.deleteAllByUserIdAndMRead(userId, isRead);
+    }
+
 }

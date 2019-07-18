@@ -1,5 +1,6 @@
 package org.yingzuidou.platform.blog.service;
 
+import org.yingzuidou.platform.blog.dto.MessageDTO;
 import org.yingzuidou.platform.common.entity.MessageEntity;
 
 import java.util.List;
@@ -49,10 +50,43 @@ public interface MessageService {
     void setMessageRead(Integer messageId);
 
     /**
+     * 设置用户下所有未读消息为可读
+     *
+     * @param userId 用户ID
+     */
+    void setMessageAllRead(Integer userId);
+
+    /**
      * 用户的未读消息数量
      *
      * @param userId 用户ID
      * @return 未读消息数量
      */
     Integer countOfMessage(int userId);
+
+    /**
+     * 获取用户下的所有已读或未读
+     *
+     * @param userId 用户ID
+     * @param isRead 是否已读
+     * @return 已读或未读消息
+     */
+    List<MessageEntity> userMessages(int userId, String isRead);
+
+    /**
+     * 获取用户的所有审核的消息
+     *
+     * @param userId 用户ID
+     * @param isRead 是否已读
+     * @return 所有审核的消息
+     */
+    List<MessageEntity> retrieveAuditMessage(int userId, String isRead);
+
+    /**
+     * 删除用户下所有已读的消息
+     *
+     * @param userId 用户ID
+     * @param isRead 已读
+     */
+    void deleteMessage(int userId, String isRead);
 }

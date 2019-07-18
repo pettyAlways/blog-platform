@@ -1,6 +1,7 @@
 package org.yingzuidou.platform.common.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -47,6 +48,7 @@ public class ArticleEntity {
 
     @Basic
     @Column(name = "post_time")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date postTime;
 
     @Basic
