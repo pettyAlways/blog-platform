@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
+import org.yingzuidou.platform.blog.dto.OperRecordDTO;
 import org.yingzuidou.platform.blog.dto.RecentArticleDTO;
 import org.yingzuidou.platform.blog.dto.RecentKnowledgeDTO;
 import org.yingzuidou.platform.blog.dto.RecentPostDTO;
@@ -40,9 +41,9 @@ public class RecentPostController {
     private RecentEditService recentEditService;
 
     @GetMapping("/post")
-    public CmsMap<List<RecentPostDTO>> retrieveRecentPost() {
-        List<RecentPostDTO> recentPostDTOList =  recentPostService.getRecentPost();
-        return CmsMap.<List<RecentPostDTO>>ok().setResult(recentPostDTOList);
+    public CmsMap<List<OperRecordDTO>> retrieveRecentPost() {
+        List<OperRecordDTO> recentPostDTOList =  recentPostService.getRecentPost();
+        return CmsMap.<List<OperRecordDTO>>ok().setResult(recentPostDTOList);
     }
 
     /**

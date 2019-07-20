@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
-import org.yingzuidou.platform.blog.dao.ArticleRepository;
-import org.yingzuidou.platform.blog.dao.KnowledgeRepository;
-import org.yingzuidou.platform.blog.dao.ParticipantRepository;
-import org.yingzuidou.platform.blog.dao.UserRepository;
+import org.yingzuidou.platform.blog.dao.*;
+import org.yingzuidou.platform.blog.dto.ArticleDTO;
 import org.yingzuidou.platform.blog.dto.KnowledgeDTO;
+import org.yingzuidou.platform.blog.dto.ParticipantDTO;
 import org.yingzuidou.platform.blog.service.KnowledgeService;
 import org.yingzuidou.platform.blog.service.MessageService;
 import org.yingzuidou.platform.blog.service.OperRecordService;
@@ -73,7 +72,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         }
 
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
-        knowledgeEntity.setCreator(user);
+        knowledgeEntity.setCreator(user.getId());
         knowledgeEntity.setCreateTime(new Date());
         knowledgeEntity = knowledgeRepository.save(knowledgeEntity);
         operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
@@ -81,30 +80,43 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     }
 
     /**
-     * 查找当前用户参与的知识库以及自己的知识库
+     * 查找当前用户参与的知识库以及自己的知识库,以卡片的形式在前端显示
      *
-     * @param knowledgeDTO 知识库信息类
      * @return 参与的知识库列表
      */
     @Override
-    public List<KnowledgeDTO> list(KnowledgeDTO knowledgeDTO) {
+    public List<KnowledgeDTO> showCardKnowledge() {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         List<KnowledgeEntity> knowledgeEntities = knowledgeRepository
                 .findAllKnowledgeByKParticipantInAndIsDelete(user.getId(), IsDeleteEnum.NOTDELETE.getValue());
         return Optional.ofNullable(knowledgeEntities).orElse(new ArrayList<>()).stream()
                 .map(knowledgeEntity -> {
-                    KnowledgeDTO tempDTO = new KnowledgeDTO();
-                    CmsBeanUtils.copyMorNULLProperties(knowledgeEntity, tempDTO);
-                    tempDTO.setCreateName(knowledgeEntity.getCreator().getUserName());
-                    if (Objects.equals(knowledgeDTO.getShowWay(), SHOWTYPE)) {
-                        List<ArticleEntity> articleEntities = articleRepository
-                                .findFirst6ByKnowledgeIdAndIsDeleteOrderByUpdateTimeDesc(
-                                        knowledgeEntity.getId(), IsDeleteEnum.NOTDELETE.getValue()
-                                );
-                        tempDTO.setArticleEntities(articleEntities);
+                    List<Object[]> data = articleRepository.findLast6ArticleInKnowledge(
+                                    knowledgeEntity.getId(), IsDeleteEnum.NOTDELETE.getValue());
+                    List<ArticleDTO> articleDTOList = null;
+                    if (!data.isEmpty()) {
+                        articleDTOList = data.stream().map(item -> ArticleDTO.knowledgeCardShow.apply(item))
+                                .collect(Collectors.toList());
                     }
-                    return tempDTO;
+                    return  new KnowledgeDTO().setKnowledgeId(knowledgeEntity.getId())
+                            .setKnowledgeName(knowledgeEntity.getKName()).setKnowledgeDesc(knowledgeEntity.getKDesc())
+                            .setKnowledgeCover(knowledgeEntity.getKUrl()).setArticleEntities(articleDTOList);
                 }).collect(Collectors.toList());
+    }
+
+    /**
+     * 当前用户所参与的知识库以列表的形式在前端显示
+     *
+     * @return 知识库列表信息
+     */
+    @Override
+    public List<KnowledgeDTO> showListKnowledge() {
+        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        List<Object[]> data = knowledgeRepository.findKnowledgeByParticipant(user.getId(), IsDeleteEnum.NOTDELETE.getValue());
+        if (!data.isEmpty()) {
+            return data.stream().map(item -> KnowledgeDTO.participantKnowledge.apply(item)).collect(Collectors.toList());
+        }
+        return null;
     }
 
     /**
@@ -121,8 +133,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             throw new BusinessException("当前用户没有参与任何知识库");
         }
         KnowledgeEntity kEntity =  knowledgeEntityOp.get();
-        if (!Objects.equals(kEntity.getCreator().getId(), user.getId())) {
-            throw new BusinessException("只有知识库创建者才有权限移除参与者");
+        if (!Objects.equals(kEntity.getCreator(), user.getId())) {
+            throw new BusinessException("您没有权限移除参与者");
         }
 
         Optional<CmsUserEntity> needRemoveOp =  userRepository.findById(userId);
@@ -168,13 +180,16 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     @Override
     public KnowledgeDTO item(Integer knowledgeId) {
         KnowledgeDTO knowledgeDTO = new KnowledgeDTO();
-        Optional<KnowledgeEntity> knowledgeEntityOp = knowledgeRepository.findById(knowledgeId);
-        if (knowledgeEntityOp.isPresent()) {
-            KnowledgeEntity knowledgeEntity = knowledgeEntityOp.get();
-            CmsBeanUtils.copyMorNULLProperties(knowledgeEntity, knowledgeDTO);
+        List<Object[]> kData = knowledgeRepository.findKnowledgeDetail(knowledgeId, IsDeleteEnum.NOTDELETE.getValue());
+        if (!kData.isEmpty()) {
+            knowledgeDTO = KnowledgeDTO.knowledgeDetail.apply(kData.get(0));
             // 获取知识库参与者
-            List<ParticipantEntity> participantEntities = participantRepository.findAllByKnowledgeId(knowledgeId);
-            knowledgeDTO.setParticipantEntities(participantEntities);
+            List<Object[]> data = participantRepository.findAllByKnowledgeId(knowledgeId);
+            if (!data.isEmpty()) {
+                List<ParticipantDTO> participantDTO = data.stream()
+                        .map(item -> ParticipantDTO.participantInKnowledge.apply(item)).collect(Collectors.toList());
+                knowledgeDTO.setParticipantEntities(participantDTO);
+            }
         }
 
         return knowledgeDTO;
@@ -195,7 +210,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         }
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         KnowledgeEntity knowledgeEntity = knowledgeEntityOp.get();
-        if (!Objects.equals(user.getId(), knowledgeEntity.getCreator().getId())) {
+        if (!Objects.equals(user.getId(), knowledgeEntity.getCreator())) {
             throw new BusinessException("没有权限移除其他人的知识库");
         }
         if (articleRepository.existsByKnowledgeIdAndIsDelete(knowledgeId, IsDeleteEnum.NOTDELETE.getValue())) {
@@ -204,9 +219,17 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         knowledgeEntity.setIsDelete(IsDeleteEnum.DELETE.getValue()).setUpdator(user.getId()).setUpdateTime(new Date());
         knowledgeRepository.save(knowledgeEntity);
 
-        List<ParticipantEntity> participantEntities = participantRepository.findAllByKnowledgeId(knowledgeId);
-        if (!participantEntities.isEmpty()) {
-            participantEntities.forEach(item -> noticeKnowledgeDelete(knowledgeEntity, user, item.getParticipant().getId()));
+        List<Object[]> data = participantRepository.findAllByKnowledgeId(knowledgeId);
+        if (!data.isEmpty()) {
+            List<ParticipantDTO> participantDTOS = data.stream()
+                    .map(item -> ParticipantDTO.participantInKnowledge.apply(item)).collect(Collectors.toList());
+            // 保存消息
+            List<Integer> noticeList = participantDTOS.stream().map(ParticipantDTO::getParticipantId)
+                    .collect(Collectors.toList());
+            noticeKnowledgeDelete(knowledgeEntity.getKName(), user.getUserName(), noticeList);
+            // 通知用户
+            participantDTOS.forEach(item -> BlogSocket.sendSpecifyUserMsg(item.getParticipantId(), WebSocketTypeEnum.NOTICE,
+                    messageService.countOfMessage(item.getParticipantId())));
         }
 
         participantRepository.removeAllParticipantByKnowledgeId(knowledgeId);
@@ -227,11 +250,23 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         knowledgeEntity.setIsDelete(IsDeleteEnum.DELETE.getValue()).setUpdator(user.getId()).setUpdateTime(new Date());
         knowledgeRepository.save(knowledgeEntity);
 
-        List<ParticipantEntity> participantEntities = participantRepository.findAllByKnowledgeId(knowledgeId);
-        if (!participantEntities.isEmpty()) {
-            participantEntities.forEach(item -> noticeKnowledgeDelete(knowledgeEntity, user, item.getParticipant().getId()));
-            if (!Objects.equals(knowledgeEntity.getCreator().getId(), user.getId())) {
-                noticeKnowledgeDelete(knowledgeEntity, user, knowledgeEntity.getCreator().getId());
+        List<Object[]> data = participantRepository.findAllByKnowledgeId(knowledgeId);
+        if (!data.isEmpty()) {
+            List<ParticipantDTO> participantDTOS = data.stream()
+                    .map(item -> ParticipantDTO.participantInKnowledge.apply(item)).collect(Collectors.toList());
+            // 保存消息
+            List<Integer> noticeList = participantDTOS.stream().map(ParticipantDTO::getParticipantId)
+                    .filter(item -> !Objects.equals(item, user.getId())).collect(Collectors.toList());
+            if (!Objects.equals(knowledgeEntity.getCreator(), user.getId())) {
+                noticeList.add(knowledgeEntity.getCreator());
+            }
+            noticeKnowledgeDelete(knowledgeEntity.getKName(), user.getUserName(), noticeList);
+            // 通知用户
+            participantDTOS.forEach(item -> BlogSocket.sendSpecifyUserMsg(item.getParticipantId(), WebSocketTypeEnum.NOTICE,
+                    messageService.countOfMessage(item.getParticipantId())));
+            if (!Objects.equals(knowledgeEntity.getCreator(), user.getId())) {
+                BlogSocket.sendSpecifyUserMsg(knowledgeEntity.getCreator(), WebSocketTypeEnum.NOTICE,
+                        messageService.countOfMessage(knowledgeEntity.getCreator()));
             }
         }
 
@@ -250,8 +285,9 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             throw new BusinessException("需要更新的知识库不存在");
         }
         KnowledgeEntity origin = knowledgeEntityOp.get();
+        String oldKnowledgeName = origin.getKName();
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
-        if (!Objects.equals(origin.getCreator().getId(), user.getId())) {
+        if (!Objects.equals(origin.getCreator(), user.getId())) {
             throw new BusinessException("无权限更新他人的知识库");
         }
 
@@ -260,14 +296,22 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         origin.setUpdateTime(new Date());
         knowledgeRepository.save(origin);
 
-        List<ParticipantEntity> participantEntities = participantRepository.findAllByKnowledgeId(origin.getId());
-        if (!participantEntities.isEmpty()) {
-            participantEntities.forEach(item -> noticeKnowledgeEdit(knowledgeEntity, user, item.getParticipant().getId()));
+        List<Object[]> data = participantRepository.findAllByKnowledgeId(origin.getId());
+        if (!data.isEmpty()) {
+            List<ParticipantDTO> participantDTOS = data.stream()
+                    .map(item -> ParticipantDTO.participantInKnowledge.apply(item)).collect(Collectors.toList());
+            // 保存消息
+            List<Integer> noticeList = participantDTOS.stream().map(ParticipantDTO::getParticipantId)
+                    .collect(Collectors.toList());
+            noticeKnowledgeEdit(oldKnowledgeName, user.getUserName(), noticeList);
+            // 通知用户
+            participantDTOS.forEach(item ->  BlogSocket.sendSpecifyUserMsg(item.getParticipantId(), WebSocketTypeEnum.NOTICE,
+                    messageService.countOfMessage(item.getParticipantId())));
         }
-
         operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
                 origin.getId(), RootEnum.KNOWLEDGE.getValue(), origin.getId());
     }
+
 
     /**
      * 共享更新知识库，拥有共享更新知识库权限用户无权限更新知识库
@@ -281,6 +325,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             throw new BusinessException("需要更新的知识库不存在");
         }
         KnowledgeEntity origin = knowledgeEntityOp.get();
+        String oldKnowledgeName = origin.getKName();
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
 
         CmsBeanUtils.copyMorNULLProperties(knowledgeEntity, origin);
@@ -288,14 +333,26 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         origin.setUpdateTime(new Date());
         knowledgeRepository.save(origin);
 
-        List<ParticipantEntity> participantEntities = participantRepository.findAllByKnowledgeId(origin.getId());
-        if (!participantEntities.isEmpty()) {
-            participantEntities.forEach(item -> noticeKnowledgeEdit(knowledgeEntity, user, item.getParticipant().getId()));
-            if (!Objects.equals(knowledgeEntity.getCreator().getId(), user.getId())) {
-                noticeKnowledgeEdit(knowledgeEntity, user, knowledgeEntity.getCreator().getId());
+        List<Object[]> data = participantRepository.findAllByKnowledgeId(origin.getId());
+        if (!data.isEmpty()) {
+            List<ParticipantDTO> participantDTOS = data.stream()
+                    .map(item -> ParticipantDTO.participantInKnowledge.apply(item)).collect(Collectors.toList());
+            // 保存消息
+            List<Integer> noticeList = participantDTOS.stream().map(ParticipantDTO::getParticipantId)
+                    .filter(item -> !Objects.equals(item, user.getId())).collect(Collectors.toList());
+            if (!Objects.equals(origin.getCreator(), user.getId())) {
+                noticeList.add(origin.getCreator());
             }
-        }
+            noticeKnowledgeEdit(oldKnowledgeName, user.getUserName(), noticeList);
+            // 通知用户
+            participantDTOS.forEach(item ->  BlogSocket.sendSpecifyUserMsg(item.getParticipantId(), WebSocketTypeEnum.NOTICE,
+                    messageService.countOfMessage(item.getParticipantId())));
+            if (!Objects.equals(origin.getCreator(), user.getId())) {
+                BlogSocket.sendSpecifyUserMsg(origin.getCreator(), WebSocketTypeEnum.NOTICE,
+                        messageService.countOfMessage(origin.getCreator()));
+            }
 
+        }
         operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
                 origin.getId(), RootEnum.KNOWLEDGE.getValue(), origin.getId());
     }
@@ -314,7 +371,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         if (!knowledgeEntities.isEmpty()) {
             result = knowledgeEntities.stream().map(knowledge -> {
                 KnowledgeDTO knowledgeDTO = new KnowledgeDTO();
-                knowledgeDTO.setId(knowledge.getId()).setKName(knowledge.getKName());
+                knowledgeDTO.setKnowledgeId(knowledge.getId()).setKnowledgeName(knowledge.getKName());
                 return knowledgeDTO;
             }) .collect(Collectors.toList());
         }
@@ -332,20 +389,17 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         String message = String.format("您已经被%s从知识库[%s]中开除啦", opUser.getUserName(),
                 knowledgeEntity.getKName());
         messageService.addMessage(MessageTypeEnum.REMOVEPARTICIPANT.getValue(), message, userId);
-        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, "new");
+        Integer count = messageService.countOfMessage(userId);
+        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, count);
     }
 
-    private void noticeKnowledgeDelete(KnowledgeEntity knowledgeEntity, CmsUserEntity opUser, Integer userId) {
-        String message = String.format("%s删除了知识库[%s]", opUser.getUserName(),
-                knowledgeEntity.getKName());
-        messageService.addMessage(MessageTypeEnum.KNOWLEDGEDEL.getValue(), message, userId);
-        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, "new");
+    private void noticeKnowledgeDelete(String knowledgeName, String opUserName, List<Integer> userIdList) {
+        String message = String.format("%s删除了知识库[%s]", opUserName, knowledgeName);
+        messageService.addBatchMessage(MessageTypeEnum.KNOWLEDGEDEL.getValue(), message, userIdList);
     }
 
-    private void noticeKnowledgeEdit(KnowledgeEntity knowledgeEntity, CmsUserEntity opUser, Integer userId) {
-        String message = String.format("%s修改了知识库[%s]信息", opUser.getUserName(),
-                knowledgeEntity.getKName());
-        messageService.addMessage(MessageTypeEnum.KNOWLEDGEEDIT.getValue(), message, userId);
-        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, "new");
+    private void noticeKnowledgeEdit(String knowledgeName, String opUserName, List<Integer> userIdList) {
+        String message = String.format("%s修改了知识库[%s]信息", opUserName, knowledgeName);
+        messageService.addBatchMessage(MessageTypeEnum.KNOWLEDGEEDIT.getValue(), message, userIdList);
     }
 }

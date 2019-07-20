@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author dell
@@ -110,6 +111,20 @@ public class CmsBeanUtils extends BeanUtils {
 
     public static <T> T jsonToBean(String json, Class<T> bean) {
         return JSONObject.parseObject(json, bean);
+    }
+
+    public static Integer objectToInt(Object obj) {
+        if (Objects.nonNull(obj)) {
+            return Integer.valueOf(String.valueOf(obj));
+        }
+        return null;
+    }
+
+    public static String objectToString(Object obj) {
+        if (Objects.nonNull(obj)) {
+            return String.valueOf(obj);
+        }
+        return null;
     }
 
 }

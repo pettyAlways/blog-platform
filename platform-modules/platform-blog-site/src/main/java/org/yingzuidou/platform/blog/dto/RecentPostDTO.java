@@ -40,10 +40,6 @@ public class RecentPostDTO {
 
     private String reserve;
 
-    /**
-     * 在移除知识库用户时所指向的知识库名字
-     */
-    private String targetName;
 
     /**
      * 在移除知识库用户时所指向的知识库ID

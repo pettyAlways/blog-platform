@@ -43,8 +43,6 @@ public class UserServiceImpl  implements UserService {
     public UserDTO userInfo() {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         Node permissions = resourceService.acquireUserPermission(user.getId());
-        UserDTO userDTO = new UserDTO();
-        userDTO.setResourceTree(permissions);
-        return userDTO;
+        return new UserDTO().setResourceTree(permissions);
     }
 }

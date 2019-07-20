@@ -10,6 +10,8 @@ import org.yingzuidou.platform.common.entity.KnowledgeEntity;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 类功能描述
@@ -31,9 +33,15 @@ public class KnowledgeController {
     private OperRecordService operRecordService;
 
 
+    @GetMapping(value="/card")
+    public CmsMap<List<KnowledgeDTO>> cardKnowledge() {
+        List<KnowledgeDTO> result = knowledgeService.showCardKnowledge();
+        return CmsMap.<List<KnowledgeDTO>>ok().setResult(result);
+    }
+
     @GetMapping(value="/list")
-    public CmsMap<List<KnowledgeDTO>> list(KnowledgeDTO knowledgeDTO) {
-        List<KnowledgeDTO> result = knowledgeService.list(knowledgeDTO);
+    public CmsMap<List<KnowledgeDTO>> listKnowledge() {
+        List<KnowledgeDTO> result = knowledgeService.showListKnowledge();
         return CmsMap.<List<KnowledgeDTO>>ok().setResult(result);
     }
 
@@ -87,8 +95,11 @@ public class KnowledgeController {
     }
 
     @GetMapping("/belongs/mine")
-    public CmsMap<List<KnowledgeDTO>> retrieveParicipantKnowledge() {
+    public CmsMap<List<KnowledgeDTO>> retrieveParticipantKnowledge(@RequestParam("knowledgeId") Integer knowledgeId) {
         List<KnowledgeDTO> knowledgeDTOS = knowledgeService.retrieveParticipantKnowledge();
+        // 排除当前拷贝文章的知识库
+        knowledgeDTOS = knowledgeDTOS.stream().filter(item -> !Objects.equals(item.getKnowledgeId(), knowledgeId))
+                .collect(Collectors.toList());
         return CmsMap.<List<KnowledgeDTO>>ok().setResult(knowledgeDTOS);
     }
 

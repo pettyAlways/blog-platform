@@ -1,7 +1,5 @@
 package org.yingzuidou.platform.blog.dao;
 
-import com.querydsl.core.types.Predicate;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -41,13 +39,14 @@ public interface ParticipantRepository extends PagingAndSortingRepository<Partic
     boolean existsByKnowledgeIdAndParticipantId(Integer knowledgeId, Integer participantId);
 
     /**
-     * 通过EntityGraph能够将多个表通过一条sql出来,查找指定知识库的参与者
+     * 查找知识库下的所有参与者
      *
      * @param knowledgeId 知识库ID
      * @return 指定知识库的参与者
      */
-    @EntityGraph(value = "Participant.Graph", type = EntityGraph.EntityGraphType.FETCH)
-    List<ParticipantEntity> findAllByKnowledgeId(Integer knowledgeId);
+    @Query(nativeQuery = true, value = "SELECT p.participant_id, u.user_name FROM participant p LEFT JOIN cms_user u " +
+            "ON p.participant_id = u.id WHERE p.knowledge_id = :knowledgeId ")
+    List<Object[]> findAllByKnowledgeId(@Param("knowledgeId") Integer knowledgeId);
 
     /**
      * 移除一个知识库的所有参与者

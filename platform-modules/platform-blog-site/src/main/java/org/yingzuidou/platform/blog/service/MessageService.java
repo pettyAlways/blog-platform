@@ -27,6 +27,15 @@ public interface MessageService {
     void addMessage(String type, String message, Integer userId);
 
     /**
+     * 批量增加消息
+     *
+     * @param type 消息类型
+     * @param message 消息内容
+     * @param userIdList 通知用户列表
+     */
+    void addBatchMessage(String type, String message, List<Integer> userIdList);
+
+    /**
      * 获取指定用户下的所有消息
      *
      * @param userId 指定用户ID

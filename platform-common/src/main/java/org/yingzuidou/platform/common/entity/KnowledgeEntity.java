@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -22,8 +23,6 @@ import java.util.List;
 @Accessors(chain = true)
 @Entity
 @Table(name = "knowledge", schema = "cms_web", catalog = "")
-@NamedEntityGraph(name = "Knowledge.Graph", attributeNodes = {
-        @NamedAttributeNode("kParticipant"), @NamedAttributeNode("kType"), @NamedAttributeNode("creator") })
 public class KnowledgeEntity {
 
     @Id
@@ -37,27 +36,20 @@ public class KnowledgeEntity {
 
     @Basic
     @Column(name = "k_desc")
+    @Length(max = 300, message = "账号不能超过300个字符")
     private String kDesc;
 
     @Basic
     @Column(name = "k_url")
     private String kUrl;
 
-    @JoinTable(name="participant",
-            joinColumns={@JoinColumn(name="knowledge_id",referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="participant_id",referencedColumnName="id")}
-    )
-    @ManyToMany
-    private List<CmsUserEntity> kParticipant;
-
     @Basic
     @Column(name = "k_access", insertable = false)
     private String kAccess;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "k_type")
-    @NotFound(action = NotFoundAction.IGNORE)
-    private CategoryEntity kType;
+    @Basic
+    @Column(name = "k_type")
+    private Integer kType;
 
     @Basic
     @Column(name = "k_reserve_o")
@@ -87,9 +79,8 @@ public class KnowledgeEntity {
     @Column(name = "is_delete", insertable = false)
     private String isDelete;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator")
-    @NotFound(action = NotFoundAction.IGNORE)
-    private CmsUserEntity creator;
+    @Basic
+    @Column(name = "creator")
+    private Integer creator;
 
 }

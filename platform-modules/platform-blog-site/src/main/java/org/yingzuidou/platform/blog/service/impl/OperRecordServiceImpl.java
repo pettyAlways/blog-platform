@@ -37,7 +37,7 @@ public class OperRecordServiceImpl implements OperRecordService {
     public void recordCommonOperation(CmsUserEntity operUser, String operType, String objType, Integer objId,
                                       String rootType, Integer root) {
         OperRecordEntity operRecordEntity = new OperRecordEntity();
-        operRecordEntity.setOperUser(operUser).setOperTime(new Date()).setOperType(operType).setObjType(objType)
+        operRecordEntity.setOperUser(operUser.getId()).setOperTime(new Date()).setOperType(operType).setObjType(objType)
                 .setObj(objId).setRootType(rootType).setRootObj(root);
         operRecordRepository.save(operRecordEntity);
     }
@@ -45,7 +45,7 @@ public class OperRecordServiceImpl implements OperRecordService {
     @Override
     public void recordCommonOperation(CmsUserEntity operUser, String operType, String objType, Integer objId, String rootType, String reserve) {
         OperRecordEntity operRecordEntity = new OperRecordEntity();
-        operRecordEntity.setOperUser(operUser).setOperTime(new Date()).setOperType(operType).setObjType(objType)
+        operRecordEntity.setOperUser(operUser.getId()).setOperTime(new Date()).setOperType(operType).setObjType(objType)
                 .setObj(objId).setRootType(rootType).setReserve(reserve);
         operRecordRepository.save(operRecordEntity);
     }
@@ -53,7 +53,7 @@ public class OperRecordServiceImpl implements OperRecordService {
     @Override
     public void recordCommonOperation(CmsUserEntity operUser, String operType, String objType, Integer objId, String rootType, Integer root, String reserve) {
         OperRecordEntity operRecordEntity = new OperRecordEntity();
-        operRecordEntity.setOperUser(operUser).setOperTime(new Date()).setOperType(operType).setObjType(objType)
+        operRecordEntity.setOperUser(operUser.getId()).setOperTime(new Date()).setOperType(operType).setObjType(objType)
                 .setObj(objId).setRootType(rootType).setRootObj(root).setReserve(reserve);
         operRecordRepository.save(operRecordEntity);
     }
@@ -62,8 +62,8 @@ public class OperRecordServiceImpl implements OperRecordService {
     public void recordApplyOperation(CmsUserEntity operUser, String operType, String objType, Integer objId,
                                      String rootType, Integer root, CmsUserEntity handleUser) {
         OperRecordEntity operRecordEntity = new OperRecordEntity();
-        operRecordEntity.setOperUser(operUser).setOperTime(new Date()).setOperType(operType).setObjType(objType)
-                .setObj(objId).setRootType(rootType).setRootObj(root).setHandleUser(handleUser);
+        operRecordEntity.setOperUser(operUser.getId()).setOperTime(new Date()).setOperType(operType).setObjType(objType)
+                .setObj(objId).setRootType(rootType).setRootObj(root).setHandleUser(handleUser.getId());
         operRecordRepository.save(operRecordEntity);
     }
 
@@ -71,7 +71,7 @@ public class OperRecordServiceImpl implements OperRecordService {
     public void recordAuditOperation(CmsUserEntity operUser, String operType, String objType, Integer objId,
                                      String rootType, Integer root, String handleResult) {
         OperRecordEntity operRecordEntity = new OperRecordEntity();
-        operRecordEntity.setOperUser(operUser).setOperTime(new Date()).setOperType(operType).setObjType(objType)
+        operRecordEntity.setOperUser(operUser.getId()).setOperTime(new Date()).setOperType(operType).setObjType(objType)
                 .setObj(objId).setRootType(rootType).setRootObj(root).setHandleResult(handleResult);
         operRecordRepository.save(operRecordEntity);
     }

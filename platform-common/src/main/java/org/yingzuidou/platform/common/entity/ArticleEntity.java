@@ -23,10 +23,6 @@ import java.util.Objects;
 @Accessors(chain = true)
 @Entity
 @Table(name = "article", schema = "cms_web", catalog = "")
-@NamedEntityGraph(name = "Article.Graph", attributeNodes = {
-        @NamedAttributeNode("author"), @NamedAttributeNode("knowledge"), @NamedAttributeNode("creator"),
-        @NamedAttributeNode("updator"), @NamedAttributeNode("participantList")
-})
 public class ArticleEntity {
 
     @Id
@@ -38,13 +34,13 @@ public class ArticleEntity {
     @Column(name = "article_title")
     private String articleTitle;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
-    private CmsUserEntity author;
+    @Basic
+    @Column(name = "author_id")
+    private Integer authorId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "knowledge_id")
-    private KnowledgeEntity knowledge;
+    @Basic
+    @Column(name = "knowledge_id")
+    private Integer knowledgeId;
 
     @Basic
     @Column(name = "post_time")
@@ -55,24 +51,17 @@ public class ArticleEntity {
     @Column(name = "content")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator")
-    private CmsUserEntity creator;
+    @Basic
+    @Column(name = "creator")
+    private Integer creator;
 
     @Basic
     @Column(name = "create_time")
     private Date createTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updator")
-    private CmsUserEntity updator;
-
-    @JoinTable(name="article_participant",
-            joinColumns={@JoinColumn(name="article_id",referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="user_id",referencedColumnName="id")}
-    )
-    @ManyToMany
-    private List<CmsUserEntity> participantList;
+    @Basic
+    @Column(name = "updator")
+    private Integer updator;
 
     @Basic
     @Column(name = "update_time")

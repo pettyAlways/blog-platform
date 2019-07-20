@@ -59,6 +59,27 @@ public class MessageServiceImpl implements MessageService {
     }
 
     /**
+     * 批量增加消息
+     *
+     * @param type 消息类型
+     * @param message 消息内容
+     * @param userIdList 通知用户列表
+     */
+    @Override
+    public void addBatchMessage(String type, String message, List<Integer> userIdList) {
+        List<MessageEntity> messageEntities = new ArrayList<>();
+        Optional.ofNullable(userIdList).orElse(new ArrayList<>()).forEach(item -> {
+            MessageEntity messageEntity = new MessageEntity();
+            messageEntity.setMessage(message).setMRead(IsReadEnum.UNREAD.getValue())
+                    .setCreateTime(new Date()).setUserId(item).setMType(type);
+            messageEntities.add(messageEntity);
+        });
+        if (!messageEntities.isEmpty()) {
+            messageRepository.saveAll(messageEntities);
+        }
+    }
+
+    /**
      * 查询指定用户的所有消息
      *
      * @param userId 指定用户ID

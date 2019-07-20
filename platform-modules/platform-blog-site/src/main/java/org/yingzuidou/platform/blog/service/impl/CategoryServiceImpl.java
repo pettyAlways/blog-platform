@@ -2,11 +2,11 @@ package org.yingzuidou.platform.blog.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.constant.InUseEnum;
 import org.yingzuidou.platform.blog.constant.IsDeleteEnum;
 import org.yingzuidou.platform.blog.dao.CategoryRepository;
-import org.yingzuidou.platform.blog.dao.OperRecordRepository;
 import org.yingzuidou.platform.blog.dao.UserRepository;
 import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.blog.service.CategoryService;
@@ -17,7 +17,6 @@ import org.yingzuidou.platform.blog.websocket.BlogSocket;
 import org.yingzuidou.platform.common.constant.*;
 import org.yingzuidou.platform.common.entity.CategoryEntity;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
-import org.yingzuidou.platform.common.entity.KnowledgeEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
  * ====================================================
  */
 @Service
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
@@ -206,13 +206,15 @@ public class CategoryServiceImpl implements CategoryService {
         String message = String.format("%s删除了您创建的分类[%s]", opUser.getUserName(),
                 categoryEntity.getCategoryName());
         messageService.addMessage(MessageTypeEnum.CATEGORYDEL.getValue(), message, userId);
-        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, "new");
+        Integer counts = messageService.countOfMessage(userId);
+        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, counts);
     }
 
     private void noticeKnowledgeEdit(CategoryEntity categoryEntity, CmsUserEntity opUser, Integer userId) {
         String message = String.format("%s修改了您创建的分类[%s]的信息", opUser.getUserName(),
                 categoryEntity.getCategoryName());
         messageService.addMessage(MessageTypeEnum.CATEGORYEDIT.getValue(), message, userId);
-        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, "new");
+        Integer counts = messageService.countOfMessage(userId);
+        BlogSocket.sendSpecifyUserMsg(userId, WebSocketTypeEnum.NOTICE, counts);
     }
 }

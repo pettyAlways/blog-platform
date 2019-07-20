@@ -19,7 +19,19 @@ public interface KnowledgeService {
 
     void addKnowledge(KnowledgeEntity knowledgeEntity);
 
-    List<KnowledgeDTO> list(KnowledgeDTO knowledgeDTO);
+    /**
+     * 查找用户所参与的知识库并以卡片的形式在前端显示
+     *
+     * @return 知识库列表
+     */
+    List<KnowledgeDTO> showCardKnowledge();
+
+    /**
+     * 查找用户所参与的知识库并以表格的形式在前端显示
+     *
+     * @return 知识库列表
+     */
+    List<KnowledgeDTO> showListKnowledge();
 
 
     /**

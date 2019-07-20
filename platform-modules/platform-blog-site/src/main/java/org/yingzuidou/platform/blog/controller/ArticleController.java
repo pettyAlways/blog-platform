@@ -26,7 +26,7 @@ public class ArticleController {
     private ArticleService articleService;
 
     @GetMapping("/list")
-    public CmsMap<List<ArticleDTO>> articleDirInKnowledge(@RequestParam("knowledgeId") Integer knowledgeId) {
+    public CmsMap<List<ArticleDTO>> articleListInKnowledge(@RequestParam("knowledgeId") Integer knowledgeId) {
         List<ArticleDTO> articleDTO = articleService.findArticleByKnowledge(knowledgeId);
         return CmsMap.<List<ArticleDTO>>ok().setResult(articleDTO);
     }
@@ -35,7 +35,7 @@ public class ArticleController {
     public CmsMap articleAdd(@RequestBody ArticleEntity articleEntity) {
         articleEntity = articleService.addArticle(articleEntity);
         return CmsMap.ok().appendData("articleId", articleEntity.getId())
-                .appendData("knowledgeId", articleEntity.getKnowledge().getId());
+                .appendData("knowledgeId", articleEntity.getKnowledgeId());
     }
 
     /**
@@ -48,7 +48,7 @@ public class ArticleController {
     public CmsMap articleEdit(@RequestBody ArticleEntity articleEntity) {
         articleEntity = articleService.editArticle(articleEntity);
         return CmsMap.ok().appendData("articleId", articleEntity.getId())
-                .appendData("knowledgeId", articleEntity.getKnowledge().getId());
+                .appendData("knowledgeId", articleEntity.getKnowledgeId());
     }
 
     /**
@@ -61,7 +61,7 @@ public class ArticleController {
     public CmsMap articleShareEdit(@RequestBody ArticleEntity articleEntity) {
         articleEntity = articleService.editShareArticle(articleEntity);
         return CmsMap.ok().appendData("articleId", articleEntity.getId())
-                .appendData("knowledgeId", articleEntity.getKnowledge().getId());
+                .appendData("knowledgeId", articleEntity.getKnowledgeId());
     }
 
     @GetMapping("/get")
@@ -71,9 +71,9 @@ public class ArticleController {
     }
 
     @DeleteMapping("/delete")
-    public CmsMap<ArticleDTO> deleteArticle(@RequestParam("articleId") Integer articleId) {
+    public CmsMap<Integer> deleteArticle(@RequestParam("articleId") Integer articleId) {
         ArticleDTO articleDTO = articleService.deleteArticle(articleId);
-        return CmsMap.<ArticleDTO>ok().setResult(articleDTO);
+        return CmsMap.<Integer>ok().setResult(articleDTO.getArticleId());
     }
 
     @DeleteMapping("/share/delete")

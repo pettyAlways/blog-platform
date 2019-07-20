@@ -14,6 +14,8 @@
         <module>platform-knowledge</module>
         <module>platform-backend-site</module>
         <module>platform-blog-site</module>
+        <module>platform-frontend-site</module>
+
     </modules>
 
 

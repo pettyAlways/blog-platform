@@ -20,17 +20,15 @@ import java.util.Objects;
 @Accessors(chain = true)
 @Entity
 @Table(name = "oper_record", schema = "cms_web", catalog = "")
-@NamedEntityGraph(name = "OperRecord.Graph", attributeNodes = {
-        @NamedAttributeNode("operUser"), @NamedAttributeNode("handleUser")})
 public class OperRecordEntity {
 
     @Id
     @Column(name = "id")
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "oper_user")
-    private CmsUserEntity operUser;
+    @Basic
+    @Column(name = "oper_user")
+    private Integer operUser;
 
     @Basic
     @Column(name = "oper_time")
@@ -40,9 +38,9 @@ public class OperRecordEntity {
     @Column(name = "oper_type")
     private String operType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "handle_user")
-    private CmsUserEntity handleUser;
+    @Basic
+    @Column(name = "handle_user")
+    private Integer handleUser;
 
     @Basic
     @Column(name = "handle_result")

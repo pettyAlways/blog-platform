@@ -1,6 +1,5 @@
 package org.yingzuidou.platform.blog.dao;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.yingzuidou.platform.common.entity.CategoryEntity;
@@ -13,6 +12,7 @@ public interface CategoryRepository extends PagingAndSortingRepository<CategoryE
      * 是否存在同一个分类名字的列表
      *
      * @param categoryName 分类名字
+     * @param isDelete 是否删除
      * @return 同一个分类名字的列表
      */
     List<CategoryEntity> findAllByCategoryNameAndIsDelete(String categoryName, String isDelete);
