@@ -353,11 +353,11 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             }
 
         }
-        operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
-                origin.getId(), RootEnum.KNOWLEDGE.getValue(), origin.getId());
-    }
+     operRecordService.recordCommonOperation(user, OperTypeEnum.EDIT.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
+     origin.getId(), RootEnum.KNOWLEDGE.getValue(), origin.getId());
+     }
 
-    /**
+     /**
      * 获取当前用户所参与的所有知识库，包括自己创建的知识库
      *
      * @return 所参与的知识库列表

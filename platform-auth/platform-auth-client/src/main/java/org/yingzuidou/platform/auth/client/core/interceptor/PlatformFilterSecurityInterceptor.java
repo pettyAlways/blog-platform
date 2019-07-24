@@ -1,13 +1,17 @@
 package org.yingzuidou.platform.auth.client.core.interceptor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.SecurityMetadataSource;
 import org.springframework.security.access.intercept.AbstractSecurityInterceptor;
 import org.springframework.security.access.intercept.InterceptorStatusToken;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.web.util.WebUtils;
+import org.yingzuidou.platform.auth.client.core.util.ResponseUtil;
+import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -64,7 +68,12 @@ public class PlatformFilterSecurityInterceptor extends AbstractSecurityIntercept
             return;
         }
         FilterInvocation fi = new FilterInvocation(request, response, chain);
-        invoke(fi);
+        try {
+            invoke(fi);
+        } catch (Exception e) {
+            ResponseUtil.sendError((HttpServletResponse) response, HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
+
     }
 
 

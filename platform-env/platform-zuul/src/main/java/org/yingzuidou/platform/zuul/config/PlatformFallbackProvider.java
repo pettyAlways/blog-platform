@@ -25,7 +25,9 @@ import java.io.InputStream;
 @Component
 public class PlatformFallbackProvider implements FallbackProvider {
 
-    private static final String FALLBACK = "服务不可用";
+    private static final String TIMEOUT_FALLBACK = "访问服务超时";
+
+    private static final String INTERNAL_ERROR_FALLBACK = "服务内部错误";
 
     @Override
     public String getRoute() {
@@ -35,13 +37,13 @@ public class PlatformFallbackProvider implements FallbackProvider {
     @Override
     public ClientHttpResponse fallbackResponse(String route, Throwable cause) {
         if (cause instanceof HystrixTimeoutException) {
-            return response(HttpStatus.GATEWAY_TIMEOUT);
+            return response(HttpStatus.GATEWAY_TIMEOUT, TIMEOUT_FALLBACK);
         } else {
-            return response(HttpStatus.INTERNAL_SERVER_ERROR);
+            return response(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_ERROR_FALLBACK);
         }
     }
 
-    private ClientHttpResponse response(final HttpStatus status) {
+    private ClientHttpResponse response(final HttpStatus status, String message) {
         return new ClientHttpResponse() {
             @Override
             public HttpStatus getStatusCode() throws IOException {
@@ -64,7 +66,7 @@ public class PlatformFallbackProvider implements FallbackProvider {
 
             @Override
             public InputStream getBody() throws IOException {
-                return new ByteArrayInputStream(FALLBACK.getBytes());
+                return new ByteArrayInputStream(message.getBytes());
             }
 
             @Override

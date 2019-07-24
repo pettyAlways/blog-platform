@@ -33,6 +33,11 @@ public class PageInfo {
        return PageRequest.of(page - 1, size, sort);
     }
 
+    public Pageable toPageable(Sort.Direction direction, String sortName) {
+        Sort sort = new Sort(direction, sortName);
+        return PageRequest.of(page - 1, size, sort);
+    }
+
     public int getPage() {
         return page;
     }

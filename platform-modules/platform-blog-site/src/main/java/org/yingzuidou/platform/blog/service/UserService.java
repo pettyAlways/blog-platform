@@ -23,4 +23,5 @@ public interface UserService {
     CmsUserEntity loadUserByUserName(String userName);
 
     UserDTO userInfo();
+
 }

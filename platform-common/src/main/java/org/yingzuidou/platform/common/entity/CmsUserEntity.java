@@ -45,8 +45,36 @@ public class CmsUserEntity {
     @Length(max = 255, message = "密码长度不能超过255个字符")
     private String userPassword;
 
+    /**
+     * 用户头像
+     */
     @Basic
-    @Column(name = "user_status")
+    @Column(name = "user_avatar")
+    private String userAvatar;
+
+    /**
+     * 用户个性签名
+     */
+    @Basic
+    @Column(name = "signature")
+    private String signature;
+
+    /**
+     * 第三方登录唯一编号
+     */
+    @Basic
+    @Column(name = "third_party_id")
+    private Integer thirdPartyId;
+
+    /**
+     * 用户个人资料封面
+     */
+    @Basic
+    @Column(name = "cover_url")
+    private String coverUrl;
+
+    @Basic
+    @Column(name = "user_status", insertable = false)
     private String userStatus;
 
     @Basic
@@ -80,7 +108,7 @@ public class CmsUserEntity {
     private Date updateTime;
 
     @Basic
-    @Column(name = "is_delete")
+    @Column(name = "is_delete", insertable = false)
     private String isDelete;
 
     @Basic

@@ -2,7 +2,6 @@ package org.yingzuidou.platform.auth.client.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,15 +12,11 @@ import org.yingzuidou.platform.auth.client.core.exception.PlatformAuthentication
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.auth.client.feign.ServerAuthFeign;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
-import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 import org.yingzuidou.platform.common.utils.HystrixUtil;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -51,8 +46,8 @@ public class    PlatformUserDetailsService implements UserDetailsService {
         // MD5加密需要用到盐值
         ThreadStorageUtil.storeItem("salt-uuid", user.getUuid());
         List<String> roleNameList = CmsBeanUtils.object2List(cmsMap.get("roleList"), String.class);
-        List<GrantedAuthority> grantedAuthorities = roleNameList.stream().map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        List<GrantedAuthority> grantedAuthorities = Optional.ofNullable(roleNameList).orElse(new ArrayList<>())
+                .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         return new JWTUserDetails(user.getId(),user.getUserName(), user.getUserAccount(), user.getUserPassword(),
                 grantedAuthorities, user.getUserStatus());
     }

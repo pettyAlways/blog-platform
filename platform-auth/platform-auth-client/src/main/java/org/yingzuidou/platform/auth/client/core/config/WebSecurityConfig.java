@@ -50,8 +50,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
            // 认证授权部分配置
            .authorizeRequests()
                 // 不需要登录认证的资源
-                .antMatchers("/platform/login", "/error", "/platform/blog/static/**",
-                        "/platform/frontend/**/search/*").permitAll()
+                .antMatchers("/platform/**/login", "/error", "/platform/blog/static/**",
+                        "/platform/frontend/**/search/**").permitAll()
                 // 其他请求都需要登录
                 .anyRequest().authenticated()
                 .and()
@@ -114,8 +114,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtAuthenticationTokenFilter authenticationTokenFilter() {
         // 不需要token 验证的url
-        List<String> pathsToSkip = Arrays.asList("/platform/login","/platform/blog/static/**",
-                "/platform/frontend/**/search/*");
+        List<String> pathsToSkip = Arrays.asList("/platform/**/login","/platform/blog/static/**",
+                "/platform/frontend/**/search/**");
         //　需要验证token　的url
         String processingPath = "/platform/**";
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, processingPath);

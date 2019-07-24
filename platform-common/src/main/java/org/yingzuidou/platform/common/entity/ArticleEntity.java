@@ -52,6 +52,10 @@ public class ArticleEntity {
     private String content;
 
     @Basic
+    @Column(name = "cover_url")
+    private String coverUrl;
+
+    @Basic
     @Column(name = "creator")
     private Integer creator;
 

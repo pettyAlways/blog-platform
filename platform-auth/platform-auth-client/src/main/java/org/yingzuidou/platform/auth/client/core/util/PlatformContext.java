@@ -1,6 +1,5 @@
 package org.yingzuidou.platform.auth.client.core.util;
 
-import lombok.Data;
 
 /**
  * 类功能描述

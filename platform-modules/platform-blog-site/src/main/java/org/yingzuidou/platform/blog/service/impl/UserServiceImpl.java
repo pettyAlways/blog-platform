@@ -45,4 +45,5 @@ public class UserServiceImpl  implements UserService {
         Node permissions = resourceService.acquireUserPermission(user.getId());
         return new UserDTO().setResourceTree(permissions);
     }
+
 }

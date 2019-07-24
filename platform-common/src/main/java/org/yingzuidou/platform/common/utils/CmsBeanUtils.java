@@ -127,4 +127,13 @@ public class CmsBeanUtils extends BeanUtils {
         return null;
     }
 
+    public static String limitContent(String content, int num) {
+        if (Objects.nonNull(content)) {
+            String placeholder = content.length() > num ? "..." : "";
+            int minLen = content.length() > num ? num : content.length();
+            return content.substring(0, minLen) + placeholder;
+        }
+        return null;
+    }
+
 }
