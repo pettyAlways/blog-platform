@@ -134,4 +134,16 @@ public class ArticleDTO {
     public static Function<Object[], UserDTO> participantShow = data -> new UserDTO()
             .setUserId(Integer.valueOf(String.valueOf(data[0]))).setUserName(String.valueOf(data[1]));
 
+    /**
+     * 用户最近发布的文章
+     */
+    public static Function<Object[], ArticleDTO> recentPostList = data -> new ArticleDTO()
+            .setArticleId(Integer.valueOf(String.valueOf(data[0]))).setArticleTitle(String.valueOf(data[1]))
+            .setContent(CmsBeanUtils.limitContent(HtmlUtils.delHTMLTag(String.valueOf(data[2])), 100))
+            .setPostTime(DateUtil.transformStrToDate(String.valueOf(data[3]), "yyyy-MM-dd HH:mm:ss"))
+            .setCoverUrl(CmsBeanUtils.objectToString(data[4]))
+            .setAuthorId(CmsBeanUtils.objectToInt(data[5])).setAuthorName(String.valueOf(data[6]))
+            .setKnowledgeId(CmsBeanUtils.objectToInt(data[7])).setKnowledgeName(String.valueOf(data[8]))
+            .setCategoryId(CmsBeanUtils.objectToInt(data[9])).setCategoryName(String.valueOf(data[10]));
+
 }

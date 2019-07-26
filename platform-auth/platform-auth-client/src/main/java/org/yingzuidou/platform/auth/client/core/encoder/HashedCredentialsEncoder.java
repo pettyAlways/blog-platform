@@ -23,9 +23,14 @@ import java.util.Objects;
  */
 public class HashedCredentialsEncoder implements PasswordEncoder {
 
+    private static final String THIRD_PARTY_PREFIX = "##thirdparty_";
     @Override
     public String encode(CharSequence rawPassword) {
         try {
+            String raw = String.valueOf(rawPassword);
+            if (raw.startsWith(THIRD_PARTY_PREFIX)) {
+                return raw.substring(THIRD_PARTY_PREFIX.length());
+            }
             String uuid = (String) ThreadStorageUtil.getItem("salt-uuid");
             return CmsCommonUtil.getMd5PasswordText(uuid, String.valueOf(rawPassword));
         } finally {

@@ -40,6 +40,43 @@ public class UserDTO {
      */
     private String userAccount;
 
+
+    /**
+     * 用户性别
+     */
+    private String userSex;
+
+    /**
+     * 用户邮箱
+     */
+    private String userMail;
+
+    /**
+     * 用户简介
+     */
+    private String introduce;
+
+    /**
+     * 用户职业
+     */
+    private String work;
+
+    /**
+     * 用户居住地
+     */
+    private String place;
+
+    /**
+     * 用户兴趣
+     */
+    private String hobby;
+
+    /**
+     * 用户技能
+     */
+    private List<UserSkillDTO> skillList;
+
+
     /**
      * 用户头像
      */
@@ -64,6 +101,11 @@ public class UserDTO {
      * 第三方ID
      */
     private Integer thirdPartyId;
+
+    /**
+     * 第三方登录是否绑定账号
+     */
+    private String isBind;
 
     /**
      * 资源树

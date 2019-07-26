@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * 时间           作者          版本        描述
  * ====================================================
  */
-@ControllerAdvice(annotations={RestController.class})
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     private Logger logger = LoggerFactory.getLogger(getClass());

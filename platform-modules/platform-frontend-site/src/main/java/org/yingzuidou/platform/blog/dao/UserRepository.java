@@ -25,4 +25,13 @@ public interface UserRepository extends PagingAndSortingRepository<CmsUserEntity
      * @return 用户实体
      */
     CmsUserEntity findByThirdPartyIdAndIsDeleteAndUserStatus(Integer thirdPartyId, String isDelete, String status);
+
+    /**
+     * 是否已经存在账号
+     *
+     * @param userAccount 账号
+     * @param isDelete 是否删除
+     * @return 是否存在
+     */
+    boolean existsByUserAccountAndIsDelete(String userAccount, String isDelete);
 }

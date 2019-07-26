@@ -32,7 +32,7 @@ public class CmsUserEntity {
     private String userName;
 
     @Basic
-    @Column(name = "user_sex")
+    @Column(name = "user_sex", insertable = false)
     private String userSex;
 
     @Basic
@@ -67,6 +67,13 @@ public class CmsUserEntity {
     private Integer thirdPartyId;
 
     /**
+     * 第三方账号绑定
+     */
+    @Basic
+    @Column(name = "is_bind")
+    private String isBind;
+
+    /**
      * 用户个人资料封面
      */
     @Basic
@@ -86,6 +93,24 @@ public class CmsUserEntity {
     @Column(name = "user_mail")
     @Email
     private String userMail;
+
+    @Basic
+    @Column(name = "introduce")
+    @Length(max = 255, message = "个人介绍长度不能超过255个字符")
+    private String introduce;
+
+    @Basic
+    @Column(name = "work")
+    @Length(max = 50, message = "工作地址长度不能超过50个字符")
+    private String work;
+
+    @Basic
+    @Column(name = "place")
+    private String place;
+
+    @Basic
+    @Column(name = "hobby")
+    private String hobby;
 
     @Basic
     @Column(name = "user_depart")

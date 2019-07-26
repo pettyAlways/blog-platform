@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import org.yingzuidou.platform.common.constant.ThirdPartyEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,11 @@ public class PlatformUsernamePasswordAuthenticationFilter extends AbstractAuthen
             JSONObject jsonObj = JSON.parseObject(body);
             username = jsonObj.getString("username");
             password = jsonObj.getString("password");
+            // 第三方自动登录由于密码是md5摘要算法生成不可逆成原密码因此加个判断直接在HashedCredentialsEncoder
+            // 类中对比加密的密码
+            if (Objects.equals(jsonObj.getString("thirdparty"), ThirdPartyEnum.YES.getValue())) {
+                password = "##thirdparty_" + password;
+            }
         }
 
         username = Objects.isNull(username) ? "" : username.trim();

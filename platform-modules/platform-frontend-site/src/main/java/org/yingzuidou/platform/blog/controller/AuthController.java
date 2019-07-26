@@ -11,10 +11,14 @@ import org.springframework.web.client.RestTemplate;
 import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
 import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.service.UserService;
+import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 类功能描述
@@ -48,25 +52,43 @@ public class AuthController {
     @GetMapping("/login")
     public void thirdPartyLogin(@RequestParam("code") String code, HttpServletResponse response) {
         String uri = "https://github.com/login/oauth/access_token?client_id={clientId}&client_secret={clientSecret}&code={code}";
-        String tokenResult = restTemplate.postForObject(uri, null, String.class,CLIENT_ID, CLIENT_SECRET, code);
+        String tokenResult;
+        try {
+            tokenResult = restTemplate.postForObject(uri, null, String.class,CLIENT_ID, CLIENT_SECRET, code);
+        } catch (Exception e) {
+            throw new BusinessException("连接github服务器失败");
+        }
         if (StringUtils.hasText(tokenResult)) {
             String[] values = tokenResult.split("&");
             String accessToken = values[0].split("=")[1];
             uri = "https://api.github.com/user?access_token={accessToken}";
-            JSONObject exchange = restTemplate.getForObject(uri, JSONObject.class, accessToken);
-            String token = userService.generateJwt(new UserDTO().setUserName(CmsBeanUtils.objectToString(exchange.get("name")))
+            JSONObject exchange;
+            try {
+                exchange = restTemplate.getForObject(uri, JSONObject.class, accessToken);
+            } catch (Exception e) {
+                throw new BusinessException("连接github服务器失败");
+            }
+            String defaultUserAccount = CmsBeanUtils.objectToString(exchange.get("id"));
+            String defaultPassword = CmsBeanUtils.objectToString(exchange.get("id"));
+            CmsUserEntity user = userService.generateUser(new UserDTO()
+                    .setUserName(CmsBeanUtils.objectToString(exchange.get("name")))
                     .setAvatarUrl(CmsBeanUtils.objectToString(exchange.get("avatar_url")))
-                    .setThirdPartyId(CmsBeanUtils.objectToInt(exchange.get("id"))));
+                    .setThirdPartyId(CmsBeanUtils.objectToInt(exchange.get("id")))
+                    // 默认账号密码为第三方登录传递的唯一标志ID
+                    .setUserAccount(defaultUserAccount)
+                    .setUserPassword(defaultPassword));
             try {
                 response.setContentType("text/html;charset=UTF-8");
-                response.getWriter().write(returnToFrontend(PlatformContext.getTokenHeaderPrefix() + token));
+                // 返回用户账号和加密密码用于第三方登录
+                response.getWriter().write(returnToFrontend(user.getUserAccount(), user.getUserPassword()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private String returnToFrontend(String token) {
+    private String returnToFrontend(String defaultUserAccount, String defaultPassword) {
+        String backStr = "ThirdPartyLogin-" + defaultUserAccount + "-" + defaultPassword;
         return "<!doctype html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -80,7 +102,7 @@ public class AuthController {
                 "登陆中...\n" +
                 "<script>\n" +
                 "    window.onload = function () {\n" +
-                "        window.opener.postMessage(\"" + token + "\", \"http://localhost:8081\");\n" +
+                "        window.opener.postMessage(\"" + backStr + "\", \"http://localhost:8081\");\n" +
                 "        window.close();\n" +
                 "    }\n" +
                 "</script>\n" +

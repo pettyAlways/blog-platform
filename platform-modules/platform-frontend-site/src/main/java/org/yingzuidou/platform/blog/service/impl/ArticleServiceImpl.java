@@ -13,6 +13,7 @@ import org.yingzuidou.platform.common.entity.ArticleEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.paging.PageInfo;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
+import org.yingzuidou.platform.common.utils.HtmlUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -156,11 +157,9 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public List<ArticleDTO> retrieveUserRecentPost(Integer userId, PageInfo pageInfo) {
-        List<ArticleEntity> articleEntityList = articleRepository.findAllByAuthorIdAndIsDelete(userId,
-                IsDeleteEnum.NOTDELETE.getValue(), pageInfo.toPageable(Sort.Direction.DESC, "postTime"));
-        return Optional.ofNullable(articleEntityList).orElse(new ArrayList<>()).stream().map(item -> new ArticleDTO()
-        .setArticleId(item.getId()).setArticleTitle(item.getArticleTitle())
-                .setContent(CmsBeanUtils.limitContent(item.getContent(), 100)).setPostTime(item.getPostTime())
-                .setCoverUrl(item.getCoverUrl())).collect(Collectors.toList());
+        List<Object[]> articleEntityList = articleRepository.findArticleUserRecentPost(userId,
+                 pageInfo.toPageable(Sort.Direction.DESC, "postTime"));
+        return Optional.ofNullable(articleEntityList).orElse(new ArrayList<>()).stream().map(item -> ArticleDTO
+                .recentPostList.apply(item)).collect(Collectors.toList());
     }
 }

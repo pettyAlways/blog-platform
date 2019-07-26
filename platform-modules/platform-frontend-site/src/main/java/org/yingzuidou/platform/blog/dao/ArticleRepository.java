@@ -128,10 +128,14 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      * 获取用户最近发布的文章
      *
      * @param authorId 用户ID
-     * @param isDelete 是否删除
      * @param pageable 分页信息
      * @return 文章列表
      */
-    List<ArticleEntity> findAllByAuthorIdAndIsDelete(Integer authorId, String isDelete, Pageable pageable);
+    @Query(nativeQuery = true, value = "SELECT a.id AS articleId, a.article_title, a.content,	a.post_time, a.cover_url, " +
+            "u.id AS authorId, u.user_name, k.id AS knowledgeId, k.k_name, c.id AS categoryId, c.category_name " +
+            "FROM article a LEFT JOIN knowledge k ON a.knowledge_id = k.id " +
+            "LEFT JOIN category c ON k.k_type = c.id LEFT JOIN cms_user u ON a.author_id = u.id " +
+            "WHERE a.author_id = :authorId AND a.is_delete = 'N' #pageable")
+    List<Object[]> findArticleUserRecentPost(@Param("authorId") Integer authorId, Pageable pageable);
 
 }

@@ -54,7 +54,7 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
             "(SELECT count(1) FROM article a WHERE a.knowledge_id = k.id AND a.is_delete = 'N') AS articleNums, " +
             "(SELECT count(1) FROM participant p WHERE p.knowledge_id = k.id) AS participantNums " +
             "FROM knowledge k LEFT JOIN category c ON k.k_type = c.id " +
-            "LEFT JOIN cms_user u ON k.creator = u.id WHERE k.creator = :userId AND = k.is_delete = 'N'")
+            "LEFT JOIN cms_user u ON k.creator = u.id WHERE k.creator = :userId AND k.is_delete = 'N' #pageable")
     List<Object[]> findUserKnowledgeList(@Param("userId") Integer userId, Pageable pageable);
 
     /**
@@ -64,10 +64,11 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
      * @param pageable 分页信息
      * @return 参与的知识库列表
      */
-    @Query(nativeQuery = true, value = "SELECT k.knowledgeId, k.k_name, k.k_desc, k_url, k.create_time, c.category_name, user_name " +
-            "FROM " +
-            "(SELECT k.id AS knowledgeId, k.k_name, k.k_desc, k_url, k.create_time, k.creator, k.k_type " +
+    @Query(nativeQuery = true, value = "SELECT k.knowledgeId, k.k_name, k.k_desc, k_url, k.create_time, c.category_name, user_name, " +
+            "(SELECT count(1) FROM article a WHERE a.knowledge_id = k.knowledgeId AND a.is_delete = 'N') AS articleNums, " +
+            "(SELECT count(1) FROM participant p WHERE p.knowledge_id = k.knowledgeId) AS participantNums " +
+            "FROM (SELECT k.id AS knowledgeId, k.k_name, k.k_desc, k_url, k.create_time, k.creator, k.k_type " +
             "FROM knowledge k LEFT JOIN participant p ON k.id = p.knowledge_id WHERE p.participant_id = 3 AND k.is_delete = 'N') k " +
-            "LEFT JOIN category c ON k.k_type = c.id LEFT JOIN cms_user u ON k.creator = u.id ")
+            "LEFT JOIN category c ON k.k_type = c.id LEFT JOIN cms_user u ON k.creator = u.id #pageable")
     List<Object[]> findUserParticipantKnowledgeList(Integer userId, Pageable pageable);
 }

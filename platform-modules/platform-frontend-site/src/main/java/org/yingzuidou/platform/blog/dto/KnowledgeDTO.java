@@ -117,7 +117,7 @@ public class KnowledgeDTO {
      */
     public static Function<Object[], KnowledgeDTO> userKnowledgeList = data -> new KnowledgeDTO()
             .setKnowledgeId(CmsBeanUtils.objectToInt(data[0])).setKnowledgeName(CmsBeanUtils.objectToString(data[1]))
-            .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 100))
+            .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 60))
             .setKnowledgeCover(CmsBeanUtils.objectToString(data[3]))
             .setCreateTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[4]), "yyyy-MM-dd HH:mm:ss"))
             .setCategoryName(CmsBeanUtils.objectToString(data[5])).setCreatorName(CmsBeanUtils.objectToString(data[6]))
@@ -128,10 +128,11 @@ public class KnowledgeDTO {
      */
     public static Function<Object[], KnowledgeDTO> userParticipantList = data -> new KnowledgeDTO()
             .setKnowledgeId(CmsBeanUtils.objectToInt(data[0])).setKnowledgeName(CmsBeanUtils.objectToString(data[1]))
-            .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 100))
+            .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 60))
             .setKnowledgeCover(CmsBeanUtils.objectToString(data[3]))
             .setCreateTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[4]), "yyyy-MM-dd HH:mm:ss"))
-            .setCategoryName(CmsBeanUtils.objectToString(data[5])).setCreatorName(CmsBeanUtils.objectToString(data[6]));
+            .setCategoryName(CmsBeanUtils.objectToString(data[5])).setCreatorName(CmsBeanUtils.objectToString(data[6]))
+            .setArticleCounts(CmsBeanUtils.objectToInt(data[7])).setParticipantCounts(CmsBeanUtils.objectToInt(data[8]));
 
 
 }

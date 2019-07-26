@@ -2,14 +2,16 @@ package org.yingzuidou.platform.blog.controller;
 
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.dto.UserDTO;
+import org.yingzuidou.platform.blog.dto.UserSkillDTO;
 import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.UserSkillEntity;
 import org.yingzuidou.platform.common.vo.CmsMap;
+
+import java.util.List;
 
 /**
  * 类功能描述
@@ -39,4 +41,35 @@ public class UserController {
         UserDTO user = userService.retrieveUserProfile(userId);
         return CmsMap.<UserDTO>ok().setResult(user);
     }
+
+    @PostMapping("/add/skill")
+    public CmsMap<UserSkillDTO> addSkill(@RequestBody UserSkillEntity userSkillEntity) {
+        UserSkillDTO userSkillDTO = userService.addUserSkill(userSkillEntity.getSkill());
+        return CmsMap.<UserSkillDTO>ok().setResult(userSkillDTO);
+    }
+
+    @DeleteMapping("/del/skill")
+    public CmsMap delSkill(Integer skillId) {
+        userService.delUserSkill(skillId);
+        return CmsMap.ok();
+    }
+
+    @GetMapping("/search/profile/extra")
+    public CmsMap<UserDTO> retrieveProfileExtra() {
+        UserDTO userDTO = userService.retrieveProfileExtra();
+        return CmsMap.<UserDTO>ok().setResult(userDTO);
+    }
+
+    @PutMapping("/update/info")
+    public CmsMap saveUserInfo(@RequestBody CmsUserEntity cmsUserEntity) {
+        userService.saveUserInfo(cmsUserEntity);
+        return CmsMap.ok();
+    }
+
+    @PutMapping("/bind/account")
+    public CmsMap bindUserAccount(@RequestBody CmsUserEntity cmsUserEntity) {
+        userService.bindUserAccount(cmsUserEntity);
+        return CmsMap.ok();
+    }
+
 }
