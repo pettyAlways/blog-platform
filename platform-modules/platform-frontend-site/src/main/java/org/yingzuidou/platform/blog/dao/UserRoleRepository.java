@@ -30,4 +30,15 @@ public interface UserRoleRepository extends PagingAndSortingRepository<UserRoleE
     @Query(nativeQuery = true, value = "select r.id from user_role ur, role r " +
             "where ur.role_id = r.id and ur.user_id=:userId and r.in_use='1'")
     List<Object> findAllByUserIdAndRoleInUse(@Param("userId") int userId);
+
+    /**
+     * 查找拥有指定启用角色的所有用户
+     *
+     * @param roleId 角色ID
+     * @param inUse 是否启用
+     * @return 用户列表
+     */
+    @Query(nativeQuery = true, value = "select ur.* from user_role ur LEFT JOIN role r " +
+            "ON ur.role_id = r.id WHERE ur.role_id=:roleId and r.in_use=:inUse")
+    List<UserRoleEntity> findUserListByRoleId(@Param("roleId") Integer roleId, @Param("inUse") String inUse);
 }

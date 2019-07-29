@@ -48,9 +48,9 @@ public enum MessageTypeEnum {
     JOINKNOWLEDGE("知识库加入", "7"),
 
     /**
-     * 用户注册
+     * 申请作者
      */
-    USERREGISTRY("用户注册", "8"),
+    BEAUTHOR("申请作者", "8"),
 
     /**
      * 移除参与者

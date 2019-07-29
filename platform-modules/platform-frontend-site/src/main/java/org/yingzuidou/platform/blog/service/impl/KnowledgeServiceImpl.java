@@ -8,8 +8,10 @@ import org.yingzuidou.platform.blog.dao.ArticleRepository;
 import org.yingzuidou.platform.blog.dao.KnowledgeRepository;
 import org.yingzuidou.platform.blog.dto.ArticleDTO;
 import org.yingzuidou.platform.blog.dto.KnowledgeDTO;
+import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.service.KnowledgeService;
 import org.yingzuidou.platform.blog.service.ParticipantService;
+import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.constant.*;
 import org.yingzuidou.platform.common.entity.*;
 import org.yingzuidou.platform.common.exception.BusinessException;
@@ -40,6 +42,9 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     @Autowired
     private ParticipantService participantService;
+
+    @Autowired
+    private UserService userService;
 
 
 
@@ -158,4 +163,32 @@ public class KnowledgeServiceImpl implements KnowledgeService {
                 .map(item -> KnowledgeDTO.userParticipantList.apply(item)).collect(Collectors.toList());
     }
 
+    /**
+     * 获取知识库创建者信息
+     *
+     * @param knowledgeId 知识库ID
+     * @return 知识库创建者信息
+     */
+    @Override
+    public UserDTO retrieveKnowledgeCreator(Integer knowledgeId) {
+        Optional<KnowledgeEntity> knowledgeEntityOp = knowledgeRepository.findById(knowledgeId);
+        if (!knowledgeEntityOp.isPresent()) {
+            throw new BusinessException("知识库不存在");
+        }
+        KnowledgeEntity knowledgeEntity = knowledgeEntityOp.get();
+        return userService.retrieveUserProfile(knowledgeEntity.getCreator());
+    }
+
+    /**
+     * 获取知识库下的协作人资料
+     *
+     * @param knowledgeId 知识库ID
+     * @return 协作人资料
+     */
+    @Override
+    public List<UserDTO> retrieveKnowledgeParticipant(Integer knowledgeId) {
+        List<UserDTO> userDTOList = participantService.findAllParticipantInKnowledge(knowledgeId);
+        return Optional.ofNullable(userDTOList).orElse(new ArrayList<>()).stream()
+                .map(item -> userService.retrieveUserProfile(item.getUserId())).collect(Collectors.toList());
+    }
 }

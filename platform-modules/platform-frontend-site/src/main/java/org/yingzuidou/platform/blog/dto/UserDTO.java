@@ -31,6 +31,11 @@ public class UserDTO {
     private String userName;
 
     /**
+     * 是否是作者
+     */
+    private Boolean isAuthor;
+
+    /**
      * 用户名密码
      */
     private String userPassword;

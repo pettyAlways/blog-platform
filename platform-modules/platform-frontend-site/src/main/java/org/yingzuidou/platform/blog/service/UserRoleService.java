@@ -28,4 +28,13 @@ public interface UserRoleService {
      * @param roleId 角色ID
      */
     void addRoleForUser(Integer userId, Integer roleId);
+
+    /**
+     * 用户是否拥有指定角色
+     *
+     * @param userId 用户ID
+     * @param roleId 角色Id
+     * @return true 拥有 false 不拥有
+     */
+    boolean hasRole(int userId, Integer roleId);
 }

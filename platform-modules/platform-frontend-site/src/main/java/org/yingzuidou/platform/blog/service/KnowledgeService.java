@@ -2,6 +2,7 @@ package org.yingzuidou.platform.blog.service;
 
 import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.blog.dto.KnowledgeDTO;
+import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.common.entity.KnowledgeEntity;
 import org.yingzuidou.platform.common.paging.PageInfo;
 
@@ -68,4 +69,21 @@ public interface KnowledgeService {
      * @return 参与的知识库列表
      */
     List<KnowledgeDTO> retrieveUserParticipant(Integer userId, PageInfo pageInfo);
+
+    /**
+     * 获取知识库创建人的信息
+     *
+     * @param knowledgeId 知识库ID
+     * @return 创建人信息
+     */
+    UserDTO retrieveKnowledgeCreator(Integer knowledgeId);
+
+
+    /**
+     * 获取知识库的协作人信息列表
+     *
+     * @param knowledgeId 知识库ID
+     * @return 协作人ID
+     */
+    List<UserDTO> retrieveKnowledgeParticipant(Integer knowledgeId);
 }

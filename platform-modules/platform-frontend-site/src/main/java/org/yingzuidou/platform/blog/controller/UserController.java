@@ -1,6 +1,5 @@
 package org.yingzuidou.platform.blog.controller;
 
-import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
@@ -40,6 +39,12 @@ public class UserController {
     public CmsMap<UserDTO> retrieveUserProfile(Integer userId) {
         UserDTO user = userService.retrieveUserProfile(userId);
         return CmsMap.<UserDTO>ok().setResult(user);
+    }
+
+    @GetMapping("/search/recommend")
+    public CmsMap<List<UserDTO>> recommendUser() {
+        List<UserDTO> userList = userService.retrieveRecommendUser();
+        return CmsMap.<List<UserDTO>>ok().setResult(userList);
     }
 
     @PostMapping("/add/skill")

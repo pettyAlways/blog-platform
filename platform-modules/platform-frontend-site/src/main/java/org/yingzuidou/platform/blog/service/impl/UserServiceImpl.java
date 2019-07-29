@@ -34,6 +34,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
 
+    /**
+     * 角色3是作者橘色
+     */
+    private static final Integer AUTHOR_ROLE = 3;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -85,9 +90,10 @@ public class UserServiceImpl implements UserService {
         if (!cmsUserEntityOp.isPresent()) {
             throw new BusinessException("用户不存在");
         }
+        boolean isAuthor = userRoleService.hasRole(userId, AUTHOR_ROLE);
         CmsUserEntity cmsUserEntity = cmsUserEntityOp.get();
         return new UserDTO().setUserId(cmsUserEntity.getId()).setUserName(cmsUserEntity.getUserName())
-                .setAvatarUrl(cmsUserEntity.getUserAvatar());
+                .setAvatarUrl(cmsUserEntity.getUserAvatar()).setIsAuthor(isAuthor);
     }
 
     /**
@@ -104,7 +110,12 @@ public class UserServiceImpl implements UserService {
             CmsUserEntity userEntity = userOp.get();
             userDTO.setUserId(userEntity.getId()).setUserName(userEntity.getUserName())
                     .setAvatarUrl(userEntity.getUserAvatar()).setCoverUrl(userEntity.getCoverUrl())
-                    .setSignature(userEntity.getSignature());
+                    .setSignature(userEntity.getSignature()).setIntroduce(userEntity.getIntroduce());
+            List<UserSkillEntity> userSkillEntityList = userSkillRepository.findAllByUserId(userEntity.getId());
+            List<UserSkillDTO> userSkillDTOList = Optional.ofNullable(userSkillEntityList).orElse(new ArrayList<>())
+                    .stream().map(item -> new UserSkillDTO().setSkillId(item.getId()).setSkillName(item.getSkill()))
+                    .collect(Collectors.toList());
+            userDTO.setSkillList(userSkillDTOList);
         }
         return userDTO;
     }
@@ -203,5 +214,28 @@ public class UserServiceImpl implements UserService {
         cmsUserEntity.setUserPassword(password);
         CmsBeanUtils.copyMorNULLProperties(cmsUserEntity, target);
         userRepository.save(target);
+    }
+
+    /**
+     * 获取推荐用户
+     *
+     * @return 推荐用户
+     */
+    @Override
+    public List<UserDTO> retrieveRecommendUser() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        List<Integer> userIdList = userRepository.retrieveRecommendUser();
+        Iterable<CmsUserEntity> iterable = userRepository.findAllById(userIdList);
+        for (CmsUserEntity user : iterable) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getId()).setUserName(user.getUserName()).setIntroduce(user.getIntroduce())
+                    .setSignature(user.getSignature()).setAvatarUrl(user.getUserAvatar());
+            List<UserSkillEntity> userSkillEntityList = userSkillRepository.findAllByUserId(user.getId());
+            List<UserSkillDTO> userSkillDTOList = Optional.ofNullable(userSkillEntityList).orElse(new ArrayList<>()).stream().map(item -> new UserSkillDTO()
+                    .setSkillId(item.getId()).setSkillName(item.getSkill())).collect(Collectors.toList());
+            userDTO.setSkillList(userSkillDTOList);
+            userDTOList.add(userDTO);
+        }
+        return userDTOList;
     }
 }

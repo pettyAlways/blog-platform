@@ -67,4 +67,10 @@ public interface UserService {
      */
     void bindUserAccount(CmsUserEntity cmsUserEntity);
 
+    /**
+     * 获取推荐用户列表
+     *
+     * @return 推荐用户列表
+     */
+    List<UserDTO> retrieveRecommendUser();
 }

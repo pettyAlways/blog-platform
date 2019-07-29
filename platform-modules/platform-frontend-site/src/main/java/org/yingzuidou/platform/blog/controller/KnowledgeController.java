@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.platform.blog.dto.CategoryDTO;
 import org.yingzuidou.platform.blog.dto.KnowledgeDTO;
+import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.service.KnowledgeService;
 import org.yingzuidou.platform.common.paging.PageInfo;
 import org.yingzuidou.platform.common.vo.CmsMap;
@@ -72,7 +73,7 @@ public class KnowledgeController {
      */
     @GetMapping(value = "/search/user/create")
     public CmsMap<List<KnowledgeDTO>> retrieveUserKnowledge(Integer userId, PageInfo pageInfo) {
-        List<KnowledgeDTO> knowledgeDTOList =knowledgeService.retrieveUserKnowledge(userId, pageInfo);
+        List<KnowledgeDTO> knowledgeDTOList = knowledgeService.retrieveUserKnowledge(userId, pageInfo);
         return CmsMap.<List<KnowledgeDTO>>ok().setResult(knowledgeDTOList);
     }
 
@@ -85,8 +86,33 @@ public class KnowledgeController {
      */
     @GetMapping(value = "/search/user/participant")
     public CmsMap<List<KnowledgeDTO>> retrieveUserParticipant(Integer userId, PageInfo pageInfo) {
-        List<KnowledgeDTO> knowledgeDTOList =knowledgeService.retrieveUserParticipant(userId, pageInfo);
+        List<KnowledgeDTO> knowledgeDTOList = knowledgeService.retrieveUserParticipant(userId, pageInfo);
         return CmsMap.<List<KnowledgeDTO>>ok().setResult(knowledgeDTOList);
     }
+
+    /**
+     * 用户知识库创建人信息
+     *
+     * @param knowledgeId 用户ID
+     * @return 创建人信息
+     */
+    @GetMapping(value = "/search/creator")
+    public CmsMap<UserDTO> retrieveCreatorInfo(Integer knowledgeId) {
+        UserDTO userDTO = knowledgeService.retrieveKnowledgeCreator(knowledgeId);
+        return CmsMap.<UserDTO>ok().setResult(userDTO);
+    }
+
+    /**
+     * 用户知识库协作人信息
+     *
+     * @param knowledgeId 用户ID
+     * @return 协作人信息
+     */
+    @GetMapping(value = "/search/participant")
+    public CmsMap<List<UserDTO>> retrieveParticipantInfo(Integer knowledgeId) {
+        List<UserDTO> userDTOList = knowledgeService.retrieveKnowledgeParticipant(knowledgeId);
+        return CmsMap.<List<UserDTO>>ok().setResult(userDTOList);
+    }
+
 
 }

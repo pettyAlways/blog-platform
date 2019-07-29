@@ -52,4 +52,17 @@ public class UserRoleServiceImpl implements UserRoleService {
         userRoleEntity.setUserId(userId).setRoleId(roleId).setCreateTime(new Date());
         userRoleRepository.save(userRoleEntity);
     }
+
+    /**
+     * 用户是否拥有指定的权限
+     *
+     * @param userId 用户ID
+     * @param roleId 角色Id
+     * @return true 拥有 false 不拥有
+     */
+    @Override
+    public boolean hasRole(int userId, Integer roleId) {
+        List<Object> roleIdList = userRoleRepository.findAllByUserIdAndRoleInUse(userId);
+        return roleIdList.contains(roleId);
+    }
 }

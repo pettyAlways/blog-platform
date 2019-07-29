@@ -10,6 +10,7 @@ import org.yingzuidou.platform.blog.service.ParticipantService;
 import org.yingzuidou.platform.common.entity.KnowledgeEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,6 +50,6 @@ public class ParticipantServiceImpl implements ParticipantService {
         if (!data.isEmpty()) {
             return data.stream().map(item -> UserDTO.participantDetail.apply(item)).collect(Collectors.toList());
         }
-        return null;
+        return new ArrayList<>();
     }
 }

@@ -2,7 +2,6 @@ package org.yingzuidou.platform.blog.dao;
 
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.yingzuidou.platform.blog.dto.UserSkillDTO;
 import org.yingzuidou.platform.common.entity.UserSkillEntity;
 
 import java.util.List;

@@ -160,7 +160,7 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public List<MessageEntity> retrieveAuditMessage(int userId, String isRead) {
-        List<String> types = Arrays.asList(MessageTypeEnum.JOINKNOWLEDGE.getValue(), MessageTypeEnum.USERREGISTRY.getValue());
+        List<String> types = Arrays.asList(MessageTypeEnum.JOINKNOWLEDGE.getValue(), MessageTypeEnum.BEAUTHOR.getValue());
         return messageRepository.findAllByUserIdAndMTypeInAndMRead(userId, types, isRead);
     }
 

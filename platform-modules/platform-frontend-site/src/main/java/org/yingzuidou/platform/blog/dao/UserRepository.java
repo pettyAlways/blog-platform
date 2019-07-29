@@ -1,8 +1,11 @@
 package org.yingzuidou.platform.blog.dao;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
+
+import java.util.List;
 
 /**
  * 类功能描述
@@ -34,4 +37,10 @@ public interface UserRepository extends PagingAndSortingRepository<CmsUserEntity
      * @return 是否存在
      */
     boolean existsByUserAccountAndIsDelete(String userAccount, String isDelete);
+
+    @Query(nativeQuery = true, value = "SELECT aa.author_id FROM (SELECT count(1) num, a.author_id " +
+            "FROM article a WHERE a.author_id in " +
+            "(SELECT DISTINCT ur.user_id FROM user_role ur LEFT JOIN role r ON ur.role_id = r.id AND r.in_use = 1 WHERE ur.role_id = 3) " +
+            "AND a.is_delete = 'N' GROUP BY a.author_id ORDER BY num DESC LIMIT 0, 2) aa")
+    List<Integer> retrieveRecommendUser();
 }
