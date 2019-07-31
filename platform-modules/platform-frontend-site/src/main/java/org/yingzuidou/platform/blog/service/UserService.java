@@ -1,5 +1,6 @@
 package org.yingzuidou.platform.blog.service;
 
+import org.yingzuidou.platform.blog.dto.MessageDTO;
 import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.dto.UserSkillDTO;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
@@ -73,4 +74,5 @@ public interface UserService {
      * @return 推荐用户列表
      */
     List<UserDTO> retrieveRecommendUser();
+
 }

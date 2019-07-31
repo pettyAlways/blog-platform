@@ -57,7 +57,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String token = getJwtToken(request);
+        String token;
+        // 因为jwt token过滤器在spring security的异常拦截器先执行，这里抛出异常不会进入异常拦截器
+        // 因此需要捕捉这个token校验不通过的异常并返回客户端一个401状态
+        try {
+             token = getJwtToken(request);
+        } catch (InsufficientAuthenticationException iae) {
+            authenticationFailureHandler.onAuthenticationFailure(request, response, iae);
+            return;
+        }
+
         log.info("当前请求" + request.getRequestURI() + "携带的token的值：[" + token + "]");
         JwtAuthenticationToken authToken = new JwtAuthenticationToken(token);
         try {

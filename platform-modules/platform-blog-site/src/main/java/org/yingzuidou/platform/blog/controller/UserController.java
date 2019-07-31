@@ -60,7 +60,6 @@ public class UserController {
     public CmsMap<UserDTO> userInfo() {
         UserDTO userDTO = userService.userInfo();
         Map<String, String> sysConst = sysConstService.listSystemConst(ConstEnum.CONST.getValue());
-        CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
-        return CmsMap.<UserDTO>ok().appendData("sysConst", sysConst).appendData("curUser", user).setResult(userDTO);
+        return CmsMap.<UserDTO>ok().appendData("sysConst", sysConst).appendData("curUser", userDTO).setResult(userDTO);
     }
 }

@@ -1,5 +1,6 @@
 package org.yingzuidou.platform.blog.service;
 
+import org.yingzuidou.platform.blog.dto.MessageDTO;
 import org.yingzuidou.platform.common.entity.MessageEntity;
 
 import java.util.List;
@@ -24,4 +25,25 @@ public interface MessageService {
      */
     void addBatchMessage(String type, String message, List<Integer> userIdList);
 
+    /**
+     * 获取用户的消息通知
+     *
+     * @param userId 用户ID
+     * @return 消息列表
+     */
+    List<MessageDTO> retrieveMessageList(int userId);
+
+    /**
+     * 单条消息已读
+     *
+     * @param messageId 消息ID
+     */
+    void messageReaded(int messageId);
+
+    /**
+     * 用户下所有消息已读
+     *
+     * @param userId 用户ID
+     */
+    void messageAllReaded(Integer userId);
 }

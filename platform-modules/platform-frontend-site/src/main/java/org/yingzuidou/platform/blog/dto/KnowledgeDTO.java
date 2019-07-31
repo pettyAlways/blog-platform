@@ -86,7 +86,7 @@ public class KnowledgeDTO {
     /**
      * 文章数量
      */
-    private Integer articleCounts;
+        private Integer articleCounts;
 
     /**
      * 参与者人数
@@ -97,6 +97,11 @@ public class KnowledgeDTO {
      * 最近文章
      */
     private ArticleDTO recentlyArticle;
+
+    /**
+     * 协作者ID逗号拼接字符串
+     */
+    private String participantIds;
 
     /**
      * 知识库协作人列表
@@ -119,9 +124,15 @@ public class KnowledgeDTO {
             .setKnowledgeId(CmsBeanUtils.objectToInt(data[0])).setKnowledgeName(CmsBeanUtils.objectToString(data[1]))
             .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 60))
             .setKnowledgeCover(CmsBeanUtils.objectToString(data[3]))
-            .setCreateTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[4]), "yyyy-MM-dd HH:mm:ss"))
-            .setCategoryName(CmsBeanUtils.objectToString(data[5])).setCreatorName(CmsBeanUtils.objectToString(data[6]))
-            .setArticleCounts(CmsBeanUtils.objectToInt(data[7])).setParticipantCounts(CmsBeanUtils.objectToInt(data[8]));
+            .setAccess(CmsBeanUtils.objectToString(data[4]))
+            .setCreator(CmsBeanUtils.objectToInt(data[5]))
+            .setCreateTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[6]), "yyyy-MM-dd HH:mm:ss"))
+            .setCreatorName(CmsBeanUtils.objectToString(data[7]))
+            .setCategoryId(CmsBeanUtils.objectToInt(data[8]))
+            .setCategoryName(CmsBeanUtils.objectToString(data[9]))
+            .setArticleCounts(CmsBeanUtils.objectToInt(data[10]))
+            .setParticipantCounts(CmsBeanUtils.objectToInt(data[11]))
+            .setParticipantIds(CmsBeanUtils.objectToString(data[12]));
 
     /**
      * 用户参与的知识库列表
@@ -131,8 +142,46 @@ public class KnowledgeDTO {
             .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 60))
             .setKnowledgeCover(CmsBeanUtils.objectToString(data[3]))
             .setCreateTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[4]), "yyyy-MM-dd HH:mm:ss"))
-            .setCategoryName(CmsBeanUtils.objectToString(data[5])).setCreatorName(CmsBeanUtils.objectToString(data[6]))
-            .setArticleCounts(CmsBeanUtils.objectToInt(data[7])).setParticipantCounts(CmsBeanUtils.objectToInt(data[8]));
+            .setAccess(CmsBeanUtils.objectToString(data[5]))
+            .setCategoryId(CmsBeanUtils.objectToInt(data[6]))
+            .setCategoryName(CmsBeanUtils.objectToString(data[7]))
+            .setCreator(CmsBeanUtils.objectToInt(data[8]))
+            .setCreatorName(CmsBeanUtils.objectToString(data[9]))
+            .setArticleCounts(CmsBeanUtils.objectToInt(data[10]))
+            .setParticipantCounts(CmsBeanUtils.objectToInt(data[11]))
+            .setParticipantIds(CmsBeanUtils.objectToString(data[12]));
 
+    /**
+     * 分类下的知识库列表
+     */
+    public static Function<Object[], KnowledgeDTO> categoryKnowledgeList = data -> new KnowledgeDTO()
+            .setKnowledgeId(CmsBeanUtils.objectToInt(data[0])).setKnowledgeName(CmsBeanUtils.objectToString(data[1]))
+            .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 26))
+            .setKnowledgeCover(CmsBeanUtils.objectToString(data[3]))
+            .setAccess(CmsBeanUtils.objectToString(data[4]))
+            .setCreator(CmsBeanUtils.objectToInt(data[5]))
+            .setCreateTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[6]), "yyyy-MM-dd HH:mm:ss"))
+            .setCreatorName(CmsBeanUtils.objectToString(data[7]))
+            .setCategoryId(CmsBeanUtils.objectToInt(data[8]))
+            .setCategoryName(CmsBeanUtils.objectToString(data[9]))
+            .setArticleCounts(CmsBeanUtils.objectToInt(data[10]))
+            .setParticipantCounts(CmsBeanUtils.objectToInt(data[11]))
+            .setParticipantIds(CmsBeanUtils.objectToString(data[12]));
 
+    /**
+     * 分类下的知识库列表
+     */
+    public static Function<Object[], KnowledgeDTO> relateKnowledgeList = data -> new KnowledgeDTO()
+            .setKnowledgeId(CmsBeanUtils.objectToInt(data[0])).setKnowledgeName(CmsBeanUtils.objectToString(data[1]))
+            .setKnowledgeDesc(CmsBeanUtils.limitContent(CmsBeanUtils.objectToString(data[2]), 60))
+            .setKnowledgeCover(CmsBeanUtils.objectToString(data[3]))
+            .setAccess(CmsBeanUtils.objectToString(data[4]))
+            .setCreator(CmsBeanUtils.objectToInt(data[5]))
+            .setCreateTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[6]), "yyyy-MM-dd HH:mm:ss"))
+            .setCreatorName(CmsBeanUtils.objectToString(data[7]))
+            .setCategoryId(CmsBeanUtils.objectToInt(data[8]))
+            .setCategoryName(CmsBeanUtils.objectToString(data[9]))
+            .setArticleCounts(CmsBeanUtils.objectToInt(data[10]))
+            .setParticipantCounts(CmsBeanUtils.objectToInt(data[11]))
+            .setParticipantIds(CmsBeanUtils.objectToString(data[12]));
 }

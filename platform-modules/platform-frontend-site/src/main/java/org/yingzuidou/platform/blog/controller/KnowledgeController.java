@@ -53,14 +53,29 @@ public class KnowledgeController {
     }
 
     /**
+     * 分类下其他公开访问的知识库
+     *
+     * @param categoryId 分类ID
+     * @param pageInfo 分页信息
+     * @return 分类下的其他公开访问的知识库
+     */
+    @GetMapping(value="/search/relate")
+    public CmsMap<List<KnowledgeDTO>> listRelate(Integer categoryId, PageInfo pageInfo) {
+        List<KnowledgeDTO> knowledgeDTOS = knowledgeService.listCouldAccessKnowledgeByCategory(categoryId, pageInfo);
+        return CmsMap.<List<KnowledgeDTO>>ok().setResult(knowledgeDTOS);
+    }
+
+    /**
      * 知识库详情
      *
      * @param knowledgeId 知识库ID
+     * @param token 加密的知识库需要token访问
+     * @param userId 访问用户
      * @return 知识库详情内容
      */
     @GetMapping(value = "/search/detail")
-    public CmsMap<KnowledgeDTO> knowledgeDetail(Integer knowledgeId) {
-        KnowledgeDTO knowledgeDTOS = knowledgeService.retrieveKnowledgeDetail(knowledgeId);
+    public CmsMap<KnowledgeDTO> knowledgeDetail(Integer knowledgeId, String token, Integer userId) {
+        KnowledgeDTO knowledgeDTOS = knowledgeService.retrieveKnowledgeDetail(knowledgeId, token, userId);
         return CmsMap.<KnowledgeDTO>ok().setResult(knowledgeDTOS);
     }
 
@@ -114,5 +129,21 @@ public class KnowledgeController {
         return CmsMap.<List<UserDTO>>ok().setResult(userDTOList);
     }
 
+    @PostMapping(value= "join")
+    public CmsMap joinKnowledge(Integer knowledgeId, String reason) {
+        knowledgeService.joinKnowledge(knowledgeId, reason);
+        return CmsMap.ok();
+    }
 
+    @GetMapping(value= "/search/already-join")
+    public CmsMap alreadyJoin(Integer knowledgeId) {
+        boolean alreadyJoin = knowledgeService.alreadyJoinKnowledge(knowledgeId);
+        return CmsMap.ok().appendData("alreadyJoin", alreadyJoin);
+    }
+
+    @GetMapping(value= "/password/verify")
+    public CmsMap passwordVerify(Integer knowledgeId, String password) {
+        String token = knowledgeService.passwordVerify(knowledgeId, password);
+        return CmsMap.ok().appendData("accessToken", token);
+    }
 }

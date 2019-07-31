@@ -26,6 +26,11 @@ public class UserDTO {
     private String userName;
 
     /**
+     * 用户头像
+     */
+    private String userAvatar;
+
+    /**
      * 资源树
      */
     private Node resourceTree;

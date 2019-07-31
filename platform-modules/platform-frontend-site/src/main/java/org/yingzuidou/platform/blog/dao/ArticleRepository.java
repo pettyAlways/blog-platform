@@ -33,7 +33,7 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      */
     @Query(nativeQuery = true, value = "SELECT aa.article_title, aa.id as articleId, aa.post_time, aa.knowledge_id, aa.k_name, aa.k_desc, aa.k_url FROM ( " +
             "SELECT ar.article_title, ar.id, ar.post_time, kk.knowledge_id, kk.k_name, kk.k_desc, kk.k_url, IF(@number=ar.knowledge_id,@temp\\:=@temp+1,@temp\\:=1) AS number , @number\\:=ar.knowledge_id FROM article ar INNER JOIN " +
-            "(SELECT k.id as knowledge_id, k.k_name, k.k_desc, k.k_url from (SELECT COUNT(a.id) num, a.knowledge_id FROM article a WHERE a.is_delete = 'N' GROUP BY a.knowledge_id ORDER BY num DESC LIMIT 0,3) aa INNER JOIN knowledge k ON k.id = aa.knowledge_id) kk " +
+            "(SELECT k.id as knowledge_id, k.k_name, k.k_desc, k.k_url from (SELECT COUNT(a.id) num, a.knowledge_id FROM article a  LEFT JOIN knowledge k ON a.knowledge_id = k.id  WHERE a.is_delete = 'N' AND k.k_access <> 1 GROUP BY a.knowledge_id ORDER BY num DESC LIMIT 0,3) aa INNER JOIN knowledge k ON k.id = aa.knowledge_id) kk " +
             "ON ar.knowledge_id = kk.knowledge_id WHERE ar.is_delete = 'N' ORDER BY ar.post_time ASC) aa WHERE aa.number <= 5")
     List<Object[]> findMostArticleKnowledgeLimit3();
 
@@ -42,8 +42,9 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      *
      * @return 最近10篇文章
      */
-    @Query(nativeQuery = true, value = "SELECT a.id, a.article_title, a.knowledge_id, a.post_time FROM article a WHERE  a.is_delete = 'N' ORDER BY  a.post_time " +
-            "LIMIT 0, 8")
+    @Query(nativeQuery = true, value = "SELECT a.id, a.article_title, a.knowledge_id, a.post_time FROM article a " +
+            "LEFT JOIN knowledge k ON a.knowledge_id = k.id WHERE k.k_access = 2 AND a.is_delete = 'N' " +
+            "ORDER BY a.post_time DESC LIMIT 0, 8")
     List<Object[]> recentArticle();
 
     /**

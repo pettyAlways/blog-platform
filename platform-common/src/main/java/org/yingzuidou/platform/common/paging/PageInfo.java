@@ -38,6 +38,10 @@ public class PageInfo {
         return PageRequest.of(page - 1, size, sort);
     }
 
+    public Pageable toPageableNoOrder() {
+        return PageRequest.of(page - 1, size);
+    }
+
     public int getPage() {
         return page;
     }

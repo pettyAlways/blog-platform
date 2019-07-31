@@ -8,11 +8,13 @@ import org.yingzuidou.platform.blog.dao.UserRoleRepository;
 import org.yingzuidou.platform.blog.service.AuditService;
 import org.yingzuidou.platform.blog.service.MessageService;
 import org.yingzuidou.platform.common.constant.AuditEnum;
+import org.yingzuidou.platform.common.constant.AuditResultEnum;
 import org.yingzuidou.platform.common.constant.InUseEnum;
 import org.yingzuidou.platform.common.constant.MessageTypeEnum;
 import org.yingzuidou.platform.common.entity.AuditEntity;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.entity.UserRoleEntity;
+import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 
 import java.util.ArrayList;
@@ -49,6 +51,10 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     public void becomeAuthorAudit(AuditEntity auditEntity) {
+        if (auditRepository.existsByApplyUserAndApplyTypeAndHandleResult(auditEntity.getApplyUser()
+                , AuditEnum.AUTHOR.getValue(), AuditResultEnum.AUDITING.getValue())) {
+            throw new BusinessException("已经提交给管理员审批中，请耐心等待哟");
+        }
         CmsUserEntity cmsUserEntity = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         List<UserRoleEntity> userRoleEntityList = userRoleRepository.findUserListByRoleId(SHARE_ROLE, InUseEnum.USE.getValue());
         auditEntity.setApplyType(AuditEnum.AUTHOR.getValue()).setApplyTime(new Date());
@@ -57,7 +63,7 @@ public class AuditServiceImpl implements AuditService {
                     AuditEntity temp = new AuditEntity();
                     CmsBeanUtils.copyMorNULLProperties(auditEntity, temp);
                     temp.setHandleUser(userId);
-                    auditRepository.save(auditEntity);
+                    auditRepository.save(temp);
                     messageService.addMessage(MessageTypeEnum.BEAUTHOR.getValue(), cmsUserEntity.getUserName() + "申请成为作者", userId);
                 });
     }

@@ -8,7 +8,10 @@ import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.service.ResourceService;
 import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.vo.Node;
+
+import java.util.Optional;
 
 /**
  * 类功能描述
@@ -42,8 +45,13 @@ public class UserServiceImpl  implements UserService {
     @Override
     public UserDTO userInfo() {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
+        Optional<CmsUserEntity> cmsUserEntityOp = userRepository.findById(user.getId());
+        if (!cmsUserEntityOp.isPresent()) {
+            throw new BusinessException("用户不存在");
+        }
+        CmsUserEntity userEntity = cmsUserEntityOp.get();
         Node permissions = resourceService.acquireUserPermission(user.getId());
-        return new UserDTO().setResourceTree(permissions);
+        return new UserDTO().setResourceTree(permissions).setUserAvatar(userEntity.getUserAvatar());
     }
 
 }

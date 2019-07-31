@@ -42,11 +42,13 @@ public class CommentController {
      * 获取文章下的所有评论
      *
      * @param articleId 文章ID
+     * @param token 知识库加密生成的token
+     * @param userId 访问用户
      * @return 评论列表
      */
     @GetMapping("/search/list")
-    public CmsMap<List<CommentDTO>> listComment(Integer articleId) {
-        List<CommentDTO> commentDTOList = commentService.listArticleComment(articleId);
+    public CmsMap<List<CommentDTO>> listComment(Integer articleId, String token, Integer userId) {
+        List<CommentDTO> commentDTOList = commentService.listArticleComment(articleId, token, userId);
         return CmsMap.<List<CommentDTO>>ok().setResult(commentDTOList);
     }
 

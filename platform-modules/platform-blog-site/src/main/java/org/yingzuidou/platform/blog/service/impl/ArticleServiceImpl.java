@@ -133,8 +133,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (!participantList.isEmpty()) {
             List<UserDTO> userDTOList = participantList.stream().map(item -> {
                 UserDTO user = new UserDTO();
-                user.setId(item.getId());
-                user.setUserName(item.getUserName());
+                user.setId(item.getId()).setUserName(item.getUserName());
                 return user;
             }).collect(Collectors.toList());
             articleDTO.setParticipantList(userDTOList);

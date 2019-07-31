@@ -33,7 +33,7 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      * @return 文章显示信息
      */
     @Query(nativeQuery = true, value = "SELECT a.id as articleId, a.article_title, a.post_time, a.content, a.creator, " +
-            "u.user_name, k.id AS knowledgeId, k.k_name, c.id AS categoryId, c.category_name " +
+            "u.user_name, k.id AS knowledgeId, k.k_name, c.id AS categoryId, c.category_name, a.cover_url " +
             "FROM article a LEFT JOIN cms_user u  ON a.creator = u.id " +
             "LEFT JOIN knowledge k ON k.id = a.knowledge_id " +
             "LEFT JOIN category c ON c.id = k.k_type WHERE a.id = :articleId AND a.is_delete = :isDelete")

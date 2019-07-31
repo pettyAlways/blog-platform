@@ -4,15 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
+import org.yingzuidou.platform.blog.dao.MessageRepository;
 import org.yingzuidou.platform.blog.dao.UserRepository;
 import org.yingzuidou.platform.blog.dao.UserSkillRepository;
+import org.yingzuidou.platform.blog.dto.MessageDTO;
 import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.dto.UserSkillDTO;
 import org.yingzuidou.platform.blog.service.UserRoleService;
 import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.constant.IsDeleteEnum;
+import org.yingzuidou.platform.common.constant.IsReadEnum;
 import org.yingzuidou.platform.common.constant.LockStatusEnum;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.entity.MessageEntity;
 import org.yingzuidou.platform.common.entity.UserSkillEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
@@ -46,7 +50,11 @@ public class UserServiceImpl implements UserService {
     private UserRoleService userRoleService;
 
     @Autowired
-    UserSkillRepository userSkillRepository;
+    private UserSkillRepository userSkillRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
+
 
     /**
      * 普通用户授予的角色ID

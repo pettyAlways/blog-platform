@@ -24,6 +24,7 @@ public class AuditEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     /**
@@ -55,10 +56,10 @@ public class AuditEntity {
     private Integer applyObj;
 
     /**
-     * 处理结果：1.通过，2.不通过
+     * 处理结果：0.审核中, 1.通过，2.不通过
      */
     @Basic
-    @Column(name = "handle_result")
+    @Column(name = "handle_result", insertable = false)
     private String handleResult;
 
     /**
@@ -67,6 +68,13 @@ public class AuditEntity {
     @Basic
     @Column(name = "reason")
     private String reason;
+
+    /**
+     * 拒绝理由
+     */
+    @Basic
+    @Column(name = "reject_reason")
+    private String rejectReason;
 
     /**
      * 处理日期

@@ -13,6 +13,7 @@ import org.yingzuidou.platform.auth.client.core.util.JwtTokenUtil;
 import org.yingzuidou.platform.auth.client.core.util.PlatformContext;
 import org.yingzuidou.platform.auth.client.interceptor.ServiceAuthInterceptor;
 import org.yingzuidou.platform.auth.client.interceptor.UserAuthInterceptor;
+import org.yingzuidou.platform.common.utils.PasswordJwtUtil;
 
 /**
  * 类功能描述
@@ -63,7 +64,10 @@ public class BlogConfig implements WebMvcConfigurer {
 
     @Autowired(required = false)
     public void initSecurity(ConfigData configData) {
+        // 登录生成的token
         JwtTokenUtil.create(configData.getIssuer(), configData.getSubject(), configData.getSecret());
+        // 知识库密码访问需要用的到token
+        PasswordJwtUtil.create(configData.getIssuer(), configData.getSubject(), configData.getSecret());
         PlatformContext.create(configData.getIssuer(), configData.getSubject(), configData.getSecret(),
                 configData.getTokenHeader(), configData.getTokenHeaderPrefix(), configData.getExpires(),
                 configData.getRefreshToken(), configData.getZuulHeader(), configData.getZuulHeaderValue());

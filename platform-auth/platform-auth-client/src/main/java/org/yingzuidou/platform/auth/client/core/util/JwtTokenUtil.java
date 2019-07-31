@@ -79,8 +79,7 @@ public class JwtTokenUtil {
         JWTVerifier jwtVerifier = JWT.require(algorithm).withIssuer(issuer).withSubject(subject)
                 .withClaim("userAccount", userAccount).withClaim("password", password).build();
         try {
-            DecodedJWT decoderJWT = jwtVerifier.verify(token);
-            System.out.println(decoderJWT);
+            jwtVerifier.verify(token);
         } catch (Exception exception) {
             throw new BusinessException("token无效");
         }

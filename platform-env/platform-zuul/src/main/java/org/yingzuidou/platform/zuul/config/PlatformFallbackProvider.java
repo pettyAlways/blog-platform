@@ -1,6 +1,7 @@
 package org.yingzuidou.platform.zuul.config;
 
 import com.netflix.hystrix.exception.HystrixTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 
 /**
  * 类功能描述
@@ -27,8 +29,6 @@ public class PlatformFallbackProvider implements FallbackProvider {
 
     private static final String TIMEOUT_FALLBACK = "访问服务超时";
 
-    private static final String INTERNAL_ERROR_FALLBACK = "服务内部错误";
-
     @Override
     public String getRoute() {
         return "*";
@@ -38,8 +38,12 @@ public class PlatformFallbackProvider implements FallbackProvider {
     public ClientHttpResponse fallbackResponse(String route, Throwable cause) {
         if (cause instanceof HystrixTimeoutException) {
             return response(HttpStatus.GATEWAY_TIMEOUT, TIMEOUT_FALLBACK);
+        } else if (cause instanceof SocketTimeoutException){
+            return response(HttpStatus.GATEWAY_TIMEOUT, TIMEOUT_FALLBACK);
+        } else if (cause instanceof HttpHostConnectException) {
+            return response(HttpStatus.GATEWAY_TIMEOUT, TIMEOUT_FALLBACK);
         } else {
-            return response(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_ERROR_FALLBACK);
+            return response(HttpStatus.INTERNAL_SERVER_ERROR, cause.getMessage());
         }
     }
 

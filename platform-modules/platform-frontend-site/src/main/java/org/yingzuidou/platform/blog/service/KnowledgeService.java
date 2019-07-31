@@ -48,9 +48,11 @@ public interface KnowledgeService {
      * 知识库详情
      *
      * @param knowledgeId 知识库ID
+     * @param token 加密的知识库需要token验证访问
+     * @param userId 访问用户
      * @return 知识库详情内容
      */
-    KnowledgeDTO retrieveKnowledgeDetail(Integer knowledgeId);
+    KnowledgeDTO retrieveKnowledgeDetail(Integer knowledgeId, String token, Integer userId);
 
     /**
      * 用户创建的知识库
@@ -86,4 +88,38 @@ public interface KnowledgeService {
      * @return 协作人ID
      */
     List<UserDTO> retrieveKnowledgeParticipant(Integer knowledgeId);
+
+    /**
+     * 加入知识库
+     *
+     * @param knowledgeId 知识库ID
+     * @param reason 加入原因
+     */
+    void joinKnowledge(Integer knowledgeId, String reason);
+
+    /**
+     * 是否已经加入知识库
+     *
+     * @param knowledgeId 知识库ID
+     * @return true 已经加入 false 还未加入
+     */
+    boolean alreadyJoinKnowledge(Integer knowledgeId);
+
+    /**
+     * 知识库密码校验
+     *
+     * @param knowledgeId 知识库ID
+     * @param password 输入的密码
+     * @return true 通过 false 不通过
+     */
+    String passwordVerify(Integer knowledgeId, String password);
+
+    /**
+     * 查找分页下可访问的知识库
+     *
+     * @param categoryId 分类ID
+     * @param pageInfo 分页信息
+     * @return 知识库列表
+     */
+    List<KnowledgeDTO> listCouldAccessKnowledgeByCategory(Integer categoryId, PageInfo pageInfo);
 }

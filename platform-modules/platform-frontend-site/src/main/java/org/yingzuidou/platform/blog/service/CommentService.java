@@ -15,12 +15,14 @@ public interface CommentService {
     void addComment(CommentEntity commentEntity);
 
     /**
-     * 按照时间倒序查询文章下的所有评论
+     * 获取文章下的所有评论
      *
      * @param articleId 文章ID
+     * @param token 知识库加密生成的token
+     * @param userId 访问用户
      * @return 评论列表
      */
-    List<CommentDTO> listArticleComment(Integer articleId);
+    List<CommentDTO> listArticleComment(Integer articleId, String token, Integer userId);
 
     /**
      * 删除评论

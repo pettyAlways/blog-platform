@@ -55,7 +55,17 @@ public enum MessageTypeEnum {
     /**
      * 移除参与者
      */
-    REMOVEPARTICIPANT("参与者移除", "9");
+    REMOVEPARTICIPANT("参与者移除", "9"),
+
+    /**
+     * 作者申请结果
+     */
+    AUTHORAUDITRESULT("作者申请结果", "10"),
+
+    /**
+     * 知识库加入结果
+     */
+    JOINKNOWLEDGERESULT("知识库加入结果", "11");
 
 
     /**

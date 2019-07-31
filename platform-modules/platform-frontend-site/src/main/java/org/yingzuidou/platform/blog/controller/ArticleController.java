@@ -41,12 +41,15 @@ public class ArticleController {
      * 获取知识库下的文章目录
      *
      * @param knowledgeId 知识库ID
+     * @param token 知识库密码访问生成的token
+     * @param userId 访问用户
      * @param pageInfo 分页信息
      * @return 文章目录列表
      */
     @GetMapping("/search/catalogue")
-    public CmsMap<List<ArticleDTO>> catalogueArticleInKnowledge (Integer knowledgeId, PageInfo pageInfo) {
-        List<ArticleDTO> articleDTOS = articleService.retrieveKnowledgeCatalogue(knowledgeId, pageInfo);
+    public CmsMap<List<ArticleDTO>> catalogueArticleInKnowledge (
+            Integer knowledgeId, String token, Integer userId, PageInfo pageInfo) {
+        List<ArticleDTO> articleDTOS = articleService.retrieveKnowledgeCatalogue(knowledgeId, token, userId, pageInfo);
         return CmsMap.<List<ArticleDTO>>ok().setResult(articleDTOS);
     }
 
@@ -54,12 +57,15 @@ public class ArticleController {
      * 获取知识库下最新发布文章
      *
      * @param knowledgeId 知识库ID
+     * @param token 知识库密码访问生成的token
+     * @param userId 访问用户
      * @param pageInfo 分页信息
      * @return 文章目录列表
      */
     @GetMapping("/search/recent/post")
-    public CmsMap<List<ArticleDTO>> recentPostArticleInKnowledge (Integer knowledgeId, PageInfo pageInfo) {
-        List<ArticleDTO> articleDTOS = articleService.retrieveRecentPostArticleList(knowledgeId, pageInfo);
+    public CmsMap<List<ArticleDTO>> recentPostArticleInKnowledge (
+            Integer knowledgeId, String token, Integer userId, PageInfo pageInfo) {
+        List<ArticleDTO> articleDTOS = articleService.retrieveRecentPostArticleList(knowledgeId, token, userId, pageInfo);
         return CmsMap.<List<ArticleDTO>>ok().setResult(articleDTOS);
     }
 
@@ -67,24 +73,44 @@ public class ArticleController {
      * 获取知识库下最新编辑文章
      *
      * @param knowledgeId 知识库ID
+     * @param token 知识库加密生成的token
+     * @param userId 访问用户
      * @param pageInfo 分页信息
      * @return 文章目录列表
      */
     @GetMapping("/search/recent/edit")
-    public CmsMap<List<ArticleDTO>> recentEditArticleInKnowledge (Integer knowledgeId, PageInfo pageInfo) {
-        List<ArticleDTO> articleDTOS = articleService.retrieveRecentEditArticleList(knowledgeId, pageInfo);
+    public CmsMap<List<ArticleDTO>> recentEditArticleInKnowledge (
+            Integer knowledgeId, String token, Integer userId, PageInfo pageInfo) {
+        List<ArticleDTO> articleDTOS = articleService.retrieveRecentEditArticleList(knowledgeId, token, userId, pageInfo);
         return CmsMap.<List<ArticleDTO>>ok().setResult(articleDTOS);
     }
 
+    /**
+     * 用户知识库简洁的文章列表
+     *
+     * @param knowledgeId 知识库ID
+     * @param token 知识库加密生成的token
+     * @param userId 访问用户
+     * @param pageInfo 分页信息
+     * @return 简洁的文章列表
+     */
     @GetMapping("/search/concise")
-    public CmsMap<List<ArticleDTO>> conciseArticle (Integer knowledgeId, PageInfo pageInfo) {
-        List<ArticleDTO> articleDTOS = articleService.retrieveConciseArticleList(knowledgeId, pageInfo);
+    public CmsMap<List<ArticleDTO>> conciseArticle (Integer knowledgeId, String token, Integer userId, PageInfo pageInfo) {
+        List<ArticleDTO> articleDTOS = articleService.retrieveConciseArticleList(knowledgeId, token, userId, pageInfo);
         return CmsMap.<List<ArticleDTO>>ok().setResult(articleDTOS);
     }
 
+    /**
+     * 获取文章的信息
+     *
+     * @param articleId 文章ID
+     * @param token 加密知识库访问的token
+     * @param userId 访问用户
+     * @return 文章信息
+     */
     @GetMapping("/search/item")
-    public CmsMap<ArticleDTO> retrieveArticle (Integer articleId) {
-        ArticleDTO articleDTO = articleService.retrieveArticle(articleId);
+    public CmsMap<ArticleDTO> retrieveArticle (Integer articleId, String token, Integer userId) {
+        ArticleDTO articleDTO = articleService.retrieveArticle(articleId, token, userId);
         return CmsMap.<ArticleDTO>ok().setResult(articleDTO);
     }
 

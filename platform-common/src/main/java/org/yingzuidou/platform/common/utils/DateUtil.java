@@ -3,6 +3,7 @@ package org.yingzuidou.platform.common.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * 类功能描述
@@ -29,6 +30,9 @@ public class DateUtil {
     }
 
     public static Date transformStrToDate(String str, String format) {
+        if (Objects.isNull(str)) {
+            return null;
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         try {
             return simpleDateFormat.parse(str);

@@ -3,6 +3,7 @@ package org.yingzuidou.platform.blog.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
+import org.yingzuidou.platform.blog.dto.MessageDTO;
 import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.dto.UserSkillDTO;
 import org.yingzuidou.platform.blog.service.UserService;

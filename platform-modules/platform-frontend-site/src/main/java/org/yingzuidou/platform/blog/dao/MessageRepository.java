@@ -17,6 +17,12 @@ public interface MessageRepository extends PagingAndSortingRepository<MessageEnt
 
     Integer countByUserIdAndMRead(Integer userId, String isRead);
 
+    /**
+     * 设置用户下所有消息已读
+     *
+     * @param userId 用户ID
+     * @param isRead 已读
+     */
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE message m SET m_read = 'Y' WHERE m.user_id = :userId AND m.m_read = :isRead")
     void updateAllMessageReadByUserId(@Param("userId") Integer userId, @Param("isRead") String isRead);
@@ -38,4 +44,13 @@ public interface MessageRepository extends PagingAndSortingRepository<MessageEnt
      * @param isRead 已读
      */
     void deleteAllByUserIdAndMRead(Integer userId, String isRead);
+
+    /**
+     * 获取用户下所有未读的消息
+     *
+     * @param userId 用户ID
+     * @param isRead 是否已读
+     * @return 所有未读消息
+     */
+    List<MessageEntity> findAllByUserIdAndMRead(Integer userId, String isRead);
 }

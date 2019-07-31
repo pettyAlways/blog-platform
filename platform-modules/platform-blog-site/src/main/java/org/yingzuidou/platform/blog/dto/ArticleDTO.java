@@ -35,6 +35,11 @@ public class ArticleDTO {
     private String articleTitle;
 
     /**
+     * 文章封面
+     */
+    private String coverUrl;
+
+    /**
      * 文章发布时间
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
@@ -78,20 +83,20 @@ public class ArticleDTO {
     private Integer knowledgeId;
 
     public static Function<Object[], ArticleDTO> articleListInKnowledge = data -> new ArticleDTO()
-            .setArticleId(CmsBeanUtils.objectToInt(data[0])).setArticleTitle(String.valueOf(data[1]))
-            .setPostTime(DateUtil.transformStrToDate(String.valueOf(data[2]), "yyyy-MM-dd HH:mm:ss"))
-            .setCreatorId(CmsBeanUtils.objectToInt(data[3])).setCreateName(String.valueOf(data[4]));
+            .setArticleId(CmsBeanUtils.objectToInt(data[0])).setArticleTitle(CmsBeanUtils.objectToString(data[1]))
+            .setPostTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[2]), "yyyy-MM-dd HH:mm:ss"))
+            .setCreatorId(CmsBeanUtils.objectToInt(data[3])).setCreateName(CmsBeanUtils.objectToString(data[4]));
 
     public static Function<Object[], ArticleDTO> articleShow = data -> new ArticleDTO()
-            .setArticleId(Integer.valueOf(String.valueOf(data[0]))).setArticleTitle(String.valueOf(data[1]))
-            .setPostTime(DateUtil.transformStrToDate(String.valueOf(data[2]), "yyyy-MM-dd HH:mm:ss"))
-            .setContent(String.valueOf(data[3])).setCreatorId(CmsBeanUtils.objectToInt(String.valueOf(data[4])))
-            .setCreateName(String.valueOf(data[5])).setKnowledgeId(CmsBeanUtils.objectToInt(data[6]))
-            .setKnowledgeName(String.valueOf(data[7])).setCategoryId(CmsBeanUtils.objectToInt(data[8]))
-            .setCategoryName(String.valueOf(data[9]));
+            .setArticleId(CmsBeanUtils.objectToInt(data[0])).setArticleTitle(CmsBeanUtils.objectToString(data[1]))
+            .setPostTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[2]), "yyyy-MM-dd HH:mm:ss"))
+            .setContent(CmsBeanUtils.objectToString(data[3])).setCreatorId(CmsBeanUtils.objectToInt(String.valueOf(data[4])))
+            .setCreateName(CmsBeanUtils.objectToString(data[5])).setKnowledgeId(CmsBeanUtils.objectToInt(data[6]))
+            .setKnowledgeName(CmsBeanUtils.objectToString(data[7])).setCategoryId(CmsBeanUtils.objectToInt(data[8]))
+            .setCategoryName(CmsBeanUtils.objectToString(data[9])).setCoverUrl(CmsBeanUtils.objectToString(data[10]));
 
     public static Function<Object[], ArticleDTO> knowledgeCardShow = data -> new ArticleDTO()
-            .setArticleId(CmsBeanUtils.objectToInt(data[0])).setArticleTitle(String.valueOf(data[1]))
-            .setPostTime(DateUtil.transformStrToDate(String.valueOf(data[2]), "yyyy-MM-dd HH:mm:ss"));
+            .setArticleId(CmsBeanUtils.objectToInt(data[0])).setArticleTitle(CmsBeanUtils.objectToString(data[1]))
+            .setPostTime(DateUtil.transformStrToDate(CmsBeanUtils.objectToString(data[2]), "yyyy-MM-dd HH:mm:ss"));
 
 }

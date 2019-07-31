@@ -292,6 +292,10 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         }
 
         CmsBeanUtils.copyMorNULLProperties(knowledgeEntity, origin);
+        // 如果访问方式是加密方式，则需要用AES处理
+        if (Objects.equals(knowledgeEntity.getKAccess(), AccessEnum.ENCRYPTION.getValue())) {
+            origin.setKReserveO(EntryptionUtils.aesEncryption(knowledgeEntity.getKReserveO()));
+        }
         origin.setUpdator(user.getId());
         origin.setUpdateTime(new Date());
         knowledgeRepository.save(origin);
@@ -329,6 +333,10 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
 
         CmsBeanUtils.copyMorNULLProperties(knowledgeEntity, origin);
+        // 如果访问方式是加密方式，则需要用AES处理
+        if (Objects.equals(knowledgeEntity.getKAccess(), AccessEnum.ENCRYPTION.getValue())) {
+            origin.setKReserveO(EntryptionUtils.aesEncryption(knowledgeEntity.getKReserveO()));
+        }
         origin.setUpdator(user.getId());
         origin.setUpdateTime(new Date());
         knowledgeRepository.save(origin);
