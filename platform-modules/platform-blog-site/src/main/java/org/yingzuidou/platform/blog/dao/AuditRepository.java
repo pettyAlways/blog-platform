@@ -23,7 +23,7 @@ public interface AuditRepository extends PagingAndSortingRepository<AuditEntity,
             "FROM audit a LEFT JOIN cms_user au ON a.apply_user = au.id " +
             "LEFT JOIN cms_user hu ON a.handle_user = hu.id " +
             "where a.handle_result = :handleResult AND a.apply_type = '1' AND a.handle_user = :handleUser " +
-            "ORDER BY a.handle_result, a.apply_time DESC #pageable")
+            "ORDER BY a.handle_result, a.apply_time DESC \n#pageable\n")
     List<Object[]> findBeAuthorAudit(@Param("handleUser") Integer handleUser, @Param("handleResult") String handleResult, Pageable pageable);
 
     /**
@@ -39,6 +39,6 @@ public interface AuditRepository extends PagingAndSortingRepository<AuditEntity,
             "LEFT JOIN cms_user hu ON hu.id = a.handle_user " +
             "LEFT JOIN knowledge k ON k.id = a.apply_obj " +
             "where a.handle_result = :handleResult AND a.apply_type = '2' And a.handle_user = :handleUser " +
-            "ORDER BY a.handle_result, a.apply_time DESC #pageable")
+            "ORDER BY a.handle_result, a.apply_time DESC \n#pageable\n")
     List<Object[]> findKnowledgeJoinList(@Param("handleUser") Integer handleUser, @Param("handleResult") String handleResult, Pageable pageable);
 }

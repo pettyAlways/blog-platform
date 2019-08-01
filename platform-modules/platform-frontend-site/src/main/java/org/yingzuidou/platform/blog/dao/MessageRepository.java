@@ -13,8 +13,6 @@ public interface MessageRepository extends PagingAndSortingRepository<MessageEnt
 
     List<MessageEntity> findAllByUserIdOrderByCreateTimeDesc(Integer userId);
 
-    List<MessageEntity> findAllByUserIdAndMReadOrderByCreateTimeDesc(Integer userId, String isRead);
-
     Integer countByUserIdAndMRead(Integer userId, String isRead);
 
     /**
@@ -52,5 +50,5 @@ public interface MessageRepository extends PagingAndSortingRepository<MessageEnt
      * @param isRead 是否已读
      * @return 所有未读消息
      */
-    List<MessageEntity> findAllByUserIdAndMRead(Integer userId, String isRead);
+    List<MessageEntity> findAllByUserIdAndMReadOrderByCreateTimeDesc(Integer userId, String isRead);
 }

@@ -33,7 +33,7 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      */
     @Query(nativeQuery = true, value = "SELECT aa.article_title, aa.id as articleId, aa.post_time, aa.knowledge_id, aa.k_name, aa.k_desc, aa.k_url FROM ( " +
             "SELECT ar.article_title, ar.id, ar.post_time, kk.knowledge_id, kk.k_name, kk.k_desc, kk.k_url, IF(@number=ar.knowledge_id,@temp\\:=@temp+1,@temp\\:=1) AS number , @number\\:=ar.knowledge_id FROM article ar INNER JOIN " +
-            "(SELECT k.id as knowledge_id, k.k_name, k.k_desc, k.k_url from (SELECT COUNT(a.id) num, a.knowledge_id FROM article a  LEFT JOIN knowledge k ON a.knowledge_id = k.id  WHERE a.is_delete = 'N' AND k.k_access <> 1 GROUP BY a.knowledge_id ORDER BY num DESC LIMIT 0,3) aa INNER JOIN knowledge k ON k.id = aa.knowledge_id) kk " +
+            "(SELECT k.id as knowledge_id, k.k_name, k.k_desc, k.k_url from (SELECT COUNT(a.id) num, a.knowledge_id FROM article a  LEFT JOIN knowledge k ON a.knowledge_id = k.id  WHERE a.is_delete = 'N' AND k.k_access = '2' GROUP BY a.knowledge_id ORDER BY num DESC LIMIT 0,3) aa INNER JOIN knowledge k ON k.id = aa.knowledge_id) kk " +
             "ON ar.knowledge_id = kk.knowledge_id WHERE ar.is_delete = 'N' ORDER BY ar.post_time ASC) aa WHERE aa.number <= 5")
     List<Object[]> findMostArticleKnowledgeLimit3();
 
@@ -74,8 +74,14 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      * @return 文章列表
      */
     @Query(nativeQuery = true, value = "SELECT a.id AS articleId, a.article_title, a.content, a.post_time, " +
-            "u.id as authorId, u.user_name AS authorName, app.nums AS participantNums FROM article a " +
+            "u.id as authorId, u.user_name AS authorName, app.nums AS participantNums, k.k_type, c.category_name, pp.participantIds, pp.participantNames " +
+            "FROM article a " +
             "LEFT JOIN cms_user u ON a.author_id = u.id " +
+            "LEFT JOIN knowledge k ON k.id = a.knowledge_id " +
+            "LEFT JOIN category c ON c.id = k.k_type " +
+            "LEFT JOIN (SELECT ap.article_id, GROUP_CONCAT(ap.user_id) AS participantIds , GROUP_CONCAT(cu.user_name) AS participantNames " +
+            "FROM article_participant ap LEFT JOIN cms_user cu ON ap.user_id = cu.id GROUP BY ap.article_id) pp " +
+            "ON pp.article_id = a.id " +
             "LEFT JOIN (SELECT ap.article_id, count(ap.id) nums FROM article_participant ap GROUP BY ap.article_id) app " +
             "ON a.id = app.article_id WHERE a.knowledge_id = :knowledgeId AND a.is_delete = :isDelete \n#pageable\n")
     List<Object[]> findArticleListInKnowledge(@Param("knowledgeId") Integer knowledgeId,
@@ -90,9 +96,12 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      * @return 文章显示信息
      */
     @Query(nativeQuery = true, value = "SELECT a.id as articleId, a.article_title, a.post_time, a.content, a.creator, " +
-            "u.user_name, k.id AS knowledgeId, k.k_name, c.id AS categoryId, c.category_name " +
+            "u.user_name, k.id AS knowledgeId, k.k_name, c.id AS categoryId, c.category_name, pp.participantIds, pp.participantNames " +
             "FROM article a LEFT JOIN cms_user u  ON a.creator = u.id " +
             "LEFT JOIN knowledge k ON k.id = a.knowledge_id " +
+            "LEFT JOIN (SELECT ap.article_id, GROUP_CONCAT(ap.user_id) AS participantIds , GROUP_CONCAT(cu.user_name) AS participantNames " +
+            "FROM article_participant ap LEFT JOIN cms_user cu ON ap.user_id = cu.id GROUP BY ap.article_id) pp " +
+            "ON pp.article_id = a.id " +
             "LEFT JOIN category c ON c.id = k.k_type WHERE a.id = :articleId AND a.is_delete = :isDelete")
     List<Object[]>  findArticleShowInfo(@Param("articleId") Integer articleId, @Param("isDelete") String isDelete);
 
@@ -136,7 +145,7 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
             "u.id AS authorId, u.user_name, k.id AS knowledgeId, k.k_name, c.id AS categoryId, c.category_name " +
             "FROM article a LEFT JOIN knowledge k ON a.knowledge_id = k.id " +
             "LEFT JOIN category c ON k.k_type = c.id LEFT JOIN cms_user u ON a.author_id = u.id " +
-            "WHERE a.author_id = :authorId AND a.is_delete = 'N' #pageable")
+            "WHERE a.author_id = :authorId AND a.is_delete = 'N' AND k.k_access = '2' \n#pageable\n")
     List<Object[]> findArticleUserRecentPost(@Param("authorId") Integer authorId, Pageable pageable);
 
 }

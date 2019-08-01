@@ -215,7 +215,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<ArticleDTO> retrieveUserRecentPost(Integer userId, PageInfo pageInfo) {
         List<Object[]> articleEntityList = articleRepository.findArticleUserRecentPost(userId,
-                 pageInfo.toPageable(Sort.Direction.DESC, "postTime"));
+                 pageInfo.toPageable(Sort.Direction.DESC, "post_time"));
         return Optional.ofNullable(articleEntityList).orElse(new ArrayList<>()).stream().map(item -> ArticleDTO
                 .recentPostList.apply(item)).collect(Collectors.toList());
     }

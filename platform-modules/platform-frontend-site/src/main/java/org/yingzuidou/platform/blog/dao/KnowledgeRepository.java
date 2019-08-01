@@ -37,7 +37,7 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
             "LEFT JOIN category c ON k.k_type = c.id LEFT JOIN " +
             "(SELECT p.knowledge_id, count(1) AS participantNum, group_concat(p.participant_id) participantIds " +
             "FROM knowledge kk LEFT JOIN participant p ON p.knowledge_id = kk.id GROUP BY p.knowledge_id) pp " +
-            "ON pp.knowledge_id = k.id WHERE k.k_type = :categoryId AND k.is_delete = :isDelete AND k.k_access = '2' #pageable ")
+            "ON pp.knowledge_id = k.id WHERE k.k_type = :categoryId AND k.is_delete = :isDelete AND k.k_access = '2' ORDER BY k.create_time \n#pageable\n ")
     List<Object[]> findAllByKTypeAndIsDelete(@Param("categoryId") Integer categoryId, @Param("isDelete") String isDelete, Pageable pageable);
 
     /**
@@ -56,7 +56,7 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
             "LEFT JOIN category c ON k.k_type = c.id LEFT JOIN " +
             "(SELECT p.knowledge_id, count(1) AS participantNum, group_concat(p.participant_id) participantIds " +
             "FROM knowledge kk LEFT JOIN participant p ON p.knowledge_id = kk.id GROUP BY p.knowledge_id) pp " +
-            "ON pp.knowledge_id = k.id WHERE k.k_type = :categoryId AND k.is_delete = :isDelete AND k.k_access = '2' #pageable ")
+            "ON pp.knowledge_id = k.id WHERE k.k_type = :categoryId AND k.is_delete = :isDelete AND k.k_access = '2' ORDER BY k.create_time \n#pageable\n ")
     List<Object[]> findCouldAccessKnowledgeByCategory(@Param("categoryId") Integer categoryId, @Param("isDelete") String isDelete, Pageable pageable);
     /**
      * 根据知识库ID查找知识库的详情页封面内容
@@ -86,7 +86,7 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
             "LEFT JOIN category c ON k.k_type = c.id LEFT JOIN " +
             "(SELECT p.knowledge_id, count(1) AS participantNum, group_concat(p.participant_id) participantIds FROM knowledge kk " +
             "LEFT JOIN participant p ON p.knowledge_id = kk.id GROUP BY p.knowledge_id) pp ON pp.knowledge_id = k.id " +
-            "WHERE k.creator = :userId AND k.is_delete = 'N' AND k.k_access <> '1' #pageable")
+            "WHERE k.creator = :userId AND k.is_delete = 'N' AND k.k_access <> '1' ORDER BY k.create_time \n#pageable\n")
     List<Object[]> findUserKnowledgeList(@Param("userId") Integer userId, Pageable pageable);
 
     /**
@@ -106,6 +106,6 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
             "FROM knowledge kk LEFT JOIN participant p ON p.knowledge_id = kk.id GROUP BY p.knowledge_id) pp " +
             "ON pp.knowledge_id = k.knowledgeId " +
             "LEFT JOIN category c ON k.k_type = c.id " +
-            "LEFT JOIN cms_user u ON k.creator = u.id #pageable")
+            "LEFT JOIN cms_user u ON k.creator = u.id ORDER BY k.create_time \n#pageable\n")
     List<Object[]> findUserParticipantKnowledgeList(@Param("userId") Integer userId, Pageable pageable);
 }

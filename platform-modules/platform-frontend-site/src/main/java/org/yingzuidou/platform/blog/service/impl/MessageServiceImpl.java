@@ -75,7 +75,7 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public List<MessageDTO> retrieveMessageList(int userId) {
-        List<MessageEntity> unReadMessageList = messageRepository.findAllByUserIdAndMRead(userId, IsReadEnum.UNREAD.getValue());
+        List<MessageEntity> unReadMessageList = messageRepository.findAllByUserIdAndMReadOrderByCreateTimeDesc(userId, IsReadEnum.UNREAD.getValue());
         if (unReadMessageList.isEmpty()) {
             return null;
         }

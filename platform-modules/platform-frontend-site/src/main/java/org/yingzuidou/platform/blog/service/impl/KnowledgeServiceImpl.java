@@ -112,7 +112,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     @Override
     public List<KnowledgeDTO> listByCategory(Integer categoryId, PageInfo pageInfo) {
         List<Object[]> knowledgeEntities = knowledgeRepository
-                .findAllByKTypeAndIsDelete(categoryId, IsDeleteEnum.NOTDELETE.getValue(), pageInfo.toPageable());
+                .findAllByKTypeAndIsDelete(categoryId, IsDeleteEnum.NOTDELETE.getValue(),
+                        pageInfo.toPageableNoOrder());
         return Optional.ofNullable(knowledgeEntities).orElse(new ArrayList<>()).stream()
                 .map(item ->KnowledgeDTO.categoryKnowledgeList.apply(item)).collect(Collectors.toList());
     }
@@ -126,8 +127,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      */
     @Override
     public List<KnowledgeDTO> listCouldAccessKnowledgeByCategory(Integer categoryId, PageInfo pageInfo) {
-        List<Object[]> knowledgeEntities = knowledgeRepository
-                .findCouldAccessKnowledgeByCategory(categoryId, IsDeleteEnum.NOTDELETE.getValue(), pageInfo.toPageable());
+        List<Object[]> knowledgeEntities = knowledgeRepository.findCouldAccessKnowledgeByCategory(
+                categoryId, IsDeleteEnum.NOTDELETE.getValue(), pageInfo.toPageableNoOrder());
         return Optional.ofNullable(knowledgeEntities).orElse(new ArrayList<>()).stream()
                 .map(item ->KnowledgeDTO.relateKnowledgeList.apply(item)).collect(Collectors.toList());
     }
@@ -179,7 +180,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     @Override
     public List<KnowledgeDTO> retrieveUserKnowledge(Integer userId, PageInfo pageInfo) {
         List<Object[]> knowledgeList = knowledgeRepository.findUserKnowledgeList(userId,
-                pageInfo.toPageable(Sort.Direction.DESC, "createTime"));
+                pageInfo.toPageableNoOrder());
         return Optional.ofNullable(knowledgeList).orElse(new ArrayList<>()).stream().parallel()
                 .map(item -> KnowledgeDTO.userKnowledgeList.apply(item)).collect(Collectors.toList());
     }
@@ -187,7 +188,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     @Override
     public List<KnowledgeDTO> retrieveUserParticipant(Integer userId, PageInfo pageInfo) {
         List<Object[]> knowledgeList = knowledgeRepository.findUserParticipantKnowledgeList(userId,
-                pageInfo.toPageable(Sort.Direction.DESC, "createTime"));
+                pageInfo.toPageableNoOrder());
         return Optional.ofNullable(knowledgeList).orElse(new ArrayList<>()).stream().parallel()
                 .map(item -> KnowledgeDTO.userParticipantList.apply(item)).collect(Collectors.toList());
     }
