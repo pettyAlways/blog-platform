@@ -9,6 +9,7 @@ import org.yingzuidou.platform.blog.dto.UserSkillDTO;
 import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.entity.UserSkillEntity;
+import org.yingzuidou.platform.common.paging.PageInfo;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.List;
@@ -45,6 +46,12 @@ public class UserController {
     @GetMapping("/search/recommend")
     public CmsMap<List<UserDTO>> recommendUser() {
         List<UserDTO> userList = userService.retrieveRecommendUser();
+        return CmsMap.<List<UserDTO>>ok().setResult(userList);
+    }
+
+    @GetMapping("/search/recommend/list")
+    public CmsMap<List<UserDTO>> recommendUserList() {
+        List<UserDTO> userList = userService.retrieveRecommendUserList();
         return CmsMap.<List<UserDTO>>ok().setResult(userList);
     }
 

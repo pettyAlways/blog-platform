@@ -4,6 +4,7 @@ import org.yingzuidou.platform.blog.dto.MessageDTO;
 import org.yingzuidou.platform.blog.dto.UserDTO;
 import org.yingzuidou.platform.blog.dto.UserSkillDTO;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
+import org.yingzuidou.platform.common.paging.PageInfo;
 
 import java.util.List;
 
@@ -75,4 +76,10 @@ public interface UserService {
      */
     List<UserDTO> retrieveRecommendUser();
 
+    /**
+     * 获取首页作者推荐列表
+     *
+     * @return 作者推荐列表
+     */
+    List<UserDTO> retrieveRecommendUserList();
 }

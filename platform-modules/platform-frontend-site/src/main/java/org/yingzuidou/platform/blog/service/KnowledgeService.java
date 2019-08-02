@@ -122,4 +122,11 @@ public interface KnowledgeService {
      * @return 知识库列表
      */
     List<KnowledgeDTO> listCouldAccessKnowledgeByCategory(Integer categoryId, PageInfo pageInfo);
+
+    /**
+     * 获取最近知识库详细信息列表
+     *
+     * @return 详细信息列表
+     */
+    List<KnowledgeDTO> listRecentInfo();
 }

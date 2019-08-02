@@ -304,4 +304,16 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         }
         return token;
     }
+
+    /**
+     * 获取最近知识库详细信息列表
+     *
+     * @return 最近知识库详细信息列表
+     */
+    @Override
+    public List<KnowledgeDTO> listRecentInfo() {
+        List<Object[]> recentKnowledgeList = knowledgeRepository.recentKnowledgeInfo();
+        return Optional.ofNullable(recentKnowledgeList).orElse(new ArrayList<>()).stream().map(item -> KnowledgeDTO
+        .recentKnowledgeList.apply(item)).collect(Collectors.toList());
+    }
 }

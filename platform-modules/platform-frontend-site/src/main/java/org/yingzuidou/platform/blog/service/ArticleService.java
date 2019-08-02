@@ -5,6 +5,7 @@ import org.yingzuidou.platform.common.entity.ArticleEntity;
 import org.yingzuidou.platform.common.paging.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 类功能描述
@@ -95,4 +96,19 @@ public interface ArticleService {
      * @return 用户列表
      */
     List<ArticleDTO> retrieveUserRecentPost(Integer userId, PageInfo pageInfo);
+
+    /**
+     * 上一篇和下一篇文章
+     *
+     * @param articleId 文章ID
+     * @return 上一篇和下一篇列表
+     */
+    Map<String, ArticleDTO> preAndNext(Integer articleId);
+
+    /**
+     * 最近文章列表
+     *
+     * @return 最近文章列表
+     */
+    List<ArticleDTO> recentArticleListInfo();
 }

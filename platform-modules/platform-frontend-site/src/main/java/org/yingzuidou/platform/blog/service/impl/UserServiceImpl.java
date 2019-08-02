@@ -19,6 +19,7 @@ import org.yingzuidou.platform.common.entity.CmsUserEntity;
 import org.yingzuidou.platform.common.entity.MessageEntity;
 import org.yingzuidou.platform.common.entity.UserSkillEntity;
 import org.yingzuidou.platform.common.exception.BusinessException;
+import org.yingzuidou.platform.common.paging.PageInfo;
 import org.yingzuidou.platform.common.utils.CmsBeanUtils;
 import org.yingzuidou.platform.common.utils.CmsCommonUtil;
 
@@ -232,7 +233,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> retrieveRecommendUser() {
         List<UserDTO> userDTOList = new ArrayList<>();
-        List<Integer> userIdList = userRepository.retrieveRecommendUser();
+        List<Integer> userIdList = userRepository.retrieveRecommendUser(IsDeleteEnum.NOTDELETE.getValue());
         Iterable<CmsUserEntity> iterable = userRepository.findAllById(userIdList);
         for (CmsUserEntity user : iterable) {
             UserDTO userDTO = new UserDTO();
@@ -242,6 +243,26 @@ public class UserServiceImpl implements UserService {
             List<UserSkillDTO> userSkillDTOList = Optional.ofNullable(userSkillEntityList).orElse(new ArrayList<>()).stream().map(item -> new UserSkillDTO()
                     .setSkillId(item.getId()).setSkillName(item.getSkill())).collect(Collectors.toList());
             userDTO.setSkillList(userSkillDTOList);
+            userDTOList.add(userDTO);
+        }
+        return userDTOList;
+    }
+
+    @Override
+    public List<UserDTO> retrieveRecommendUserList() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        List<Integer> userIdList = userRepository.retrieveRecommendUserList(IsDeleteEnum.NOTDELETE.getValue());
+        Iterable<CmsUserEntity> iterable = userRepository.findAllById(userIdList);
+        for (CmsUserEntity user : iterable) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getId()).setUserName(user.getUserName()).setIntroduce(user.getIntroduce())
+                    .setSignature(user.getSignature()).setAvatarUrl(user.getUserAvatar());
+            List<UserSkillEntity> userSkillEntityList = userSkillRepository.findAllByUserId(user.getId());
+            if (!userSkillEntityList.isEmpty()) {
+                List<UserSkillDTO> userSkillDTOList = userSkillEntityList.stream().map(item -> new UserSkillDTO()
+                        .setSkillId(item.getId()).setSkillName(item.getSkill())).collect(Collectors.toList());
+                userDTO.setSkillList(userSkillDTOList);
+            }
             userDTOList.add(userDTO);
         }
         return userDTOList;

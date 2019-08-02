@@ -219,4 +219,52 @@ public class ArticleServiceImpl implements ArticleService {
         return Optional.ofNullable(articleEntityList).orElse(new ArrayList<>()).stream().map(item -> ArticleDTO
                 .recentPostList.apply(item)).collect(Collectors.toList());
     }
+
+    /**
+     * 上一篇和下一篇列表
+     *
+     * @param articleId 文章ID
+     * @return 上一篇和下一篇文章
+     */
+    @Override
+    public Map<String, ArticleDTO> preAndNext(Integer articleId) {
+        Map<String, ArticleDTO> articleDTOMap = new HashMap<>();
+        Optional<ArticleEntity> articleEntityOp = articleRepository.findById(articleId);
+        if (!articleEntityOp.isPresent()) {
+            throw new BusinessException("文章不存在");
+        }
+        ArticleEntity articleEntity = articleEntityOp.get();
+        List<Integer> articleIdList = articleRepository.findArticleIdList(articleEntity.getKnowledgeId());
+        if (!articleIdList.isEmpty()) {
+          int index = articleIdList.indexOf(articleId);
+          if (index > 0) {
+              Optional<ArticleEntity> pre = articleRepository.findById(articleIdList.get(index - 1));
+              if (pre.isPresent()) {
+                  articleEntity = pre.get();
+                  ArticleDTO articleDTO = new ArticleDTO();
+                  articleDTO.setArticleId(articleEntity.getId()).setArticleTitle(articleEntity.getArticleTitle());
+                  articleDTOMap.put("pre", articleDTO);
+              }
+          }
+          if (index < articleIdList.size() - 1) {
+              Optional<ArticleEntity> next = articleRepository.findById(articleIdList.get(index + 1));
+              if (next.isPresent()) {
+                  articleEntity = next.get();
+                  ArticleDTO articleDTO = new ArticleDTO();
+                  articleDTO.setArticleId(articleEntity.getId()).setArticleTitle(articleEntity.getArticleTitle());
+                  articleDTOMap.put("next", articleDTO);
+              }
+          }
+        }
+        return articleDTOMap;
+    }
+
+    @Override
+    public List<ArticleDTO> recentArticleListInfo() {
+        List<Object[]> recentArticleList = articleRepository.findRecentArticleList();
+        if (!recentArticleList.isEmpty()) {
+            return recentArticleList.stream().map(item -> ArticleDTO.articleList.apply(item)).collect(Collectors.toList());
+        }
+        return null;
+    }
 }

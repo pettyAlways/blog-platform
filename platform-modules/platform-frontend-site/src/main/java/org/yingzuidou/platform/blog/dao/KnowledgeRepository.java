@@ -108,4 +108,19 @@ public interface KnowledgeRepository extends PagingAndSortingRepository<Knowledg
             "LEFT JOIN category c ON k.k_type = c.id " +
             "LEFT JOIN cms_user u ON k.creator = u.id ORDER BY k.create_time \n#pageable\n")
     List<Object[]> findUserParticipantKnowledgeList(@Param("userId") Integer userId, Pageable pageable);
+
+    /**
+     * 获取最近的知识库列表
+     *
+     * @return 最近知识库列表
+     */
+    @Query(nativeQuery = true, value = "SELECT k.id, k.k_name, k.k_desc, k_url, k.create_time, k.creator, u.user_name, k.k_type, " +
+            "c.category_name, aa.articleNums, pp.participantNum FROM knowledge k LEFT JOIN cms_user u ON k.creator = u.id " +
+            "LEFT JOIN category c ON k.k_type = c.id " +
+            "LEFT JOIN (SELECT a.knowledge_id, count(1) AS articleNums " +
+            "FROM article a WHERE a.is_delete = 'N' GROUP BY a.knowledge_id) aa ON aa.knowledge_id = k.id " +
+            "LEFT JOIN (SELECT p.knowledge_id, count(1) AS participantNum FROM knowledge kk " +
+            "LEFT JOIN participant p ON p.knowledge_id = kk.id GROUP BY p.knowledge_id) pp ON pp.knowledge_id = k.id " +
+            "WHERE k.k_access = 2 AND k.is_delete = 'N' ORDER BY k.create_time DESC LIMIT 0, 3")
+    List<Object[]> recentKnowledgeInfo();
 }

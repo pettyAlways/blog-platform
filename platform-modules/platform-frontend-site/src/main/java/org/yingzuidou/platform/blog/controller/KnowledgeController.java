@@ -40,6 +40,17 @@ public class KnowledgeController {
     }
 
     /**
+     * 获取最近知识库详细信息列表
+     *
+     * @return 最近知识库列表
+     */
+    @GetMapping("/search/recent/info")
+    public CmsMap<List<KnowledgeDTO>> recentKnowledgeInfo() {
+        List<KnowledgeDTO> knowledgeDTOS = knowledgeService.listRecentInfo();
+        return CmsMap.<List<KnowledgeDTO>>ok().setResult(knowledgeDTOS);
+    }
+
+    /**
      * 根据分类分页查找知识库
      *
      * @param categoryId 分类ID

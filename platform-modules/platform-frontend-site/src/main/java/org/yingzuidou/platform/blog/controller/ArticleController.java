@@ -9,6 +9,7 @@ import org.yingzuidou.platform.common.paging.PageInfo;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 类功能描述
@@ -50,6 +51,12 @@ public class ArticleController {
     public CmsMap<List<ArticleDTO>> catalogueArticleInKnowledge (
             Integer knowledgeId, String token, Integer userId, PageInfo pageInfo) {
         List<ArticleDTO> articleDTOS = articleService.retrieveKnowledgeCatalogue(knowledgeId, token, userId, pageInfo);
+        return CmsMap.<List<ArticleDTO>>ok().setResult(articleDTOS);
+    }
+
+    @GetMapping("/search/recent/info")
+    public CmsMap<List<ArticleDTO>> recentArticleListInfo() {
+        List<ArticleDTO> articleDTOS = articleService.recentArticleListInfo();
         return CmsMap.<List<ArticleDTO>>ok().setResult(articleDTOS);
     }
 
@@ -111,7 +118,8 @@ public class ArticleController {
     @GetMapping("/search/item")
     public CmsMap<ArticleDTO> retrieveArticle (Integer articleId, String token, Integer userId) {
         ArticleDTO articleDTO = articleService.retrieveArticle(articleId, token, userId);
-        return CmsMap.<ArticleDTO>ok().setResult(articleDTO);
+        Map<String, ArticleDTO> preAndNextList = articleService.preAndNext(articleId);
+        return CmsMap.<ArticleDTO>ok().appendData("preAndNext", preAndNextList).setResult(articleDTO);
     }
 
     @GetMapping("/search/recent/in-knowledge")
