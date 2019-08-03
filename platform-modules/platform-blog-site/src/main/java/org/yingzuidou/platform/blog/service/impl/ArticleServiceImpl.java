@@ -319,7 +319,9 @@ public class ArticleServiceImpl implements ArticleService {
         articleEntity = articleRepository.findFirstByKnowledgeIdAndIsDeleteOrderByPostTimeAsc(
                 articleEntity.getKnowledgeId(), IsDeleteEnum.NOTDELETE.getValue());
         ArticleDTO articleDTO = new ArticleDTO();
-        articleDTO.setArticleId(articleEntity.getId());
+        if (Objects.nonNull(articleEntity)) {
+            articleDTO.setArticleId(articleEntity.getId());
+        }
         return articleDTO;
     }
 
@@ -345,7 +347,7 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleEntity copy = new ArticleEntity();
         copy.setArticleTitle(origin.getArticleTitle()).setContent(origin.getContent()).setAuthorId(user.getId())
                 .setPostTime(new Date()).setCreator(user.getId()).setCreateTime(new Date()).setKnowledgeId(knowledgeId)
-                .setUpdateTime(new Date());
+                .setUpdateTime(new Date()).setCoverUrl(origin.getCoverUrl());
         copy = articleRepository.save(copy);
         recentEditService.saveRecentEditRecord(user.getId(), copy, knowledgeEntity);
         operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.ARTICLE.getValue(),

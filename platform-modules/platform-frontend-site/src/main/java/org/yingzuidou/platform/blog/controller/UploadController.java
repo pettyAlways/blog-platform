@@ -39,7 +39,8 @@ public class UploadController {
     @Value("${static.resource.uploadPath}")
     private String uploadPath;
 
-    private static final String STATIC_RESOURCE_HOST = "http://localhost:8086/platform/blog/static/";
+    @Value("${static.resource.accessUrl}")
+    private String accessUrl;
 
         @RequestMapping("/common")
         public CmsMap commonUpload(@RequestParam("file") MultipartFile file,@RequestParam("fileName") String fileName,
@@ -59,6 +60,6 @@ public class UploadController {
                 log.error(e.toString(), e);
             }
 
-        return CmsMap.ok().setResult(STATIC_RESOURCE_HOST + dirPath.replace(File.separator, "/") );
+        return CmsMap.ok().setResult(accessUrl + dirPath.replace(File.separator, "/") );
     }
 }

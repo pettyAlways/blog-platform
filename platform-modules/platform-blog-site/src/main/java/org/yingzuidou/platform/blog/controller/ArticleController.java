@@ -77,9 +77,9 @@ public class ArticleController {
     }
 
     @DeleteMapping("/share/delete")
-    public CmsMap<ArticleDTO> deleteShareArticle(@RequestParam("articleId") Integer articleId) {
+    public CmsMap<Integer> deleteShareArticle(@RequestParam("articleId") Integer articleId) {
         ArticleDTO articleDTO = articleService.deleteShareArticle(articleId);
-        return CmsMap.<ArticleDTO>ok().setResult(articleDTO);
+        return CmsMap.<Integer>ok().setResult(articleDTO.getArticleId());
     }
 
     @PostMapping("/copy")

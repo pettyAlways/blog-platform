@@ -102,7 +102,7 @@ public class AuthController {
                 "登陆中...\n" +
                 "<script>\n" +
                 "    window.onload = function () {\n" +
-                "        window.opener.postMessage(\"" + backStr + "\", \"http://localhost:8081\");\n" +
+                "        window.opener.postMessage(\"" + backStr + "\", \"http://192.168.0.100:8081\");\n" +
                 "        window.close();\n" +
                 "    }\n" +
                 "</script>\n" +

@@ -51,7 +51,8 @@ public class UserServiceImpl  implements UserService {
         }
         CmsUserEntity userEntity = cmsUserEntityOp.get();
         Node permissions = resourceService.acquireUserPermission(user.getId());
-        return new UserDTO().setResourceTree(permissions).setUserAvatar(userEntity.getUserAvatar());
+        return new UserDTO().setResourceTree(permissions).setId(userEntity.getId()).setUserName(userEntity.getUserName())
+                .setUserAvatar(userEntity.getUserAvatar());
     }
 
 }
