@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * 时间           作者          版本        描述
  * ====================================================
  */
-public class    PlatformUserDetailsService implements UserDetailsService {
+public class PlatformUserDetailsService implements UserDetailsService {
 
     @Autowired
     private ServerAuthFeign serverAuthFeign;

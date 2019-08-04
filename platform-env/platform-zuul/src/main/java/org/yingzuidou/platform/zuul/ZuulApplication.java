@@ -8,13 +8,12 @@ import org.yingzuidou.platform.auth.client.EnableAuthClient;
 
 /**
  * 类功能描述
-        *
-        * @author 鹰嘴豆
-        * @date 2019/6/5
-        * <p>
+ * @author 鹰嘴豆
+ * @date 2019/6/5
+ * <p>
  * 时间           作者          版本        描述
-         * ====================================================
-         */
+ * ====================================================
+ * */
 @SpringBootApplication
 @EnableZuulProxy
 @EnableAuthClient

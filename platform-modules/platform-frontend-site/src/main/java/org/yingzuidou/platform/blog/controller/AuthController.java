@@ -2,6 +2,7 @@ package org.yingzuidou.platform.blog.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,14 +34,21 @@ import java.util.Map;
 @RequestMapping("/third-party")
 public class AuthController {
 
-    private static final String CLIENT_ID = "47fca5d6cdbf13ae8984";
-    private static final String CLIENT_SECRET = "c1f7002ed74ed439ebe8d8e238263e945d028f90";
+    @Value("github.clientId")
+    private String clientId;
+
+    @Value("github.clientSecret")
+    private String clientSecret;
+
+    @Value("${github.frontendUrl}")
+    private String frontendUrl;
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private UserService userService;
+
 
     /**
      * <p>使用github第三方登录的方式登录本博客系统，根据github返回的用户信息中的唯一id判断是否已经存在用户，如果不存在则
@@ -54,7 +62,7 @@ public class AuthController {
         String uri = "https://github.com/login/oauth/access_token?client_id={clientId}&client_secret={clientSecret}&code={code}";
         String tokenResult;
         try {
-            tokenResult = restTemplate.postForObject(uri, null, String.class,CLIENT_ID, CLIENT_SECRET, code);
+            tokenResult = restTemplate.postForObject(uri, null, String.class,clientId, clientSecret, code);
         } catch (Exception e) {
             throw new BusinessException("连接github服务器失败");
         }
@@ -102,7 +110,7 @@ public class AuthController {
                 "登陆中...\n" +
                 "<script>\n" +
                 "    window.onload = function () {\n" +
-                "        window.opener.postMessage(\"" + backStr + "\", \"http://192.168.0.100:8081\");\n" +
+                "        window.opener.postMessage(\"" + backStr + "\", \"" + frontendUrl + "\");\n" +
                 "        window.close();\n" +
                 "    }\n" +
                 "</script>\n" +
