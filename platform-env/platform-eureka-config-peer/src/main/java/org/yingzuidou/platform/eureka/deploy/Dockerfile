@@ -9,7 +9,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 RUN java -version
 ADD platform-eureka-config-peer-1.0-SNAPSHOT.jar /usr/web/project
 WORKDIR /usr/web/project
-ENTRYPOINT java -jar platform-eureka-config-1.0-SNAPSHOT.jar && tail -f > /etc/null
+ENTRYPOINT java -jar platform-eureka-config-peer-1.0-SNAPSHOT.jar && tail -f > /etc/null
 
  
 

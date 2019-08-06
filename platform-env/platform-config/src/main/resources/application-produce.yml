@@ -26,8 +26,9 @@ eureka:
   instance:
     instance-id: platform-config
     prefer-ip-address: true
-    hostname: 139.199.213.156
-    ip-address: 139.199.213.156
+    # 部署所在的机器
+    hostname: 118.25.74.179
+    ip-address: 118.25.74.179
   client:
     serviceUrl:
       defaultZone: http://yingzuidou:yingzuidou@139.199.213.156:8080/eureka/, http://yingzuidou:yingzuidou@139.199.213.156:8081/eureka/

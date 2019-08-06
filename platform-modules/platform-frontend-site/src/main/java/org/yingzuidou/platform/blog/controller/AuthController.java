@@ -1,6 +1,7 @@
 package org.yingzuidou.platform.blog.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
@@ -32,12 +33,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/third-party")
+@Slf4j
 public class AuthController {
 
-    @Value("github.clientId")
+    @Value("${github.clientId}")
     private String clientId;
 
-    @Value("github.clientSecret")
+    @Value("${github.clientSecret}")
     private String clientSecret;
 
     @Value("${github.frontendUrl}")
@@ -59,21 +61,23 @@ public class AuthController {
      */
     @GetMapping("/login")
     public void thirdPartyLogin(@RequestParam("code") String code, HttpServletResponse response) {
-        String uri = "https://github.com/login/oauth/access_token?client_id={clientId}&client_secret={clientSecret}&code={code}";
+        String uri = "https://github.com/login/oauth/access_token?client_id=" + clientId + "&client_secret=" + clientSecret + "&code=" + code;
         String tokenResult;
         try {
-            tokenResult = restTemplate.postForObject(uri, null, String.class,clientId, clientSecret, code);
+            tokenResult = restTemplate.postForObject(uri, null, String.class);
         } catch (Exception e) {
+            log.error("access github fail，error info is [" + e.getMessage() + "],the uri is [ " + uri + "]");
             throw new BusinessException("连接github服务器失败");
         }
         if (StringUtils.hasText(tokenResult)) {
             String[] values = tokenResult.split("&");
             String accessToken = values[0].split("=")[1];
-            uri = "https://api.github.com/user?access_token={accessToken}";
+            uri = "https://api.github.com/user?access_token=" + accessToken;
             JSONObject exchange;
             try {
-                exchange = restTemplate.getForObject(uri, JSONObject.class, accessToken);
+                exchange = restTemplate.getForObject(uri, JSONObject.class);
             } catch (Exception e) {
+                log.error("access github fail，error info is [" + e.getMessage() + "],the uri is [ " + uri + "]");
                 throw new BusinessException("连接github服务器失败");
             }
             String defaultUserAccount = CmsBeanUtils.objectToString(exchange.get("id"));

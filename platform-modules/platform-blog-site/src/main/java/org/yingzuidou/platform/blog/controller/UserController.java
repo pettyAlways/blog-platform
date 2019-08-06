@@ -42,12 +42,13 @@ public class UserController {
 
     @RequestMapping("/loadUser/{userName}")
     public CmsMap loadUserByUserName(@PathVariable String userName) {
+        System.out.println("UserController：loadUserByUserName 进入");
         List<String> roleNameList = new ArrayList<>();
         CmsUserEntity cmsUserEntity = userService.loadUserByUserName(userName);
         if (Objects.nonNull(cmsUserEntity)) {
             roleNameList =  userRoleService.retrieveRolesByUserId(cmsUserEntity.getId());
         }
-
+        System.out.println("UserController：loadUserByUserName 返回:" + cmsUserEntity.getUserName());
         return CmsMap.ok().appendData("roleList", roleNameList).setResult(cmsUserEntity);
     }
 
