@@ -131,7 +131,6 @@ public class ArticleDTO {
      * 知识库下的文章详细信息
      */
 
-
     public static Function<Object[], ArticleDTO> articleList = data -> new ArticleDTO()
             .setArticleId(CmsBeanUtils.objectToInt(data[0])).setArticleTitle(CmsBeanUtils.objectToString(data[1]))
             .setContent(CmsBeanUtils.limitContent(HtmlUtils.delHTMLTag(CmsBeanUtils.objectToString(data[2])), 120))

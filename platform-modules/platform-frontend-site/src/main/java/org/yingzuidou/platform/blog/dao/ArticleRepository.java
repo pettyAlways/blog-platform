@@ -75,7 +75,8 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      * @return 文章列表
      */
     @Query(nativeQuery = true, value = "SELECT a.id AS articleId, a.article_title, a.content, a.post_time, " +
-            "u.id as authorId, u.user_name AS authorName, pp.participantNum, k.k_type, c.category_name, pp.participantIds, pp.participantNames, a.cover_url " +
+            "u.id as authorId, u.user_name AS authorName, pp.participantNum, k.k_type, c.category_name, pp.participantIds, " +
+            "pp.participantNames, a.cover_url, a.knowledge_id, k.k_name " +
             "FROM article a " +
             "LEFT JOIN cms_user u ON a.author_id = u.id " +
             "LEFT JOIN knowledge k ON k.id = a.knowledge_id " +
