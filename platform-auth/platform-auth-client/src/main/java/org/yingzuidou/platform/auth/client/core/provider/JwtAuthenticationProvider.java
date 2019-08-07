@@ -39,8 +39,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String password = user.getPassword();
 
         JwtTokenUtil.verifyToken(token, userAccount, password);
-        //成功后返回认证信息，filter会将认证信息放入SecurityContext
-        return new JwtAuthenticationToken(user, token, user.getAuthorities());
+        //成功后返回认证信息，filter会将认证信息放入SecurityContext,注意需要设置是否已经登录的标志，校验成功就表明登录
+        return new JwtAuthenticationToken(user, token, true, user.getAuthorities());
     }
 
     @Override

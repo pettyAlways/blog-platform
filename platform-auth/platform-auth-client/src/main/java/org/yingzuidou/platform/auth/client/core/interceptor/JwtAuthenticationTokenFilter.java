@@ -1,11 +1,11 @@
 package org.yingzuidou.platform.auth.client.core.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -73,6 +73,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
             if (Objects.nonNull(authentication)) {
                 authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
+                // 将jwt解析成用户信息存放线程上下文中以便于后面匿名拦截器、框架自定义的权限校验拦截器
+                // 进行正确的验证需要登录的请求
+                SecurityContextHolder.getContext().setAuthentication(authentication);
                 // 执行下一个拦截器
                 filterChain.doFilter(request, response);
             }

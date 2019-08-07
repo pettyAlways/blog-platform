@@ -22,13 +22,16 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private String token;
 
     public JwtAuthenticationToken(String token) {
-       this(null, token, null);
+       this(null, token, true, null);
     }
 
-    public JwtAuthenticationToken(UserDetails userDetails, String token, Collection<? extends GrantedAuthority> getAuthoritie) {
+    public JwtAuthenticationToken(
+            UserDetails userDetails, String token, boolean isAuthenticated,
+            Collection<? extends GrantedAuthority> getAuthoritie) {
         super(getAuthoritie);
         this.principal = userDetails;
         this.token = token;
+        this.setAuthenticated(isAuthenticated);
     }
 
     @Override
@@ -43,5 +46,10 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     public String getToken() {
         return token;
+    }
+
+    @Override
+    public void setAuthenticated(boolean authenticated) {
+        super.setAuthenticated(authenticated);
     }
 }
