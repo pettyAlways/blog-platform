@@ -11,11 +11,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.yingzuidou.platform.auth.client.core.base.ConfigData;
 import org.yingzuidou.platform.auth.client.core.configurer.JwtVerifyConfigurer;
 import org.yingzuidou.platform.auth.client.core.configurer.PlatformLoginConfigurer;
 import org.yingzuidou.platform.auth.client.core.encoder.HashedCredentialsEncoder;
+import org.yingzuidou.platform.auth.client.core.handler.PlatformLogoutSuccessHandler;
 import org.yingzuidou.platform.auth.client.core.interceptor.JwtAuthenticationTokenFilter;
 import org.yingzuidou.platform.auth.client.core.interceptor.PlatformFilterSecurityInterceptor;
 import org.yingzuidou.platform.auth.client.core.interceptor.PlatformZuulHeaderFilter;
@@ -51,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
            .authorizeRequests()
                 // 不需要登录认证的资源
                 .antMatchers("/platform/**/login", "/error", "/platform/blog/static/**",
-                        "/platform/frontend/**/search/**").permitAll()
+                        "/platform/frontend/**/search/**", "/platform/**/logout").permitAll()
                 // 其他请求都需要登录
                 .anyRequest().authenticated()
                 .and()
@@ -62,6 +64,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
            // 禁用原生的form页面登录
             .formLogin().disable()
             .cors().and()
+           // 登出处理
+            .logout().logoutUrl("/platform/logout").logoutSuccessHandler(platformLogoutSuccessHandler()).and()
             // 增加权限校验拦截器
             .addFilterBefore(platformFilterSecurityInterceptor(), FilterSecurityInterceptor.class)
             .addFilterBefore(platformZuulHeaderFilter(), HeaderWriterFilter.class)
@@ -110,6 +114,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         platformFilterSecurityInterceptor.setAccessDecisionManager(platformAccessDecisionManager());
         platformFilterSecurityInterceptor.setSecurityMetadataSource(platformInvocationSecurityMetadataSourceService());
         return platformFilterSecurityInterceptor;
+    }
+
+    @Bean
+    public LogoutSuccessHandler platformLogoutSuccessHandler() {
+        return new PlatformLogoutSuccessHandler();
     }
 
     private JwtAuthenticationTokenFilter authenticationTokenFilter() {

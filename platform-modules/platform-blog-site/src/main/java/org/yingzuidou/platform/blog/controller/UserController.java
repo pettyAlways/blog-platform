@@ -2,15 +2,12 @@ package org.yingzuidou.platform.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.yingzuidou.platform.auth.client.core.util.ThreadStorageUtil;
 import org.yingzuidou.platform.blog.dto.UserDTO;
-import org.yingzuidou.platform.blog.service.MessageService;
 import org.yingzuidou.platform.blog.service.SysConstService;
 import org.yingzuidou.platform.blog.service.UserRoleService;
 import org.yingzuidou.platform.blog.service.UserService;
 import org.yingzuidou.platform.common.constant.ConstEnum;
 import org.yingzuidou.platform.common.entity.CmsUserEntity;
-import org.yingzuidou.platform.common.entity.MessageEntity;
 import org.yingzuidou.platform.common.vo.CmsMap;
 
 import java.util.ArrayList;
@@ -42,7 +39,6 @@ public class UserController {
 
     @RequestMapping("/loadUser/{userName}")
     public CmsMap loadUserByUserName(@PathVariable String userName) {
-        System.out.println("UserController：loadUserByUserName 进入");
         List<String> roleNameList = new ArrayList<>();
         CmsUserEntity cmsUserEntity = userService.loadUserByUserName(userName);
         if (Objects.nonNull(cmsUserEntity)) {

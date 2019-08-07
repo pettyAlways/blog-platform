@@ -43,6 +43,7 @@ public class FileUtil {
                 }
                 try {
                     ff = file.createNewFile();
+                    System.out.println("create File Success, file url is [ " + file.getAbsolutePath() + " ]");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

@@ -32,7 +32,8 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      * @return 前3个知识库及前5篇文章的集合
      */
     @Query(nativeQuery = true, value = "SELECT aa.article_title, aa.id as articleId, aa.post_time, aa.knowledge_id, aa.k_name, aa.k_desc, aa.k_url FROM ( " +
-            "SELECT ar.article_title, ar.id, ar.post_time, kk.knowledge_id, kk.k_name, kk.k_desc, kk.k_url, IF(@number=ar.knowledge_id,@temp\\:=@temp+1,@temp\\:=1) AS number , @number\\:=ar.knowledge_id FROM article ar INNER JOIN " +
+            "SELECT ar.article_title, ar.id, ar.post_time, kk.knowledge_id, kk.k_name, kk.k_desc, kk.k_url, IF(@number=ar.knowledge_id,@temp\\:=@temp+1,@temp\\:=1) AS number , @number\\:=ar.knowledge_id " +
+            "FROM (SELECT @number\\:=0, @temp\\:=0) rr, article ar INNER JOIN " +
             "(SELECT k.id as knowledge_id, k.k_name, k.k_desc, k.k_url from (SELECT COUNT(a.id) num, a.knowledge_id FROM article a  LEFT JOIN knowledge k ON a.knowledge_id = k.id  WHERE a.is_delete = 'N' AND k.k_access = '2' GROUP BY a.knowledge_id ORDER BY num DESC LIMIT 0,3) aa INNER JOIN knowledge k ON k.id = aa.knowledge_id) kk " +
             "ON ar.knowledge_id = kk.knowledge_id WHERE ar.is_delete = 'N' ORDER BY ar.post_time ASC) aa WHERE aa.number <= 5")
     List<Object[]> findMostArticleKnowledgeLimit3();
@@ -93,14 +94,15 @@ public interface ArticleRepository extends PagingAndSortingRepository<ArticleEnt
      * @return 文章列表
      */
     @Query(nativeQuery = true, value = "SELECT a.id AS articleId, a.article_title, a.content, a.post_time, " +
-            "u.id as authorId, u.user_name AS authorName, pp.participantNum, k.k_type, c.category_name, pp.participantIds, pp.participantNames, a.cover_url " +
+            "u.id as authorId, u.user_name AS authorName, pp.participantNum, k.k_type, c.category_name, pp.participantIds, pp.participantNames, a.cover_url, " +
+            "a.knowledge_id, k.k_name " +
             "FROM article a " +
             "LEFT JOIN cms_user u ON a.author_id = u.id " +
             "LEFT JOIN knowledge k ON k.id = a.knowledge_id " +
             "LEFT JOIN category c ON c.id = k.k_type " +
             "LEFT JOIN (SELECT ap.article_id, count(1) AS participantNum, GROUP_CONCAT(ap.user_id) AS participantIds , GROUP_CONCAT(cu.user_name) AS participantNames " +
             "FROM article_participant ap LEFT JOIN cms_user cu ON ap.user_id = cu.id GROUP BY ap.article_id) pp " +
-            "ON pp.article_id = a.id WHERE a.is_delete = 'N' ORDER BY a.post_time DESC LIMIT 0, 4")
+            "ON pp.article_id = a.id WHERE a.is_delete = 'N' AND k.k_access = '2' ORDER BY a.post_time DESC LIMIT 0, 4")
     List<Object[]> findRecentArticleList();
 
     /**

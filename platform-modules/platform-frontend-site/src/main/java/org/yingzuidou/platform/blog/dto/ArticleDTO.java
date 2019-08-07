@@ -140,7 +140,8 @@ public class ArticleDTO {
             .setParticipantNum(CmsBeanUtils.objectToInt(data[6]))
             .setCategoryId(CmsBeanUtils.objectToInt(data[7])).setCategoryName(CmsBeanUtils.objectToString(data[8]))
             .setParticipantList(transformParticipant(CmsBeanUtils.objectToString(data[9]), CmsBeanUtils.objectToString(data[10])))
-            .setCoverUrl(CmsBeanUtils.objectToString(data[11]));
+            .setCoverUrl(CmsBeanUtils.objectToString(data[11]))
+            .setKnowledgeId(CmsBeanUtils.objectToInt(data[12])).setKnowledgeName(CmsBeanUtils.objectToString(data[13]));
 
     /**
      * 将字符串分割的文章参与者的名字和ID转成DTO对象
