@@ -74,6 +74,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         CmsUserEntity user = (CmsUserEntity) ThreadStorageUtil.getItem("user");
         knowledgeEntity.setCreator(user.getId());
         knowledgeEntity.setCreateTime(new Date());
+        knowledgeEntity.setEditTime(new Date());
         knowledgeEntity = knowledgeRepository.save(knowledgeEntity);
         operRecordService.recordCommonOperation(user, OperTypeEnum.ADD.getValue(), ObjTypeEnum.KNOWLEDGE.getValue(),
                 knowledgeEntity.getId(), RootEnum.KNOWLEDGE.getValue(), knowledgeEntity.getId());
