@@ -6,6 +6,9 @@ spring:
       server:
         git:
           uri: https://github.com/pettyAlways/platform-config.git
+          # 本地仓库目录设定
+          basedir: /usr/config-local/repos
+          # 本地仓库如果有脏数据，则会强制拉取（默认是false）
           force-pull: true
           deleteUntrackedBranches: true
       request-read-timeout: 6000
@@ -27,8 +30,8 @@ eureka:
     instance-id: platform-config
     prefer-ip-address: true
     # 部署所在的机器
-    hostname: 118.25.74.179
-    ip-address: 118.25.74.179
+    hostname: 106.13.166.145
+    ip-address: 106.13.166.145
   client:
     serviceUrl:
       defaultZone: http://yingzuidou:yingzuidou@139.199.213.156:8080/eureka/, http://yingzuidou:yingzuidou@139.199.213.156:8081/eureka/

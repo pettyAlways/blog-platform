@@ -44,6 +44,11 @@ public class UserServiceImpl implements UserService {
      */
     private static final Integer AUTHOR_ROLE = 3;
 
+    /**
+     * 角色1是超级管理员
+     */
+    private static final Integer ADMIN_ROLE = 1;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -100,9 +105,10 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("用户不存在");
         }
         boolean isAuthor = userRoleService.hasRole(userId, AUTHOR_ROLE);
+        boolean isAdmin = userRoleService.hasRole(userId, ADMIN_ROLE);
         CmsUserEntity cmsUserEntity = cmsUserEntityOp.get();
         return new UserDTO().setUserId(cmsUserEntity.getId()).setUserName(cmsUserEntity.getUserName())
-                .setAvatarUrl(cmsUserEntity.getUserAvatar()).setIsAuthor(isAuthor);
+                .setAvatarUrl(cmsUserEntity.getUserAvatar()).setIsAuthor(isAuthor).setIsAdmin(isAdmin);
     }
 
     /**

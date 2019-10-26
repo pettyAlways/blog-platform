@@ -36,6 +36,11 @@ public class UserDTO {
     private Boolean isAuthor;
 
     /**
+     * 是否是超级管理员
+     */
+    private Boolean isAdmin;
+
+    /**
      * 用户名密码
      */
     private String userPassword;
